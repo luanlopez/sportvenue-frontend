@@ -1,0 +1,274 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { ApprovalModal } from "@/components/ui/ApprovalModal";
+import { Pagination } from "@/components/ui/Pagination";
+import { showToast } from "@/components/ui/Toast";
+import { reservationService, Reservation } from "@/services/reservations";
+import { FaMapMarkerAlt, FaClock, FaMoneyBillWave } from "react-icons/fa";
+import { IoImageOutline } from "react-icons/io5";
+import { useAuth } from "@/hooks/useAuth";
+
+const ITEMS_PER_PAGE = 6;
+
+const statusStyles = {
+  requested: {
+    bg: "bg-yellow-100",
+    text: "text-yellow-800",
+    label: "Pendente",
+  },
+  approved: {
+    bg: "bg-green-100",
+    text: "text-green-800",
+    label: "Aprovado",
+  },
+  rejected: {
+    bg: "bg-red-100",
+    text: "text-red-800",
+    label: "Reprovado",
+  },
+  cancelled: {
+    bg: "bg-gray-100",
+    text: "text-gray-800",
+    label: "Cancelado",
+  },
+};
+
+function formatDate(date: string) {
+  return new Date(date).toLocaleDateString("pt-BR", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+}
+
+function LoadingState() {
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center">
+      <div className="bg-white p-8 rounded-lg shadow-sm flex flex-col items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mb-4" />
+        <p className="text-gray-500">Carregando reservas...</p>
+      </div>
+    </div>
+  );
+}
+
+export default function Bookings() {
+  const { user } = useAuth();
+  const [reservations, setReservations] = useState<Reservation[]>([]);
+  const [selectedReservation, setSelectedReservation] =
+    useState<Reservation | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    if (!user) {
+      return;
+    }
+
+    const fetchReservations = async () => {
+      try {
+        setIsLoading(true);
+        const response =
+          user.userType === "HOUSE_OWNER"
+            ? await reservationService.getOwnerReservations(
+                currentPage,
+                ITEMS_PER_PAGE
+              )
+            : await reservationService.getUserReservations(
+                currentPage,
+                ITEMS_PER_PAGE
+              );
+
+        setReservations(response.data);
+        setTotalPages(Math.ceil(response.total / ITEMS_PER_PAGE));
+      } catch {
+        showToast.error("Erro", "Não foi possível carregar as reservas");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchReservations();
+  }, [user, currentPage]);
+
+  const handleApprove = async (reservationId: string) => {
+    try {
+      await reservationService.approveReservation(reservationId);
+      showToast.success("Sucesso", "Reserva aprovada com sucesso!");
+      setIsApprovalModalOpen(false);
+
+      const response = await reservationService.getOwnerReservations(
+        currentPage,
+        ITEMS_PER_PAGE
+      );
+      setReservations(response.data);
+    } catch {
+      showToast.error("Erro", "Não foi possível aprovar a reserva");
+    }
+  };
+
+  const handleReject = async (reservationId: string) => {
+    try {
+      await reservationService.rejectReservation(reservationId);
+      showToast.success("Sucesso", "Reserva reprovada com sucesso!");
+      setIsApprovalModalOpen(false);
+
+      const response = await reservationService.getOwnerReservations(
+        currentPage,
+        ITEMS_PER_PAGE
+      );
+      setReservations(response.data);
+    } catch {
+      showToast.error("Erro", "Não foi possível rejeitar a reserva");
+    }
+  };
+
+  if (!user || isLoading) {
+    return <LoadingState />;
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-between items-center mb-8">
+          <h1 className="text-2xl font-bold text-gray-900">Minhas Reservas</h1>
+          <div className="text-sm text-gray-500">
+            Total de reservas: {reservations.length}
+          </div>
+        </div>
+
+        {reservations.length === 0 ? (
+          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
+            <p className="text-gray-500">Nenhuma reserva encontrada.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {reservations.map((reservation) => (
+              <div
+                key={reservation?._id}
+                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+              >
+                <div className="relative h-48">
+                  {reservation.courtId.images?.[0] ? (
+                    <img
+                      src={reservation.courtId.images[0]}
+                      alt={reservation.courtId.name}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-gray-100 flex flex-col items-center justify-center">
+                      <IoImageOutline className="w-12 h-12 text-gray-400" />
+                      <span className="text-sm text-gray-500 mt-2">
+                        Sem imagem disponível
+                      </span>
+                    </div>
+                  )}
+                  <div className="absolute top-4 right-4">
+                    <span
+                      className={`
+                      px-3 py-1 rounded-full text-sm font-medium
+                      ${statusStyles[reservation.status].bg}
+                      ${statusStyles[reservation.status].text}
+                    `}
+                    >
+                      {statusStyles[reservation.status].label}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                    {reservation.courtId.name}
+                  </h3>
+
+                  <div className="space-y-3 mb-6">
+                    <div className="flex items-center text-gray-600">
+                      <FaMapMarkerAlt className="w-4 h-4 mr-2 text-primary-500" />
+                      <p className="text-sm">
+                        {`${reservation.courtId.address}, ${reservation.courtId.number}`}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center text-gray-600">
+                      <FaClock className="w-4 h-4 mr-2 text-primary-500" />
+                      <p className="text-sm">
+                        {formatDate(reservation.createdAt)}
+                      </p>
+                    </div>
+
+                    <div className="flex items-center text-gray-600">
+                      <FaMoneyBillWave className="w-4 h-4 mr-2 text-primary-500" />
+                      <p className="text-sm">
+                        R$ {reservation?.courtId?.price_per_hour.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setSelectedReservation(reservation);
+                      setIsApprovalModalOpen(true);
+                    }}
+                    className={`w-full px-4 py-2 rounded-md
+                      border-2 transition-all duration-300 ease-in-out
+                      focus:outline-none focus:ring-2 focus:ring-offset-2
+                      shadow-sm hover:shadow-md
+                      flex items-center justify-center
+                      ${"text-primary-500 border-primary-500 hover:bg-primary-50 focus:ring-primary-500"}`}
+                  >
+                    {reservation.status === "requested"
+                      ? "Ver Detalhes"
+                      : "Visualizar"}
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {reservations.length > ITEMS_PER_PAGE && (
+          <div className="mt-8">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={setCurrentPage}
+            />
+          </div>
+        )}
+      </div>
+
+      {selectedReservation && (
+        <ApprovalModal
+          isOpen={isApprovalModalOpen}
+          onClose={() => setIsApprovalModalOpen(false)}
+          reservationId={selectedReservation._id}
+          courtName={selectedReservation.courtId.name}
+          courtAddress={`${selectedReservation.courtId.address}, ${selectedReservation.courtId.number} - ${selectedReservation.courtId.neighborhood}, ${selectedReservation.courtId.city}`}
+          price={selectedReservation.courtId.price_per_hour}
+          reservedStartTime={selectedReservation.reservedStartTime}
+          status={
+            selectedReservation.status as "requested" | "approved" | "rejected"
+          }
+          user={selectedReservation.userId}
+          onApprove={
+            user.userType === "HOUSE_OWNER" &&
+            selectedReservation.status === "requested"
+              ? handleApprove
+              : undefined
+          }
+          onReject={
+            user.userType === "HOUSE_OWNER" &&
+            selectedReservation.status === "requested"
+              ? handleReject
+              : undefined
+          }
+        />
+      )}
+    </div>
+  );
+}
