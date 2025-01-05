@@ -1,10 +1,7 @@
+import { CreateCourtDTO } from "@/app/courts/new/page";
 import { api } from "@/lib/axios";
-
-interface User {
-  name: string;
-  email: string;
-  phone: string;
-}
+import { WeeklySchedule } from "@/types/courts";
+import { User } from "./reservations";
 
 export enum Amenity {
   WIFI = 'WIFI',
@@ -28,26 +25,25 @@ export enum Category {
   TENNIS = "TENNIS",
   HANDBALL = "HANDBALL",
   BEACH_VOLLEYBALL = "BEACH_VOLLEYBALL",
-  BEACH_TENNIS = "BEACH_TENNIS"
+  BEACH_TENNIS = "BEACH_TENNIS",
+  RUGBY = "RUGBY"
 }
 
 export interface Court {
   _id: string;
+  name: string;
+  description: string;
   address: string;
   neighborhood: string;
   city: string;
-  number: string;
-  owner_id: string;
-  name: string;
-  availableHours: string[];
-  images: string[];
-  createdAt: string;
-  updatedAt: string;
-  amenities?: Amenity[];
-  categories?: Category[];
-  price_per_hour?: number;
-  __v: number;
   user: User;
+  number: string;
+  ownerId: string;
+  pricePerHour: number;
+  amenities: string[];
+  categories: string[];
+  images: string[];
+  weeklySchedule: WeeklySchedule;
 }
 
 interface ApiResponse {
@@ -84,22 +80,22 @@ export const CATEGORY_LABELS = {
   TENNIS: "Tênis",
   HANDBALL: "Handebol",
   BEACH_VOLLEYBALL: "Vôlei de Praia",
-  BEACH_TENNIS: "Tênis de Praia"
+  BEACH_TENNIS: "Beach Tennis",
+  RUGBY: "Rugby"
 } as const;
 
 export interface UpdateCourtDTO {
+  name: string;
+  description: string;
   address: string;
   neighborhood: string;
   city: string;
   number: string;
-  name: string;
-  availableHours: string[];
-  reason?: string;
-  description: string;
-  price_per_hour: number;
+  pricePerHour: number;
   amenities: Amenity[];
   categories: Category[];
   images: string[];
+  weeklySchedule: WeeklySchedule;
 }
 
 export const courtService = {
@@ -140,7 +136,18 @@ export const courtService = {
   },
 
   async updateCourt(id: string, data: UpdateCourtDTO) {
-    const response = await api.put<Court>(`/courts/${id}`, data);
+    const response = await api.put<Court>(`/courts/${id}`, {
+      ...data,
+      weeklySchedule: {
+        monday: data.weeklySchedule.monday || [],
+        tuesday: data.weeklySchedule.tuesday || [],
+        wednesday: data.weeklySchedule.wednesday || [],
+        thursday: data.weeklySchedule.thursday || [],
+        friday: data.weeklySchedule.friday || [],
+        saturday: data.weeklySchedule.saturday || [],
+        sunday: data.weeklySchedule.sunday || [],
+      }
+    });
     return response.data;
   },
 
@@ -167,8 +174,19 @@ export const courtService = {
     return response.data;
   },
 
-  async createCourt(data: Omit<UpdateCourtDTO, 'reason'>) {
-    const response = await api.post<Court>('/courts', data);
+  async createCourt(data: CreateCourtDTO) {
+    const response = await api.post<Court>('/courts', {
+      ...data,
+      weeklySchedule: {
+        monday: data.weeklySchedule.monday || [],
+        tuesday: data.weeklySchedule.tuesday || [],
+        wednesday: data.weeklySchedule.wednesday || [],
+        thursday: data.weeklySchedule.thursday || [],
+        friday: data.weeklySchedule.friday || [],
+        saturday: data.weeklySchedule.saturday || [],
+        sunday: data.weeklySchedule.sunday || [],
+      }
+    });
     return response.data;
   }
 };

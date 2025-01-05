@@ -1,26 +1,31 @@
-const ACCESS_TOKEN_KEY = '@SportVenue:accessToken';
-const REFRESH_TOKEN_KEY = '@SportVenue:refreshToken';
+import { parseCookies, setCookie, destroyCookie } from 'nookies';
 
-export const setTokens = (accessToken: string, refreshToken: string) => {
-  localStorage.setItem(ACCESS_TOKEN_KEY, accessToken);
-  localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
-};
+export const TOKEN_KEY = '@courts:accessToken';
+export const REFRESH_TOKEN_KEY = '@courts:refreshToken';
 
 export const getAccessToken = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(ACCESS_TOKEN_KEY);
-  }
-  return null;
+  const { [TOKEN_KEY]: token } = parseCookies();
+  return token;
 };
 
 export const getRefreshToken = () => {
-  if (typeof window !== 'undefined') {
-    return localStorage.getItem(REFRESH_TOKEN_KEY);
-  }
-  return null;
+  const { [REFRESH_TOKEN_KEY]: refreshToken } = parseCookies();
+  return refreshToken;
+};
+
+export const setTokens = (accessToken: string, refreshToken: string) => {
+  setCookie(undefined, TOKEN_KEY, accessToken, {
+    maxAge: 60 * 60 * 24 * 30,
+    path: '/',
+  });
+
+  setCookie(undefined, REFRESH_TOKEN_KEY, refreshToken, {
+    maxAge: 60 * 60 * 24 * 30,
+    path: '/',
+  });
 };
 
 export const removeTokens = () => {
-  localStorage.removeItem(ACCESS_TOKEN_KEY);
-  localStorage.removeItem(REFRESH_TOKEN_KEY);
+  destroyCookie(undefined, TOKEN_KEY);
+  destroyCookie(undefined, REFRESH_TOKEN_KEY);
 }; 

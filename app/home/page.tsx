@@ -1,166 +1,53 @@
 "use client";
 
-import { SearchBar } from "@/components/ui/SearchBar";
-import { Pagination } from "@/components/ui/Pagination";
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import {
-  FaFutbol,
-  FaBasketballBall,
-  FaVolleyballBall,
-  FaTableTennis,
-  FaBaseballBall,
-} from "react-icons/fa";
-import {
-  GiTennisBall,
-  GiVolleyballBall,
-  GiFeather,
-  GiTennisCourt,
-} from "react-icons/gi";
-import Link from "next/link";
-import { Court, courtService, GetCourtsParams } from "@/services/courts";
-import { showToast } from "@/components/ui/Toast";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { SearchBar } from "@/components/ui/SearchBar";
+import { CategoryFilter } from "@/components/ui/CategoryFilter";
+import { Pagination } from "@/components/ui/Pagination";
+import Image from "next/image";
+import Link from "next/link";
+import { courtService } from "@/services/courts";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { CourtImagePlaceholder } from "@/components/ui/CourtImagePlaceholder";
 
-const ITEMS_PER_PAGE = 6;
-
-interface Category {
-  id: string;
-  name: string;
-  value: string;
-  icon: React.ElementType;
-}
-
-const categories: Category[] = [
-  {
-    id: "futebol",
-    name: "Futebol",
-    value: "FOOTBALL",
-    icon: FaFutbol,
-  },
-  {
-    id: "basquete",
-    name: "Basquete",
-    value: "BASKETBALL",
-    icon: FaBasketballBall,
-  },
-  {
-    id: "volei",
-    name: "Vôlei",
-    value: "VOLLEYBALL",
-    icon: FaVolleyballBall,
-  },
-  {
-    id: "tenis",
-    name: "Tênis",
-    value: "TENNIS",
-    icon: GiTennisBall,
-  },
-  {
-    id: "pingpong",
-    name: "Ping Pong",
-    value: "PING_PONG",
-    icon: FaTableTennis,
-  },
-  {
-    id: "baseball",
-    name: "Baseball",
-    value: "BASEBALL",
-    icon: FaBaseballBall,
-  },
-  {
-    id: "futsal",
-    name: "Futsal",
-    value: "FUTSAL",
-    icon: FaFutbol,
-  },
-  {
-    id: "handball",
-    name: "Handebol",
-    value: "HANDBALL",
-    icon: GiVolleyballBall,
-  },
-  {
-    id: "badminton",
-    name: "Badminton",
-    value: "BADMINTON",
-    icon: GiFeather,
-  },
-  {
-    id: "beach-tennis",
-    name: "Beach Tennis",
-    value: "BEACH_TENNIS",
-    icon: GiTennisCourt,
-  },
-];
-
-function CourtImagePlaceholder() {
-  return (
-    <div className="h-48 bg-gray-100 flex items-center justify-center">
-      <div className="text-center">
-        <svg
-          className="mx-auto h-12 w-12 text-gray-400"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          aria-hidden="true"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={1}
-            d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z"
-          />
-        </svg>
-        <p className="mt-2 text-sm text-gray-500">Sem imagem disponível</p>
-      </div>
-    </div>
-  );
-}
+const ITEMS_PER_PAGE = 10;
 
 export default function Home() {
   const { user } = useAuth();
-  const [courts, setCourts] = useState<Court[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState(1);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const fetchCourts = async (params: GetCourtsParams = {}) => {
-    if (!user) return;
+  const { data, isLoading } = useQuery({
+    queryKey: ['courts', currentPage, searchQuery, selectedCategory, user?.userType],
+    queryFn: async () => {
+      if (!user) return null;
 
-    try {
-      setIsLoading(true);
-      let response;
+      const params = {
+        search: searchQuery,
+        sport: selectedCategory || undefined,
+      };
 
       if (user.userType === 'HOUSE_OWNER') {
-        response = await courtService.getOwnerCourts(user.id, currentPage, ITEMS_PER_PAGE, {
-          search: searchQuery,
-          sport: selectedCategory || undefined,
-        });
-      } else {
-        response = await courtService.getCourts({
-          page: currentPage,
-          limit: ITEMS_PER_PAGE,
-          search: searchQuery,
-          sport: selectedCategory || undefined,
-          ...params,
-        });
+        return courtService.getOwnerCourts(
+          user.id,
+          currentPage,
+          ITEMS_PER_PAGE,
+          params
+        );
       }
 
-      setCourts(response.courts);
-      setTotalPages(response.totalPages);
-    } catch {
-      showToast.error("Erro", "Não foi possível carregar as quadras");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCourts();
-  }, [currentPage, searchQuery, selectedCategory]);
+      return courtService.getCourts({
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+        ...params,
+      });
+    },
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5,
+  });
 
   const handleSearch = (query: string) => {
     setSearchQuery(query);
@@ -173,57 +60,22 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white relative">
-      <div className="container mx-auto px-4 py-8">
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         <SearchBar onSearch={handleSearch} />
 
-        <div className="relative my-8">
-          <div className="relative">
-            <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10" />
-            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10" />
-
-            <div className="overflow-x-auto scrollbar-hide">
-              <div className="flex gap-6 px-8">
-                {categories.map((category) => {
-                  const Icon = category.icon;
-                  const isSelected = selectedCategory === category.value;
-
-                  return (
-                    <button
-                      key={category.id}
-                      onClick={() =>
-                        handleCategorySelect(isSelected ? null : category.value)
-                      }
-                      className={`
-                        flex items-center gap-2 py-3
-                        whitespace-nowrap
-                        transition-all duration-200
-                        ${
-                          isSelected
-                            ? "text-primary-500 border-b-2 border-primary-500"
-                            : "text-gray-600 hover:text-primary-500"
-                        }
-                      `}
-                    >
-                      <Icon className="w-4 h-4" />
-                      <span className="text-sm font-medium">
-                        {category.name}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
+        <div className="flex flex-col md:flex-row gap-4 mb-8">
+          <CategoryFilter
+            selectedCategory={selectedCategory}
+            onSelect={handleCategorySelect}
+          />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {isLoading ? (
-            <div className="col-span-full flex justify-center items-center py-12">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500" />
-            </div>
-          ) : courts?.length > 0 ? (
-            courts.map((court) => (
+        {isLoading ? (
+          <LoadingSpinner />
+        ) : data?.courts && data?.courts?.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {data.courts.map((court) => (
               <div
                 key={court._id}
                 className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
@@ -244,8 +96,11 @@ export default function Home() {
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">
                     {court.name}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-4">
+                  <p className="text-gray-600 text-sm mb-2">
                     {`${court.address}, ${court.number} - ${court.neighborhood}, ${court.city}`}
+                  </p>
+                  <p className="text-primary-500 font-medium text-sm mb-4">
+                    R$ {court.pricePerHour.toFixed(2)}/hora
                   </p>
 
                   <div className="flex gap-2">
@@ -276,18 +131,18 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            ))
-          ) : (
-            <div className="col-span-full text-center py-8 text-secondary-500">
-              <p>Nenhuma quadra encontrada.</p>
-            </div>
-          )}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="col-span-full text-center py-8 text-secondary-500">
+            <p>Nenhuma quadra encontrada.</p>
+          </div>
+        )}
 
-        {totalPages > 1 && !isLoading && (
+        {data?.totalPages && data?.totalPages > 1 && !isLoading && (
           <Pagination
             currentPage={currentPage}
-            totalPages={totalPages}
+            totalPages={data?.totalPages || 0}
             onPageChange={setCurrentPage}
           />
         )}

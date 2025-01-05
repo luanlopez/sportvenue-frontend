@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import { getAccessToken } from '../auth/token';
 
 export const api = axios.create({
@@ -17,9 +17,22 @@ api.interceptors.request.use(async (config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
-      window.location.href = '/';
+  (error: AxiosError) => {
+    if (error.response) {
+      console.error('API Error:', {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response.status,
+        data: error.response.data
+      });
+    } else if (error.request) {
+      console.error('API Request Error:', {
+        url: error.config?.url,
+        method: error.config?.method,
+        message: 'No response received'
+      });
+    } else {
+      console.error('API Config Error:', error.message);
     }
     return Promise.reject(error);
   }

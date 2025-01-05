@@ -1,13 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useQuery, useMutation } from "@tanstack/react-query";
+import { useState } from "react";
+import { useAuth } from "@/hooks/useAuth";
+import { reservationService } from "@/services/reservations";
 import { ApprovalModal } from "@/components/ui/ApprovalModal";
 import { Pagination } from "@/components/ui/Pagination";
 import { showToast } from "@/components/ui/Toast";
-import { reservationService, Reservation } from "@/services/reservations";
+import { Reservation } from "@/services/reservations";
 import { FaMapMarkerAlt, FaClock, FaMoneyBillWave } from "react-icons/fa";
 import { IoImageOutline } from "react-icons/io5";
-import { useAuth } from "@/hooks/useAuth";
+import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -44,111 +47,62 @@ function formatDate(date: string) {
   });
 }
 
-function LoadingState() {
-  return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-sm flex flex-col items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mb-4" />
-        <p className="text-gray-500">Carregando reservas...</p>
-      </div>
-    </div>
-  );
-}
-
 export default function Bookings() {
   const { user } = useAuth();
-  const [reservations, setReservations] = useState<Reservation[]>([]);
-  const [selectedReservation, setSelectedReservation] =
-    useState<Reservation | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedReservation, setSelectedReservation] = useState<Reservation | null>(null);
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const [totalPages, setTotalPages] = useState(1);
 
-  useEffect(() => {
-    if (!user) {
-      return;
-    }
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ['reservations', user?.userType, currentPage],
+    queryFn: async () => {
+      if (!user) return null;
 
-    const fetchReservations = async () => {
-      try {
-        setIsLoading(true);
-        const response =
-          user.userType === "HOUSE_OWNER"
-            ? await reservationService.getOwnerReservations(
-                currentPage,
-                ITEMS_PER_PAGE
-              )
-            : await reservationService.getUserReservations(
-                currentPage,
-                ITEMS_PER_PAGE
-              );
+      return user.userType === "HOUSE_OWNER"
+        ? reservationService.getOwnerReservations(currentPage, ITEMS_PER_PAGE)
+        : reservationService.getUserReservations(currentPage, ITEMS_PER_PAGE);
+    },
+    enabled: !!user,
+    staleTime: 1000 * 60 * 5,
+  });
 
-        setReservations(response.data);
-        setTotalPages(Math.ceil(response.total / ITEMS_PER_PAGE));
-      } catch {
-        showToast.error("Erro", "Não foi possível carregar as reservas");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchReservations();
-  }, [user, currentPage]);
-
-  const handleApprove = async (reservationId: string) => {
-    try {
-      await reservationService.approveReservation(reservationId);
+  const approveMutation = useMutation({
+    mutationFn: (id: string) => reservationService.approveReservation(id),
+    onSuccess: () => {
       showToast.success("Sucesso", "Reserva aprovada com sucesso!");
       setIsApprovalModalOpen(false);
-
-      const response = await reservationService.getOwnerReservations(
-        currentPage,
-        ITEMS_PER_PAGE
-      );
-      setReservations(response.data);
-    } catch {
+      refetch();
+    },
+    onError: () => {
       showToast.error("Erro", "Não foi possível aprovar a reserva");
     }
-  };
+  });
 
-  const handleReject = async (reservationId: string) => {
-    try {
-      await reservationService.rejectReservation(reservationId);
+  const rejectMutation = useMutation({
+    mutationFn: (id: string) => reservationService.rejectReservation(id),
+    onSuccess: () => {
       showToast.success("Sucesso", "Reserva reprovada com sucesso!");
       setIsApprovalModalOpen(false);
-
-      const response = await reservationService.getOwnerReservations(
-        currentPage,
-        ITEMS_PER_PAGE
-      );
-      setReservations(response.data);
-    } catch {
+      refetch();
+    },
+    onError: () => {
       showToast.error("Erro", "Não foi possível rejeitar a reserva");
     }
-  };
-
-  if (!user || isLoading) {
-    return <LoadingState />;
-  }
+  });
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
+      <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Minhas Reservas</h1>
           <div className="text-sm text-gray-500">
-            Total de reservas: {reservations.length}
+            Total de reservas: {data?.data.length}
           </div>
         </div>
 
-        {reservations.length === 0 ? (
-          <div className="bg-white rounded-lg shadow-sm p-8 text-center">
-            <p className="text-gray-500">Nenhuma reserva encontrada.</p>
-          </div>
-        ) : (
+        { data?.data && data.data.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {reservations.map((reservation) => (
+            {data.data.map((reservation) => (
               <div
                 key={reservation?._id}
                 className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
@@ -229,13 +183,17 @@ export default function Bookings() {
               </div>
             ))}
           </div>
+        ) : (
+          <div className="col-span-full text-center py-8 text-secondary-500">
+           {isLoading ? <LoadingSpinner /> : <p>Nenhuma reserva encontrada.</p>}
+          </div>
         )}
 
-        {reservations.length > ITEMS_PER_PAGE && (
+        {data && data.total > ITEMS_PER_PAGE && (
           <div className="mt-8">
             <Pagination
               currentPage={currentPage}
-              totalPages={totalPages}
+              totalPages={Math.ceil(data.total / ITEMS_PER_PAGE)}
               onPageChange={setCurrentPage}
             />
           </div>
@@ -256,15 +214,15 @@ export default function Bookings() {
           }
           user={selectedReservation.userId}
           onApprove={
-            user.userType === "HOUSE_OWNER" &&
+            user?.userType === "HOUSE_OWNER" &&
             selectedReservation.status === "requested"
-              ? handleApprove
+              ? approveMutation.mutate
               : undefined
           }
           onReject={
-            user.userType === "HOUSE_OWNER" &&
+            user?.userType === "HOUSE_OWNER" &&
             selectedReservation.status === "requested"
-              ? handleReject
+              ? rejectMutation.mutate
               : undefined
           }
         />

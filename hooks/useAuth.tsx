@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext } from "react";
+import { useState, useEffect, createContext, useContext, useCallback } from "react";
 import { authService } from "@/services/auth";
 import { getAccessToken, getRefreshToken, setTokens, removeTokens } from "@/lib/auth/token";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { jwtDecode } from 'jwt-decode';
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 interface User {
   id: string;
@@ -26,27 +27,30 @@ interface AuthContextData {
 
 const AuthContext = createContext({} as AuthContextData);
 
-const publicRoutes = ['/', '/register', '/forgot-password', ''];
+const publicRoutes = ['/', '/register', '/forgot-password', '/register/verification'];
+
+const isPublicRoute = (path: string) => publicRoutes.includes(path);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
-  const pathname = usePathname();
 
-  useEffect(() => {
-    checkAuth();
-  }, [pathname]);
+  const checkAuth = useCallback(async () => {
+    const handleUnauthenticated = () => {
+      setUser(null);
+      removeTokens();
+      setIsLoading(false);
 
-  const checkAuth = async () => {
+      if (!isPublicRoute(window.location.pathname)) {
+        router.push('/');
+      }
+    };
+
     try {
       let accessToken = getAccessToken();
-      const refreshToken = getRefreshToken();
 
-      if (publicRoutes.includes(pathname) && (accessToken || refreshToken)) {
-        router.push('/home');
-        return;
-      }
+      const refreshToken = getRefreshToken();
 
       if (!accessToken && !refreshToken) {
         handleUnauthenticated();
@@ -81,17 +85,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     } catch {
       handleUnauthenticated();
     }
-  };
+  }, [router]);
 
-  const handleUnauthenticated = () => {
-    setUser(null);
-    removeTokens();
-    setIsLoading(false);
-
-    if (!publicRoutes.includes(pathname)) {
-      router.push('/');
-    }
-  };
+  useEffect(() => {
+    checkAuth();
+  }, [checkAuth]);
 
   const signIn = async (credentials: { email: string; password: string }) => {
     const response = await authService.signIn(credentials);
@@ -119,7 +117,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         signOut,
       }}
     >
-      {children}
+      {isLoading ? <LoadingScreen /> : children}
     </AuthContext.Provider>
   );
 }

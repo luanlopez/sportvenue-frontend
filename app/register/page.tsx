@@ -73,17 +73,19 @@ export default function Register() {
         userType: values.userType,
       };
 
-      await authService.register(registerData);
-
+      await authService.preRegister(registerData);
+      
       showToast.success(
-        "Cadastro realizado!",
-        "Você será redirecionado para o login."
+        "Código enviado!",
+        "Verifique seu email para continuar o cadastro."
       );
-      router.push("/");
-    } catch {
+      router.push("/register/verification");
+    } catch (error: unknown) {
+      console.error('Erro no registro:', error);
+      const err = error as { response?: { data?: { message?: string } } };
       showToast.error(
         "Erro ao realizar cadastro",
-        "Verifique os dados e tente novamente."
+        err?.response?.data?.message || "Verifique os dados e tente novamente."
       );
     } finally {
       setSubmitting(false);

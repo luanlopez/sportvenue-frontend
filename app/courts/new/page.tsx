@@ -9,41 +9,46 @@ import { Amenity, AMENITY_LABELS, Category, CATEGORY_LABELS, courtService } from
 import { showToast } from "@/components/ui/Toast";
 import { TagSelect } from "@/components/ui/TagSelect";
 import { useAuth } from "@/hooks/useAuth";
+import { WeeklyScheduleSelector } from "@/components/ui/WeeklyScheduleSelector";
+import { WeeklySchedule } from "@/types/courts";
 
-interface CreateCourtDTO {
+export interface CreateCourtDTO {
   name: string;
   description: string;
   address: string;
   neighborhood: string;
   city: string;
   number: string;
-  price_per_hour: number;
-  availableHours: string[];
-  amenities: Amenity[];
-  categories: Category[];
+  pricePerHour: number;
+  amenities: string[];
+  categories: string[];
   images: string[];
   ownerId: string;
-  reason?: string;
+  weeklySchedule: WeeklySchedule;
 }
 
-const schema = yup.object().shape({
+const schema: yup.ObjectSchema<CreateCourtDTO> = yup.object().shape({
   name: yup.string().required("Nome é obrigatório"),
   description: yup.string().required("Descrição é obrigatória"),
   address: yup.string().required("Endereço é obrigatório"),
   neighborhood: yup.string().required("Bairro é obrigatório"),
   city: yup.string().required("Cidade é obrigatória"),
   number: yup.string().required("Número é obrigatório"),
-  price_per_hour: yup.number()
-    .typeError("Preço deve ser um número")
-    .min(0, "Preço deve ser maior que zero")
-    .required("Preço é obrigatório"),
-  availableHours: yup.array().of(yup.string().required()).required().min(1, "Selecione pelo menos um horário"),
-  amenities: yup.array().of(yup.string().required()).required().min(1, "Selecione pelo menos uma comodidade"),
-  categories: yup.array().of(yup.string().required()).required().min(1, "Selecione pelo menos uma categoria"),
-  images: yup.array().of(yup.string()).default([]),
-  ownerId: yup.string().required("ID do proprietário é obrigatório"),
-  reason: yup.string().optional()
-}) as yup.ObjectSchema<CreateCourtDTO>;
+  pricePerHour: yup.number().required("Preço por hora é obrigatório"),
+  amenities: yup.array(yup.string().defined()).required().min(1),
+  categories: yup.array(yup.string().defined()).required().min(1),
+  images: yup.array(yup.string().defined()).required(),
+  ownerId: yup.string().required("Id do proprietário é obrigatório"),
+  weeklySchedule: yup.object().shape({
+    monday: yup.array(yup.string().defined()).default([]),
+    tuesday: yup.array(yup.string().defined()).default([]),
+    wednesday: yup.array(yup.string().defined()).default([]),
+    thursday: yup.array(yup.string().defined()).default([]),
+    friday: yup.array(yup.string().defined()).default([]),
+    saturday: yup.array(yup.string().defined()).default([]),
+    sunday: yup.array(yup.string().defined()).default([]),
+  }).required("Horários são obrigatórios")
+});
 
 export default function CreateCourt() {
   const router = useRouter();
@@ -53,7 +58,6 @@ export default function CreateCourt() {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<CreateCourtDTO>({
     resolver: yupResolver(schema),
     defaultValues: {
-      availableHours: [],
       amenities: [],
       categories: [],
       images: [],
@@ -61,13 +65,14 @@ export default function CreateCourt() {
     }
   });
 
-  const generateHourlyTimes = () => {
-    const times = [];
-    for (let i = 0; i < 24; i++) {
-      const hour = i.toString().padStart(2, '0');
-      times.push(`${hour}:00`);
-    }
-    return times;
+  const defaultSchedule: WeeklySchedule = {
+    monday: [],
+    tuesday: [],
+    wednesday: [],
+    thursday: [],
+    friday: [],
+    saturday: [],
+    sunday: []
   };
 
   const onSubmit = async (data: CreateCourtDTO) => {
@@ -109,11 +114,11 @@ export default function CreateCourt() {
                     <input
                       type="number"
                       step="0.01"
-                      {...register("price_per_hour")}
+                      {...register("pricePerHour")}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
                     />
-                    {errors.price_per_hour && (
-                      <p className="mt-1 text-sm text-red-600">{errors.price_per_hour.message}</p>
+                    {errors.pricePerHour && (
+                      <p className="mt-1 text-sm text-red-600">{errors.pricePerHour.message}</p>
                     )}
                   </div>
 
@@ -230,36 +235,18 @@ export default function CreateCourt() {
                       <p className="mt-2 text-sm text-red-600">{errors.amenities.message}</p>
                     )}
                   </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">
-                      Horários Disponíveis
-                    </label>
-                    <div className="flex flex-wrap gap-2">
-                      {generateHourlyTimes().map((time) => {
-                        const hours = watch("availableHours") || [];
-                        return (
-                          <TagSelect
-                            key={time}
-                            value={time}
-                            label={time}
-                            isSelected={hours.includes(time)}
-                            onChange={(value) => {
-                              const current = hours;
-                              const updated = current.includes(value as string)
-                                ? current.filter(v => v !== value)
-                                : [...current, value];
-                              setValue("availableHours", updated as string[]);
-                            }}
-                          />
-                        );
-                      })}
-                    </div>
-                    {errors.availableHours && (
-                      <p className="mt-2 text-sm text-red-600">{errors.availableHours.message}</p>
-                    )}
-                  </div>
                 </div>
+              </div>
+
+              <div className="bg-white p-6 rounded-lg shadow-sm">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Horários de Funcionamento</h2>
+                <WeeklyScheduleSelector
+                  value={watch('weeklySchedule') || defaultSchedule}
+                  onChange={(schedule) => setValue('weeklySchedule', schedule)}
+                />
+                {errors.weeklySchedule && (
+                  <p className="mt-1 text-sm text-red-600">{errors.weeklySchedule.message}</p>
+                )}
               </div>
 
               <div className="flex justify-end space-x-4">

@@ -5,15 +5,6 @@ interface SignInResponse {
   refreshToken: string;
 }
 
-interface CreateUserDTO {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  phone: string;
-  userType?: 'USER' | 'HOUSE_OWNER' | 'ADMIN';
-}
-
 interface RegisterDTO {
   firstName: string;
   lastName: string;
@@ -21,6 +12,19 @@ interface RegisterDTO {
   password: string;
   phone: string;
   userType?: 'USER' | 'HOUSE_OWNER';
+}
+
+interface PreRegisterDTO {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phone: string;
+  userType: "USER" | "HOUSE_OWNER";
+}
+
+interface CompleteRegistrationDTO {
+  code: string;
 }
 
 export const authService = {
@@ -43,4 +47,14 @@ export const authService = {
     const response = await api.get('/auth/me');
     return response.data;
   },
+
+  async preRegister(data: PreRegisterDTO) {
+    const response = await api.post('/auth/pre-register', data);
+    return response.data;
+  },
+
+  async completeRegistration(data: CompleteRegistrationDTO) {
+    const response = await api.post('/auth/complete-registration', data);
+    return response.data;
+  }
 }; 

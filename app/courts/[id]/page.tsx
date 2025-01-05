@@ -1,42 +1,31 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { Court, courtService, AMENITY_LABELS, CATEGORY_LABELS } from "@/services/courts";
+import { courtService, AMENITY_LABELS, CATEGORY_LABELS } from "@/services/courts";
 import { ReservationModal } from "@/components/ui/ReservationModal";
 import { ContactModal } from "@/components/ui/ContactModal";
-import { showToast } from "@/components/ui/Toast";
-import { FaMapMarkerAlt, FaClock, FaMoneyBillWave } from "react-icons/fa";
+import { FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa";
 import { BiDumbbell } from "react-icons/bi";
 import { MdSportsSoccer } from "react-icons/md";
 import { useAuth } from "@/hooks/useAuth";
+import { WeeklyScheduleDisplay } from "@/components/ui/WeeklyScheduleDisplay";
 
 export default function CourtDetails() {
   const { id } = useParams();
   const { user } = useAuth();
-  const [court, setCourt] = useState<Court | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
-  useEffect(() => {
-    async function loadCourt() {
-      try {
-        setIsLoading(true);
-        const data = await courtService.getCourtById(id as string);
-        setCourt(data);
-      } catch (error) {
-        console.error("Error loading court:", error);
-        showToast.error("Erro", "Não foi possível carregar os dados da quadra");
-      } finally {
-        setIsLoading(false);
-      }
-    }
-
-    loadCourt();
-  }, [id]);
+  const { data: court, isLoading } = useQuery({
+    queryKey: ['court', id],
+    queryFn: () => courtService.getCourtById(id as string),
+    staleTime: 1000 * 60 * 5,
+    retry: 1
+  });
 
   if (isLoading) {
     return (
@@ -61,7 +50,7 @@ export default function CourtDetails() {
           src={court.images[0] || "/placeholder-court.jpg"}
           alt={court.name}
           fill
-          className="object-cover"
+          className="object-cover"  
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
@@ -88,10 +77,12 @@ export default function CourtDetails() {
                       className="relative aspect-square rounded-lg overflow-hidden cursor-pointer hover:opacity-90 transition-opacity"
                       onClick={() => setSelectedImage(image)}
                     >
-                      <img
+                      <Image
                         src={image}
                         alt={`${court.name} - Foto ${index + 1}`}
                         className="w-full h-full object-cover"
+                        width={1000}
+                        height={1000}
                       />
                     </div>
                   ))
@@ -108,27 +99,12 @@ export default function CourtDetails() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-primary-50 text-primary-500 rounded-lg">
-                    <FaClock className="text-2xl" />
-                  </div>
-                  <div>
-                    <h3 className="font-semibold text-lg mb-2 text-black">Horários Disponíveis</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {court.availableHours.map((hour) => (
-                        <span key={hour} className="px-3 py-1 bg-gray-100 rounded-full text-sm text-black">
-                          {hour}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-start gap-4">
-                  <div className="p-3 bg-primary-50 text-primary-500 rounded-lg">
                     <FaMoneyBillWave className="text-2xl" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-lg mb-2 text-black">Valor por Hora</h3>
                     <p className="text-2xl font-bold text-primary-500">
-                      R$ {court.price_per_hour?.toFixed(2) || 0}
+                      R$ {court.pricePerHour?.toFixed(2) || 0}
                     </p>
                   </div>
                 </div>
@@ -146,7 +122,7 @@ export default function CourtDetails() {
                     key={amenity}
                     className="px-4 py-3 bg-gray-50 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
                   >
-                    {AMENITY_LABELS[amenity]}
+                    {AMENITY_LABELS[amenity as keyof typeof AMENITY_LABELS]}
                   </div>
                 ))}
               </div>
@@ -163,10 +139,15 @@ export default function CourtDetails() {
                     key={category}
                     className="px-4 py-3 bg-gray-50 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
                   >
-                    {CATEGORY_LABELS[category]}
+                    {CATEGORY_LABELS[category as keyof typeof CATEGORY_LABELS]}
                   </div>
                 ))}
               </div>
+            </div>
+
+            <div className="bg-white p-6 rounded-lg shadow-sm">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Horários de Funcionamento</h2>
+              <WeeklyScheduleDisplay schedule={court.weeklySchedule} />
             </div>
           </div>
 
@@ -205,10 +186,12 @@ export default function CourtDetails() {
           onClick={() => setSelectedImage(null)}
         >
           <div className="relative max-w-7xl max-h-[90vh] w-full h-full">
-            <img
+            <Image
               src={selectedImage}
               alt="Foto da quadra"
               className="w-full h-full object-contain"
+              width={1000}
+              height={1000}
             />
             <button
               onClick={() => setSelectedImage(null)}
@@ -225,7 +208,8 @@ export default function CourtDetails() {
       <ReservationModal
         isOpen={isReservationModalOpen}
         onClose={() => setIsReservationModalOpen(false)}
-        courtId={court?._id}
+        weeklySchedule={court.weeklySchedule}
+        court={court}
       />
 
       <ContactModal
