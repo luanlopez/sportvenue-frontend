@@ -40,12 +40,6 @@ export function WeeklyScheduleSelector({ value, onChange }: WeeklyScheduleSelect
     onChange(newSchedule);
   };
 
-  const copySchedule = (fromDay: keyof WeeklySchedule) => {
-    const newSchedule = { ...value };
-    newSchedule[selectedDay] = [...value[fromDay]];
-    onChange(newSchedule);
-  };
-
   return (
     <div className="space-y-4">
       <div className="flex gap-2 overflow-x-auto pb-2">
@@ -64,20 +58,6 @@ export function WeeklyScheduleSelector({ value, onChange }: WeeklyScheduleSelect
         <h4 className="text-sm font-medium text-gray-700">
           Horários disponíveis - {DAYS[selectedDay]}
         </h4>
-        <div className="flex gap-2">
-          {Object.entries(DAYS).map(([day, label]) => (
-            day !== selectedDay && (
-              <button
-                key={`copy-${day}`}
-                type="button"
-                onClick={() => copySchedule(day as keyof WeeklySchedule)}
-                className="text-xs text-primary-500 hover:text-primary-600"
-              >
-                Copiar de {label}
-              </button>
-            )
-          ))}
-        </div>
       </div>
 
       <div className="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">

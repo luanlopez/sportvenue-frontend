@@ -90,44 +90,62 @@ export default function CreateCourt() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8">Criar Nova Quadra</h1>
+      <div className="container mx-auto px-2 sm:px-4">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Criar Nova Quadra</h1>
         
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
 
           <div className="flex-1">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-8">
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Informações Básicas</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Informações Básicas</h2>
+                <div className="grid grid-cols-1 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Nome da Quadra</label>
                     <input
                       {...register("name")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
+                      className="mt-2 block w-full px-4 py-3 rounded-md 
+                        border border-gray-300 
+                        bg-white text-gray-900 placeholder-gray-400
+                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
+                        transition-colors duration-200"
+                      placeholder="Digite o nome da quadra"
                     />
                     {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700">Valor por Hora</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      {...register("pricePerHour")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
-                    />
+                    <div className="relative mt-2">
+                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        {...register("pricePerHour")}
+                        className="block w-full pl-10 pr-4 py-3 rounded-md 
+                          border border-gray-300 
+                          bg-white text-gray-900 placeholder-gray-400
+                          focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
+                          transition-colors duration-200"
+                        placeholder="0,00"
+                      />
+                    </div>
                     {errors.pricePerHour && (
                       <p className="mt-1 text-sm text-red-600">{errors.pricePerHour.message}</p>
                     )}
                   </div>
 
-                  <div className="col-span-2">
+                  <div className="col-span-1 sm:col-span-2">
                     <label className="block text-sm font-medium text-gray-700">Descrição</label>
                     <textarea
                       {...register("description")}
                       rows={3}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
+                      className="mt-2 block w-full px-4 py-3 rounded-md 
+                        border border-gray-300 
+                        bg-white text-gray-900 placeholder-gray-400
+                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
+                        transition-colors duration-200 resize-none"
+                      placeholder="Descreva os detalhes da quadra"
                     />
                     {errors.description && (
                       <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
@@ -137,13 +155,18 @@ export default function CreateCourt() {
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Endereço</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Endereço</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700">Endereço</label>
                     <input
                       {...register("address")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
+                      className="mt-2 block w-full px-4 py-3 rounded-md 
+                        border border-gray-300 
+                        bg-white text-gray-900 placeholder-gray-400
+                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
+                        transition-colors duration-200"
+                      placeholder="Rua, Avenida..."
                     />
                     {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address.message}</p>}
                   </div>
@@ -152,7 +175,12 @@ export default function CreateCourt() {
                     <label className="block text-sm font-medium text-gray-700">Número</label>
                     <input
                       {...register("number")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
+                      className="mt-2 block w-full px-4 py-3 rounded-md 
+                        border border-gray-300 
+                        bg-white text-gray-900 placeholder-gray-400
+                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
+                        transition-colors duration-200"
+                      placeholder="Nº"
                     />
                     {errors.number && <p className="mt-1 text-sm text-red-600">{errors.number.message}</p>}
                   </div>
@@ -161,18 +189,28 @@ export default function CreateCourt() {
                     <label className="block text-sm font-medium text-gray-700">Bairro</label>
                     <input
                       {...register("neighborhood")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
+                      className="mt-2 block w-full px-4 py-3 rounded-md 
+                        border border-gray-300 
+                        bg-white text-gray-900 placeholder-gray-400
+                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
+                        transition-colors duration-200"
+                      placeholder="Digite o bairro"
                     />
                     {errors.neighborhood && (
                       <p className="mt-1 text-sm text-red-600">{errors.neighborhood.message}</p>
                     )}
                   </div>
 
-                  <div>
+                  <div className="col-span-2 md:col-span-1">
                     <label className="block text-sm font-medium text-gray-700">Cidade</label>
                     <input
                       {...register("city")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
+                      className="mt-2 block w-full px-4 py-3 rounded-md 
+                        border border-gray-300 
+                        bg-white text-gray-900 placeholder-gray-400
+                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
+                        transition-colors duration-200"
+                      placeholder="Digite a cidade"
                     />
                     {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>}
                   </div>
@@ -180,11 +218,11 @@ export default function CreateCourt() {
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Horários e Categorias</h2>
-                <div className="space-y-8">
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Horários e Categorias</h2>
+                <div className="space-y-4 sm:space-y-8">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Categorias</label>
-                    <div className="flex flex-wrap gap-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">Categorias</label>
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {Object.entries(CATEGORY_LABELS).map(([value, label]) => {
                         const categories = watch("categories") || [];
                         return (
@@ -210,8 +248,8 @@ export default function CreateCourt() {
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Comodidades</label>
-                    <div className="flex flex-wrap gap-2">
+                    <label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">Comodidades</label>
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
                       {Object.entries(AMENITY_LABELS).map(([value, label]) => {
                         const amenities = watch("amenities") || [];
                         return (
@@ -239,7 +277,7 @@ export default function CreateCourt() {
               </div>
 
               <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Horários de Funcionamento</h2>
+                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Horários de Funcionamento</h2>
                 <WeeklyScheduleSelector
                   value={watch('weeklySchedule') || defaultSchedule}
                   onChange={(schedule) => setValue('weeklySchedule', schedule)}
@@ -249,19 +287,18 @@ export default function CreateCourt() {
                 )}
               </div>
 
-              <div className="flex justify-end space-x-4">
+              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                  className="px-4 sm:px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 text-sm sm:text-base"
                   disabled={isSubmitting}
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 text-white bg-primary-500 rounded-md hover:bg-primary-600 transition-colors
-                    disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 sm:px-6 py-2 text-white bg-primary-500 rounded-md hover:bg-primary-600 text-sm sm:text-base"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? "Criando..." : "Criar Quadra"}

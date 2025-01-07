@@ -135,28 +135,31 @@ export function CategoryFilter({ selectedCategory, onSelect }: CategoryFilterPro
   }, []);
 
   return (
-    <div className="relative w-full flex items-center">
-      <div className="relative flex-1">
+    <div className="relative w-full flex flex-col lg:flex-row items-start lg:items-center gap-3">
+      <div className="relative flex-1 w-full">
         {showLeftArrow && (
           <button
             onClick={() => scroll('left')}
-            className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:scale-110 transition-transform"
+            className="hidden lg:block absolute -left-2 top-1/2 -translate-y-1/2 z-10 
+              bg-white rounded-full p-1.5 shadow-md hover:scale-110 transition-transform"
             aria-label="Scroll left"
           >
-            <FaChevronLeft className="w-4 h-4 text-gray-600" />
+            <FaChevronLeft className="w-3.5 h-3.5 text-gray-600" />
           </button>
         )}
 
         <div
           ref={scrollContainerRef}
-          className="flex gap-4 overflow-x-auto scrollbar-hide px-4 py-2 -mx-4 scroll-smooth"
+          className="flex gap-1.5 sm:gap-2 lg:gap-4 overflow-x-auto scrollbar-hide 
+            px-1 sm:px-2 lg:px-4 py-1.5 sm:py-2 -mx-1 sm:-mx-2 lg:-mx-4 scroll-smooth"
         >
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => onSelect(selectedCategory === category.value ? null : category.value)}
               className={`
-                flex flex-col items-center min-w-[80px] px-4 py-2
+                flex flex-col items-center min-w-[60px] sm:min-w-[70px] lg:min-w-[80px] 
+                px-1.5 sm:px-2 lg:px-4 py-1.5 sm:py-2
                 transition-all duration-200 group
                 ${selectedCategory === category.value
                   ? 'border-b-2 border-primary-500'
@@ -166,18 +169,18 @@ export function CategoryFilter({ selectedCategory, onSelect }: CategoryFilterPro
             >
               <div
                 className={`
-                  p-3 rounded-full mb-1 transition-colors
+                  p-1.5 sm:p-2 lg:p-3 rounded-full mb-1 transition-colors
                   ${selectedCategory === category.value
                     ? 'bg-primary-500 text-white'
                     : 'bg-gray-100 text-gray-600 group-hover:bg-gray-200'
                   }
                 `}
               >
-                <category.icon className="w-5 h-5" />
+                <category.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
               </div>
               <span
                 className={`
-                  text-xs font-medium whitespace-nowrap
+                  text-[9px] sm:text-[10px] lg:text-xs font-medium whitespace-nowrap
                   ${selectedCategory === category.value
                     ? 'text-primary-500'
                     : 'text-gray-600'
@@ -193,34 +196,36 @@ export function CategoryFilter({ selectedCategory, onSelect }: CategoryFilterPro
         {showRightArrow && (
           <button
             onClick={() => scroll('right')}
-            className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full p-2 shadow-md hover:scale-110 transition-transform"
+            className="hidden lg:block absolute -right-2 top-1/2 -translate-y-1/2 z-10 
+              bg-white rounded-full p-1.5 shadow-md hover:scale-110 transition-transform"
             aria-label="Scroll right"
           >
-            <FaChevronRight className="w-4 h-4 text-gray-600" />
+            <FaChevronRight className="w-3.5 h-3.5 text-gray-600" />
           </button>
         )}
       </div>
 
-      <div className="relative group">
+      <div className="relative group w-full lg:w-auto">
         <button
           disabled
-          className="flex items-center gap-2 px-4 py-4 rounded-lg text-sm font-medium
+          className="flex items-center justify-center lg:justify-start gap-2 px-3 py-2 lg:px-4 lg:py-3 
+            rounded-lg text-xs sm:text-sm font-medium w-full lg:w-auto
             bg-white border border-gray-200 cursor-not-allowed
             transition-all duration-200 hover:shadow-md
             text-gray-400 hover:text-gray-500"
         >
-          <FaFilter className="w-4 h-4" />
+          <FaFilter className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
           Filtros
         </button>
         <div className="absolute bottom-full right-0 mb-2 
           opacity-0 group-hover:opacity-100 transform group-hover:-translate-y-1
           transition-all duration-200 pointer-events-none z-50"
         >
-          <div className="bg-primary-500 text-white px-4 py-2 rounded-lg shadow-lg
-            text-sm font-medium relative"
+          <div className="bg-primary-500 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg shadow-lg
+            text-xs sm:text-sm font-medium relative whitespace-nowrap"
           >
             Disponível em breve
-            <div className="absolute -bottom-2 right-6 w-4 h-4 bg-primary-500 
+            <div className="absolute -bottom-2 right-6 w-3 h-3 lg:w-4 lg:h-4 bg-primary-500 
               transform rotate-45"
             />
           </div>

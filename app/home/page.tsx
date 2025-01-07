@@ -61,10 +61,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4 py-8 max-w-7xl">
+      <div className="container mx-auto px-2 sm:px-4 py-4 sm:py-8 max-w-7xl">
         <SearchBar onSearch={handleSearch} />
 
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        <div className="flex flex-col gap-4 mb-4 sm:mb-8">
           <CategoryFilter
             selectedCategory={selectedCategory}
             onSelect={handleCategorySelect}
@@ -74,13 +74,13 @@ export default function Home() {
         {isLoading ? (
           <LoadingSpinner />
         ) : data?.courts && data?.courts?.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {data.courts.map((court) => (
               <div
                 key={court._id}
                 className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
               >
-                <div className="relative h-48">
+                <div className="relative h-40 sm:h-48">
                   {court.images && court.images.length > 0 ? (
                     <Image
                       src={court.images[0]}
@@ -92,25 +92,26 @@ export default function Home() {
                     <CourtImagePlaceholder />
                   )}
                 </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <div className="p-3 sm:p-4">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
                     {court.name}
                   </h3>
-                  <p className="text-gray-600 text-sm mb-2">
+                  <p className="text-gray-600 text-xs sm:text-sm mb-1 sm:mb-2">
                     {`${court.address}, ${court.number} - ${court.neighborhood}, ${court.city}`}
                   </p>
-                  <p className="text-primary-500 font-medium text-sm mb-4">
+                  <p className="text-primary-500 font-medium text-xs sm:text-sm mb-3 sm:mb-4">
                     R$ {court.pricePerHour.toFixed(2)}/hora
                   </p>
 
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 flex-col sm:flex-row">
                     <Link
                       href={`/courts/${court._id}`}
                       className="flex-1 px-4 py-2 text-white rounded-md
                         bg-primary-500 hover:bg-primary-600
                         transition-colors duration-300
                         focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-                        flex items-center justify-center"
+                        flex items-center justify-center
+                        text-sm sm:text-base"
                     >
                       Ver Detalhes
                     </Link>
@@ -123,7 +124,8 @@ export default function Home() {
                           hover:bg-primary-50
                           transition-colors duration-300
                           focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-                          flex items-center justify-center"
+                          flex items-center justify-center
+                          text-sm sm:text-base"
                       >
                         Editar
                       </Link>
@@ -151,10 +153,12 @@ export default function Home() {
       {user?.userType === 'HOUSE_OWNER' && (
         <Link
           href="/courts/new"
-          className="fixed bottom-8 right-8 px-6 py-3 bg-primary-500 text-white rounded-full
+          className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 px-4 sm:px-6 py-2 sm:py-3 
+            bg-primary-500 text-white rounded-full
             hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl
             focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-            flex items-center gap-2 z-10"
+            flex items-center gap-2 z-10
+            text-sm sm:text-base"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -162,7 +166,7 @@ export default function Home() {
             viewBox="0 0 24 24"
             strokeWidth={1.5}
             stroke="currentColor"
-            className="w-5 h-5"
+            className="w-4 h-4 sm:w-5 sm:h-5"
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
