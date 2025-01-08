@@ -1,10 +1,15 @@
 "use client";
 
-import { useState, useEffect, createContext, useContext, useCallback } from "react";
+import {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  useCallback,
+} from "react";
 import { authService } from "@/services/auth";
-import { getAccessToken, getRefreshToken, setTokens, removeTokens } from "@/lib/auth/token";
+import { getAccessToken, setTokens, removeTokens } from "@/lib/auth/token";
 import { useRouter } from "next/navigation";
-import { jwtDecode } from 'jwt-decode';
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 
 interface User {
@@ -27,8 +32,12 @@ interface AuthContextData {
 
 const AuthContext = createContext({} as AuthContextData);
 
-const publicRoutes = ['/', '/register', '/forgot-password', '/register/verification'];
-
+const publicRoutes = [
+  "/",
+  "/register",
+  "/forgot-password",
+  "/register/verification",
+];
 const isPublicRoute = (path: string) => publicRoutes.includes(path);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -37,74 +46,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
   const checkAuth = useCallback(async () => {
-    const handleUnauthenticated = () => {
-      setUser(null);
-      removeTokens();
-      setIsLoading(false);
-
-      if (!isPublicRoute(window.location.pathname)) {
-        router.push('/');
-      }
-    };
-
     try {
-      let accessToken = getAccessToken();
+      const accessToken = getAccessToken();
 
-      const refreshToken = getRefreshToken();
-
-      if (!accessToken && !refreshToken) {
-        handleUnauthenticated();
-        return;
-      }
-
-      if (accessToken) {
-        const decodedToken = jwtDecode(accessToken) as { exp: number };
-        const isTokenExpired = Date.now() >= decodedToken.exp * 1000;
-
-        if (isTokenExpired && refreshToken) {
-          const response = await authService.refreshToken(refreshToken);
-          setTokens(response.accessToken, response.refreshToken);
-          accessToken = response.accessToken;
-        }
-      }
-
-      if (!accessToken && refreshToken) {
-        const response = await authService.refreshToken(refreshToken);
-        setTokens(response.accessToken, response.refreshToken);
-        accessToken = response.accessToken;
-      }
-
-      if (accessToken) {
-        const userData = await authService.getProfile();
-        setUser(userData);
+      if (!accessToken) {
+        setUser(null);
         setIsLoading(false);
         return;
       }
 
-      handleUnauthenticated();
+      const userData = await authService.getProfile();
+      setUser(userData);
+      setIsLoading(false);
     } catch {
-      handleUnauthenticated();
+      removeTokens();
+      setUser(null);
+      setIsLoading(false);
     }
-  }, [router]);
+  }, []);
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
 
+  useEffect(() => {
+    if (!isLoading && !user && !isPublicRoute(window.location.pathname)) {
+      router.push("/");
+    }
+  }, [isLoading, user, router]);
+
   const signIn = async (credentials: { email: string; password: string }) => {
-    const response = await authService.signIn(credentials);
-    setTokens(response.accessToken, response.refreshToken);
-    
+    const { accessToken, refreshToken } = await authService.signIn(credentials);
+    setTokens(accessToken, refreshToken);
+
     const userData = await authService.getProfile();
     setUser(userData);
 
-    router.push('/home');
+    router.push("/home");
   };
 
   const signOut = async () => {
     removeTokens();
     setUser(null);
-    router.push('/');
+    router.push("/");
   };
 
   return (

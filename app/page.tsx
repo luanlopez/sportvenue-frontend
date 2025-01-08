@@ -33,12 +33,12 @@ function LoginPage() {
   ) => {
     try {
       await signIn(values);
-      showToast.success(
-        "Login realizado!",
-        "Você será redirecionado em instantes."
-      );
     } catch {
-      showToast.error("Erro ao realizar login", "Credenciais inválidas.");
+      showToast.error(
+        "Login falhou",
+        "Verifique suas credenciais e tente novamente"
+      );
+    } finally {
       setSubmitting(false);
     }
   };

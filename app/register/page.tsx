@@ -74,14 +74,15 @@ export default function Register() {
       };
 
       await authService.preRegister(registerData);
-      
+
       showToast.success(
         "Código enviado!",
         "Verifique seu email para continuar o cadastro."
       );
+
       router.push("/register/verification");
     } catch (error: unknown) {
-      console.error('Erro no registro:', error);
+      console.error("Erro no registro:", error);
       const err = error as { response?: { data?: { message?: string } } };
       showToast.error(
         "Erro ao realizar cadastro",

@@ -1,11 +1,23 @@
-import axios, { AxiosError } from 'axios';
-import { getAccessToken } from '../auth/token';
+import axios from "axios";
+import {
+  getAccessToken,
+  getRefreshToken,
+  setTokens,
+  removeTokens,
+} from "../auth/token";
+import { authService } from "@/services/auth";
 
 export const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
 });
 
-api.interceptors.request.use(async (config) => {
+let isRefreshing = false;
+let failedRequestsQueue: Array<{
+  onSuccess: (token: string) => void;
+  onFailure: (err: Error) => void;
+}> = [];
+
+api.interceptors.request.use((config) => {
   const token = getAccessToken();
 
   if (token) {
@@ -17,23 +29,59 @@ api.interceptors.request.use(async (config) => {
 
 api.interceptors.response.use(
   (response) => response,
-  (error: AxiosError) => {
-    if (error.response) {
-      console.error('API Error:', {
-        url: error.config?.url,
-        method: error.config?.method,
-        status: error.response.status,
-        data: error.response.data
+  async (error) => {
+    if (error?.response?.status === 401) {
+      const originalRequest = error.config;
+      const refreshToken = getRefreshToken();
+
+      if (!refreshToken) {
+        removeTokens();
+        return Promise.reject(error);
+      }
+
+      if (!isRefreshing) {
+        isRefreshing = true;
+
+        try {
+          const response = await authService.refreshToken(refreshToken);
+
+          const { accessToken, refreshToken: newRefreshToken } = response;
+          setTokens(accessToken, newRefreshToken);
+
+          api.defaults.headers.Authorization = `Bearer ${accessToken}`;
+
+          failedRequestsQueue.forEach((request) =>
+            request.onSuccess(accessToken)
+          );
+          failedRequestsQueue = [];
+
+          return api(originalRequest);
+        } catch (err) {
+          failedRequestsQueue.forEach((request) =>
+            request.onFailure(err as Error)
+          );
+
+          failedRequestsQueue = [];
+          removeTokens();
+          return Promise.reject(err);
+        } finally {
+          isRefreshing = false;
+        }
+      }
+
+      return new Promise((resolve, reject) => {
+        failedRequestsQueue.push({
+          onSuccess: (token: string) => {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+            resolve(api(originalRequest));
+          },
+          onFailure: (err: Error) => {
+            reject(err);
+          },
+        });
       });
-    } else if (error.request) {
-      console.error('API Request Error:', {
-        url: error.config?.url,
-        method: error.config?.method,
-        message: 'No response received'
-      });
-    } else {
-      console.error('API Config Error:', error.message);
     }
+
     return Promise.reject(error);
   }
 );
