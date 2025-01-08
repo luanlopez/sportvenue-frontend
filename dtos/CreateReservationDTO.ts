@@ -3,4 +3,5 @@ export interface CreateReservationDTO {
   courtId: string;
   reservedStartTime: string;
   status: "requested" | "approved" | "rejected" | "cancelled";
+  dayOfWeek: string;
 }

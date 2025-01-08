@@ -158,7 +158,7 @@ export default function Bookings() {
                     <div className="flex items-center text-gray-600">
                       <FaMoneyBillWave className="w-4 h-4 mr-2 text-primary-500" />
                       <p className="text-sm">
-                        R$ {reservation?.courtId?.price_per_hour.toFixed(2)}
+                        R$ {reservation?.courtId?.pricePerHour.toFixed(2)}
                       </p>
                     </div>
                   </div>
@@ -207,7 +207,7 @@ export default function Bookings() {
           reservationId={selectedReservation._id}
           courtName={selectedReservation.courtId.name}
           courtAddress={`${selectedReservation.courtId.address}, ${selectedReservation.courtId.number} - ${selectedReservation.courtId.neighborhood}, ${selectedReservation.courtId.city}`}
-          price={selectedReservation.courtId.price_per_hour}
+          price={selectedReservation.courtId.pricePerHour}
           reservedStartTime={selectedReservation.reservedStartTime}
           status={
             selectedReservation.status as "requested" | "approved" | "rejected"

@@ -51,10 +51,11 @@ export function ReservationModal({
     }
 
     const reservationData: CreateReservationDTO = {
-      ownerId: court?.ownerId || "",
+      ownerId: court?.owner_id || "",
       courtId: court?._id || "",
       reservedStartTime: selectedHour,
       status: "requested",
+      dayOfWeek: selectedDay,
     };
 
     try {
@@ -97,7 +98,7 @@ export function ReservationModal({
                   setSelectedDay(e.target.value as keyof WeeklySchedule);
                   setSelectedHour("");
                 }}
-                className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 rounded-lg border text-gray-500 border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
               >
                 <option value="">Selecione um dia</option>
                 {Object.entries(DAYS).map(([day, label]) => (
@@ -116,7 +117,7 @@ export function ReservationModal({
                 <select
                   value={selectedHour}
                   onChange={(e) => setSelectedHour(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2 rounded-lg border text-gray-500 border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
                 >
                   <option value="">Selecione um horário</option>
                   {weeklySchedule[selectedDay].map((hour) => (

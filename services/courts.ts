@@ -38,7 +38,7 @@ export interface Court {
   city: string;
   user: User;
   number: string;
-  ownerId: string;
+  owner_id: string;
   pricePerHour: number;
   amenities: string[];
   categories: string[];

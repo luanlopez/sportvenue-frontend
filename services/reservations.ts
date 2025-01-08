@@ -1,5 +1,6 @@
 import { api } from "@/lib/axios";
 import { CreateReservationDTO } from "@/dtos/CreateReservationDTO";
+import { WeeklySchedule } from "@/types/courts";
 
 export interface Court {
   _id: string;
@@ -10,9 +11,9 @@ export interface Court {
   city: string;
   number: string;
   ownerId: string;
-  availableHours: string[];
+  weeklySchedule: WeeklySchedule;
   reason: string;
-  price_per_hour: number;
+  pricePerHour: number;
   amenities: string[];
   categories: string[];
   images: string[];
