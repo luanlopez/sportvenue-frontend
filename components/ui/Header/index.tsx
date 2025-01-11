@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { GlobeAltIcon, Bars3Icon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { FaVolleyballBall } from "react-icons/fa";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
@@ -72,13 +73,13 @@ export function Header() {
       onMouseLeave={() => setIsHovered(false)}
     >
       <div>
-        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-24">
+        <div className="max-w-8xl mx-auto px-3 sm:px-4 md:px-6 lg:px-8 xl:px-24">
           <div className={`flex items-center justify-between transition-all duration-500 ease-in-out
-            ${isScrolled || (!isHomePage && !isHovered) ? 'h-14' : 'h-16'}`}
+            ${isScrolled || (!isHomePage && !isHovered) ? 'h-16' : 'h-16'}`}
           >
-            <Link href="/" className="flex-shrink-0 -ml-3">
-              <h2 className={`font-bold text-primary-500 transition-all duration-500 ease-in-out transform
-                ${isScrolled || (!isHomePage && !isHovered) ? 'text-xl' : 'text-2xl'}`}
+            <Link href="/" className="flex-shrink-0">
+              <h2 className={`font-bold text-primary-500 transition-all duration-500 ease-in-out
+                text-xl sm:text-2xl md:text-3xl`}
               >
                 SportVenue
               </h2>
@@ -97,36 +98,60 @@ export function Header() {
               </Link>
             </nav>
 
-            <div className="flex items-center gap-4 -mr-3">
+            <div className="flex items-center gap-2 sm:gap-4">
+              {!user && (
+                <Link
+                  href="/owner-plans"
+                  className="hidden xs:flex items-center gap-1 sm:gap-2 
+                    px-2 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium
+                    text-gray-500 hover:text-primary-600
+                    hover:bg-primary-50 rounded-full transition-all duration-200"
+                  >
+                    <FaVolleyballBall className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="whitespace-nowrap">Anuncie seu espaço</span>
+                  </Link>
+                )}
+
               <button
                 onClick={() => setIsLanguageModalOpen(true)}
-                className="p-2 hover:bg-gray-100 rounded-full transition"
+                className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition hidden sm:block"
               >
-                <GlobeAltIcon className="h-5 w-5 text-gray-700" />
+                <GlobeAltIcon className="h-4 w-4 sm:h-5 sm:w-5 text-gray-700" />
               </button>
 
               <div className="relative">
-                <button
-                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 border rounded-full p-2 hover:shadow-md transition"
-                >
-                  <Bars3Icon className="h-5 w-5 text-gray-700" />
-                  <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center">
-                    {user?.picture ? (
-                      <Image
-                        src={user.picture}
-                        alt={user.name}
-                        width={32}
-                        height={32}
-                        className="rounded-full"
-                      />
-                    ) : (
-                      <span className="text-sm text-white font-medium">
-                        {user ? getInitials(user.name) : "?"}
-                      </span>
-                    )}
-                  </div>
-                </button>
+                {user ? (
+                  <>
+                    <button
+                      onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                      className="flex items-center gap-1 sm:gap-2 p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition"
+                    >
+                      {user.picture ? (
+                        <Image
+                          src={user.picture}
+                          alt={user.name}
+                          width={28}
+                          height={28}
+                          className="rounded-full"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                          <span className="text-sm font-medium text-primary-600">
+                            {getInitials(user.name)}
+                          </span>
+                        </div>
+                      )}
+                      <Bars3Icon className="h-5 w-5 text-gray-700" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                    className="p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition"
+                  >
+                    <Bars3Icon className="h-5 w-5 sm:h-6 sm:w-6 text-gray-700" />
+                  </button>
+                )}
 
                 {isDropdownOpen && (
                   <>
