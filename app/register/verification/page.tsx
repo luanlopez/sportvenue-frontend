@@ -51,7 +51,7 @@ export default function VerificationCode() {
         "Cadastro finalizado!",
         "Você será redirecionado para o login."
       );
-      router.push("/");
+      router.push("/login");
     } catch {
       showToast.error(
         "Código inválido",

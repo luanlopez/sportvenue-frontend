@@ -20,7 +20,7 @@ interface PreRegisterDTO {
   email: string;
   password: string;
   phone: string;
-  userType: "USER" | "HOUSE_OWNER";
+  userType?: "USER" | "HOUSE_OWNER";
 }
 
 interface CompleteRegistrationDTO {
@@ -68,5 +68,10 @@ export const authService = {
       console.error("Erro na chamada do Google callback:", error);
       throw error;
     }
+  },
+
+  async updateUserType(type: 'USER' | 'HOUSE_OWNER') {
+    const response = await api.patch('/auth/update-type', { userType: type });
+    return response.data;
   }
 }; 

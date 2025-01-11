@@ -10,7 +10,6 @@ import Link from "next/link";
 import { AnimatedBackground } from "@/components/background/AnimatedBackground";
 import { Spinner } from "@/components/ui/Spinner";
 import { showToast } from "@/components/ui/Toast";
-import { Select } from "@/components/form/select";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth";
 
@@ -26,7 +25,6 @@ interface FormValues {
   password: string;
   confirmPassword: string;
   phone: string;
-  userType: UserType;
 }
 
 const validationSchema = Yup.object({
@@ -46,15 +44,7 @@ const validationSchema = Yup.object({
   phone: Yup.string()
     .required("Telefone é obrigatório")
     .matches(/^\d{10,11}$/, "Telefone inválido"),
-  userType: Yup.string()
-    .oneOf(Object.values(UserType), "Tipo de usuário inválido")
-    .required("Tipo de usuário é obrigatório"),
 });
-
-const userTypeOptions = [
-  { value: UserType.HOUSE_OWNER, label: "Dono de Quadra" },
-  { value: UserType.USER, label: "Usuário Comum" },
-];
 
 export default function Register() {
   const router = useRouter();
@@ -70,7 +60,6 @@ export default function Register() {
         email: values.email,
         password: values.password,
         phone: values.phone,
-        userType: values.userType,
       };
 
       await authService.preRegister(registerData);
@@ -157,13 +146,6 @@ export default function Register() {
                   name="phone"
                   label="Telefone"
                   placeholder="Digite seu telefone"
-                  disabled={isSubmitting}
-                />
-
-                <Select
-                  name="userType"
-                  label="Tipo de Usuário"
-                  options={userTypeOptions}
                   disabled={isSubmitting}
                 />
 
