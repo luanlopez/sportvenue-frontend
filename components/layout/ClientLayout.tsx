@@ -5,18 +5,21 @@ import { Footer } from "@/components/ui/Footer";
 import { usePathname } from "next/navigation";
 
 const authRoutes = [
-  "/",
+  "",
   "/register",
   "/forgot-password",
   "/register/verification",
+  "/auth/google/callback"
 ];
 
 const validRoutes = [
   ...authRoutes,
-  "/home",
+  "/",
   "/bookings",
   "/courts/new",
   "/courts",
+  "/courts/[id]",
+  "/courts/[id]/edit",
   "/profile",
 ];
 
@@ -25,7 +28,12 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
 
   const isPublicPage = authRoutes.includes(pathname);
 
-  const isValidRoute = validRoutes.some((route) => pathname === route);
+  const isValidRoute = validRoutes.some((route) => {
+    if (route.includes("[id]")) {
+      return pathname.startsWith("/courts/") && pathname !== "/courts/new";
+    }
+    return pathname === route;
+  });
 
   if (!isValidRoute) {
     return children;
@@ -34,7 +42,7 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!isPublicPage && <Header />}
-      <main className={!isPublicPage ? "mt-16" : ""}>{children}</main>
+      <main>{children}</main>
       {!isPublicPage && <Footer />}
     </>
   );

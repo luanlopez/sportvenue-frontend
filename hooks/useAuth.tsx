@@ -20,6 +20,8 @@ interface User {
   lastName: string;
   email: string;
   userType: "USER" | "HOUSE_OWNER";
+  picture?: string;
+  googleId?: string;
 }
 
 interface AuthContextData {
@@ -38,6 +40,7 @@ const publicRoutes = [
   "/forgot-password",
   "/register/verification",
 ];
+
 const isPublicRoute = (path: string) => publicRoutes.includes(path);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -82,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userData = await authService.getProfile();
     setUser(userData);
 
-    router.push("/home");
+    router.push("/");
   };
 
   const signOut = async () => {

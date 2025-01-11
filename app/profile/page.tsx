@@ -1,10 +1,14 @@
 "use client";
 
 import { useAuth } from "@/hooks/useAuth";
-
+import Image from "next/image";
 
 function getInitials(name: string) {
-  return name.split(' ').map(word => word[0]).join('').toUpperCase();
+  return name
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
 }
 
 function LoadingState() {
@@ -26,17 +30,25 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 px-20 py-20">
       <div className="container max-w-2xl mx-auto px-4">
         <div className="bg-white rounded-xl shadow-sm overflow-hidden">
           <div className="p-8">
             <div className="flex flex-col items-center mb-8">
               <div className="w-32 h-32 rounded-full bg-primary-500 flex items-center justify-center text-white text-4xl font-medium shadow-lg mb-4">
-                {getInitials(user.name)}
+                {user?.picture ? (
+                  <Image
+                    src={user.picture}
+                    alt="Profile Picture"
+                    width={128}
+                    height={128}
+                    className="rounded-full"
+                  />
+                ) : (
+                  getInitials(user.name)
+                )}
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">
-                {user.name}
-              </h1>
+              <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
               <span className="text-gray-500 mt-1">{user.email}</span>
             </div>
 
@@ -53,7 +65,8 @@ export default function Profile() {
                       <span className="font-medium">Email:</span> {user.email}
                     </p>
                     <p className="text-gray-900">
-                      <span className="font-medium">Telefone:</span> {user.phone}
+                      <span className="font-medium">Telefone:</span>{" "}
+                      {user.phone || "Não informado"}
                     </p>
                   </div>
                 </div>
@@ -68,12 +81,14 @@ export default function Profile() {
                     <p className="text-gray-900">
                       <span className="font-medium">Tipo de Usuário:</span>{" "}
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
-                        {user.userType === "HOUSE_OWNER" ? "Proprietário" : "Usuário"}
+                        {user.userType === "HOUSE_OWNER"
+                          ? "Proprietário"
+                          : "Usuário"}
                       </span>
                     </p>
                     <p className="text-gray-900">
                       <span className="font-medium">Nome Completo:</span>{" "}
-                      {user.firstName} {user.lastName}
+                      {user.name}
                     </p>
                   </div>
                 </div>
@@ -95,4 +110,4 @@ export default function Profile() {
       </div>
     </div>
   );
-} 
+}

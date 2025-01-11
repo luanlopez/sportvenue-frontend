@@ -6,6 +6,12 @@ import { reservationService } from "@/services/reservations";
 import { CreateReservationDTO } from "@/dtos/CreateReservationDTO";
 import { Court } from "@/services/courts";
 import { WeeklySchedule } from "@/types/courts";
+import { FaClock, FaMoneyBillWave, FaCalendarAlt } from "react-icons/fa";
+
+enum ReservationType {
+  SINGLE = 'SINGLE',
+  MONTHLY = 'MONTHLY',
+}
 
 const DAYS = {
   monday: "Segunda",
@@ -34,6 +40,7 @@ export function ReservationModal({
     null
   );
   const [selectedHour, setSelectedHour] = useState<string>("");
+  const [reservationType, setReservationType] = useState<ReservationType>(ReservationType.SINGLE);
 
   useEffect(() => {
     if (!isOpen) {
@@ -56,6 +63,7 @@ export function ReservationModal({
       reservedStartTime: selectedHour,
       status: "requested",
       dayOfWeek: selectedDay,
+      reservationType: reservationType,
     };
 
     try {
@@ -135,6 +143,12 @@ export function ReservationModal({
                   Resumo da Reserva
                 </h4>
                 <div className="flex justify-between items-center">
+                  <span className="text-gray-600">Tipo de reserva:</span>
+                  <span className="font-semibold text-gray-900">
+                    {reservationType === ReservationType.MONTHLY ? "Mensal" : "Avulso"}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
                   <span className="text-gray-600">Dia selecionado:</span>
                   <span className="font-semibold text-gray-900">
                     {DAYS[selectedDay as keyof typeof DAYS]}
@@ -154,6 +168,59 @@ export function ReservationModal({
                 </div>
               </div>
             )}
+
+            <div>
+              <label className="flex items-center text-sm font-medium text-gray-500 mb-3">
+                <FaCalendarAlt className="w-4 h-4 mr-2" />
+                Tipo de Reserva
+              </label>
+              <div className="grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => setReservationType(ReservationType.SINGLE)}
+                  className={`
+                    px-4 py-3 rounded-lg text-sm font-medium
+                    transition-all duration-200
+                    flex items-center justify-center gap-2
+                    ${reservationType === ReservationType.SINGLE
+                      ? "bg-primary-500 text-white shadow-sm"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }
+                  `}
+                >
+                  <FaClock className="w-4 h-4" />
+                  Avulso
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setReservationType(ReservationType.MONTHLY)}
+                  className={`
+                    px-4 py-3 rounded-lg text-sm font-medium
+                    transition-all duration-200
+                    flex items-center justify-center gap-2
+                    ${reservationType === ReservationType.MONTHLY
+                      ? "bg-primary-500 text-white shadow-sm"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                    }
+                  `}
+                >
+                  <FaCalendarAlt className="w-4 h-4" />
+                  Mensal
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between py-3 px-4 bg-gray-50 rounded-lg">
+              <div className="flex items-center text-gray-600">
+                <FaMoneyBillWave className="w-5 h-5 mr-2" />
+                <span>
+                  Valor
+                </span>
+              </div>
+              <span className="text-lg font-semibold text-gray-900">
+                R$ {court?.pricePerHour?.toFixed(2)}
+              </span>
+            </div>
           </div>
         </div>
 

@@ -1,148 +1,177 @@
 "use client";
 
-import { Formik, Form } from "formik";
-import * as Yup from "yup";
-import { Input } from "@/components/form/input";
-import { Card } from "@/components/form/card";
-import Image from "next/image";
-import { Password } from "@/components/form/password";
-import Link from "next/link";
-import { AnimatedBackground } from "@/components/background/AnimatedBackground";
-import { Spinner } from "@/components/ui/Spinner";
-import { showToast } from "@/components/ui/Toast";
+import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
+import { CategoryFilter } from "@/components/ui/CategoryFilter";
+import { Pagination } from "@/components/ui/Pagination";
+import Image from "next/image";
+import Link from "next/link";
+import { courtService } from "@/services/courts";
+import { CourtImagePlaceholder } from "@/components/ui/CourtImagePlaceholder";
+import { useSearchParams } from "next/navigation";
+import { CourtCardSkeleton } from "@/components/ui/CourtCardSkeleton";
 
-const validationSchema = Yup.object({
-  email: Yup.string().required("Email é obrigatório").email("Email inválido"),
-  password: Yup.string()
-    .required("Senha é obrigatória")
-    .min(6, "Senha deve ter no mínimo 6 caracteres"),
-});
+const ITEMS_PER_PAGE = 10;
 
-interface FormValues {
-  email: string;
-  password: string;
-}
+export default function Home() {
+  const { user } = useAuth();
+  const [currentPage, setCurrentPage] = useState(1);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const searchParams = useSearchParams();
+  const searchQuery = searchParams.get("search") || "";
 
-function LoginPage() {
-  const { signIn } = useAuth();
+  const { data, isLoading } = useQuery({
+    queryKey: ['courts', currentPage, searchQuery, selectedCategory, user?.userType],
+    queryFn: async () => {
+      const params = {
+        search: searchQuery,
+        sport: selectedCategory || undefined,
+      };
 
-  const handleSubmit = async (
-    values: FormValues,
-    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
-  ) => {
-    try {
-      await signIn(values);
-    } catch {
-      showToast.error(
-        "Login falhou",
-        "Verifique suas credenciais e tente novamente"
-      );
-    } finally {
-      setSubmitting(false);
-    }
+      await new Promise(resolve => setTimeout(resolve, 1500));
+
+      if (user?.userType === "HOUSE_OWNER") {
+        return courtService.getOwnerCourts(
+          user.id,
+          currentPage,
+          ITEMS_PER_PAGE,
+          params
+        );
+      }
+
+      return courtService.getCourts({
+        page: currentPage,
+        limit: ITEMS_PER_PAGE,
+        ...params,
+      });
+    },
+    enabled: true,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const handleCategorySelect = (categoryId: string | null) => {
+    setSelectedCategory(categoryId);
+    setCurrentPage(1);
   };
 
   return (
-    <main className="min-h-screen p-4 sm:p-8 flex justify-center items-center flex-col relative">
-      <AnimatedBackground />
-      <div className="relative z-10 w-full max-w-md px-2 sm:px-0">
-        <div className="flex flex-col items-center justify-center mb-6 sm:mb-8">
-          <Image 
-            src="/logo.png" 
-            alt="SportVenue" 
-            width={150} 
-            height={150}
-            className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48"
+    <div className="min-h-screen bg-white">
+      <div className="h-36"></div>
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="flex flex-col gap-4 mb-6">
+          <CategoryFilter
+            selectedCategory={selectedCategory}
+            onSelect={handleCategorySelect}
           />
         </div>
-        <Card variant="modal">
-          <Formik
-            initialValues={{ email: "", password: "" }}
-            validationSchema={validationSchema}
-            onSubmit={handleSubmit}
-          >
-            {({ isSubmitting }) => (
-              <Form className="space-y-4 sm:space-y-6">
-                <Input
-                  name="email"
-                  type="email"
-                  label="Email"
-                  placeholder="Digite seu email"
-                  disabled={isSubmitting}
-                />
-                <div className="w-full">
-                  <Password
-                    name="password"
-                    label="Senha"
-                    placeholder="Digite sua senha"
-                    disabled={isSubmitting}
-                  />
-                  <div className="flex justify-end w-full">
+
+        {isLoading ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+            {[...Array(6)].map((_, index) => (
+              <CourtCardSkeleton key={index} />
+            ))}
+          </div>
+        ) : data?.courts && data?.courts?.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+            {data.courts.map((court) => (
+              <div
+                key={court._id}
+                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
+              >
+                <div className="relative h-40 sm:h-48">
+                  {court.images && court.images.length > 0 ? (
+                    <Image
+                      src={court.images[0]}
+                      alt={court.name}
+                      fill
+                      className="object-cover"
+                    />
+                  ) : (
+                    <CourtImagePlaceholder />
+                  )}
+                </div>
+                <div className="p-3 sm:p-4">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
+                    {court.name}
+                  </h3>
+                  <p className="text-gray-600 text-xs sm:text-sm mb-1 sm:mb-2">
+                    {`${court.address}, ${court.number} - ${court.neighborhood}, ${court.city}`}
+                  </p>
+                  <p className="text-primary-500 font-medium text-xs sm:text-sm mb-3 sm:mb-4">
+                    R$ {court.pricePerHour.toFixed(2)}/hora
+                  </p>
+
+                  <div className="flex gap-2 flex-col sm:flex-row">
                     <Link
-                      href="/forgot-password"
-                      className="text-xs sm:text-sm text-primary-500 hover:text-primary-600 
-                        transition-colors mt-2 sm:mt-4"
+                      href={`/courts/${court._id}`}
+                      className="flex-1 px-4 py-2 text-white rounded-md
+                        bg-primary-500 hover:bg-primary-600
+                        transition-colors duration-300
+                        focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+                        flex items-center justify-center
+                        text-sm sm:text-base"
                     >
-                      Esqueci minha senha
+                      Ver Detalhes
                     </Link>
-                  </div>
-                </div>
 
-                <div className="w-full space-y-3 sm:space-y-4">
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base text-white rounded-md
-                      bg-gradient-to-r from-primary-600 to-primary-500
-                      hover:from-primary-700 hover:to-primary-500
-                      transition-all duration-300 ease-in-out
-                      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-                      shadow-lg hover:shadow-xl
-                      disabled:opacity-70 disabled:cursor-not-allowed
-                      flex items-center justify-center gap-2"
-                  >
-                    {isSubmitting ? (
-                      <>
-                        <Spinner />
-                        <span>Entrando...</span>
-                      </>
-                    ) : (
-                      "Entrar"
+                    {user?.userType === 'HOUSE_OWNER' && (
+                      <Link
+                        href={`/courts/${court._id}/edit`}
+                        className="px-4 py-2 text-primary-500 rounded-md
+                          border-2 border-primary-500
+                          hover:bg-primary-50
+                          transition-colors duration-300
+                          focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+                          flex items-center justify-center
+                          text-sm sm:text-base"
+                      >
+                        Editar
+                      </Link>
                     )}
-                  </button>
-
-                  <div className="relative">
-                    <div className="absolute inset-0 flex items-center">
-                      <div className="w-full border-t border-secondary-200"></div>
-                    </div>
-                    <div className="relative flex justify-center text-xs sm:text-sm">
-                      <span className="px-2 bg-white text-secondary-500">
-                        ou
-                      </span>
-                    </div>
                   </div>
-
-                  <Link
-                    href="/register"
-                    className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base text-primary-500 rounded-md
-                      border-2 border-primary-500
-                      hover:bg-primary-50
-                      transition-all duration-300 ease-in-out
-                      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-                      shadow-lg hover:shadow-xl
-                      flex items-center justify-center"
-                  >
-                    Criar conta
-                  </Link>
                 </div>
-              </Form>
-            )}
-          </Formik>
-        </Card>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="col-span-full text-center py-8 text-secondary-500">
+            <p>Nenhuma quadra encontrada.</p>
+          </div>
+        )}
+
+        {data?.totalPages && data?.totalPages > 1 && !isLoading && (
+          <Pagination
+            currentPage={currentPage}
+            totalPages={data?.totalPages || 0}
+            onPageChange={setCurrentPage}
+          />
+        )}
       </div>
-    </main>
+
+      {user?.userType === 'HOUSE_OWNER' && (
+        <Link
+          href="/courts/new"
+          className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 px-4 sm:px-6 py-2 sm:py-3 
+            bg-primary-500 text-white rounded-full
+            hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl
+            focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+            flex items-center gap-2 z-10
+            text-sm sm:text-base"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            strokeWidth={1.5}
+            stroke="currentColor"
+            className="w-4 h-4 sm:w-5 sm:h-5"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+          </svg>
+          Criar Quadra
+        </Link>
+      )}
+    </div>
   );
 }
-
-export default LoginPage;

@@ -135,58 +135,46 @@ export function CategoryFilter({ selectedCategory, onSelect }: CategoryFilterPro
   }, []);
 
   return (
-    <div className="relative w-full flex flex-col lg:flex-row items-start lg:items-center gap-3">
-      <div className="relative flex-1 w-full">
+    <div className="relative w-full flex items-center gap-4">
+      <div className="relative flex-1 w-full bg-white rounded-2xl shadow-sm border border-gray-100">
         {showLeftArrow && (
           <button
             onClick={() => scroll('left')}
-            className="hidden lg:block absolute -left-2 top-1/2 -translate-y-1/2 z-10 
-              bg-white rounded-full p-1.5 shadow-md hover:scale-110 transition-transform"
+            className="absolute -left-3 top-1/2 -translate-y-1/2 z-10 
+              bg-white rounded-full p-2 shadow-lg hover:shadow-xl
+              transition-all duration-300 ease-out
+              hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             aria-label="Scroll left"
           >
-            <FaChevronLeft className="w-3.5 h-3.5 text-gray-600" />
+            <FaChevronLeft className="w-4 h-4 text-gray-600" />
           </button>
         )}
 
         <div
           ref={scrollContainerRef}
-          className="flex gap-1.5 sm:gap-2 lg:gap-4 overflow-x-auto scrollbar-hide 
-            px-1 sm:px-2 lg:px-4 py-1.5 sm:py-2 -mx-1 sm:-mx-2 lg:-mx-4 scroll-smooth"
+          className="flex gap-2 overflow-x-auto scrollbar-hide px-6 py-4 scroll-smooth"
         >
           {categories.map((category) => (
             <button
               key={category.id}
               onClick={() => onSelect(selectedCategory === category.value ? null : category.value)}
               className={`
-                flex flex-col items-center min-w-[60px] sm:min-w-[70px] lg:min-w-[80px] 
-                px-1.5 sm:px-2 lg:px-4 py-1.5 sm:py-2
-                transition-all duration-200 group
+                flex items-center gap-3 px-4 py-2 rounded-full transition-all duration-200
+                min-w-fit hover:shadow-md
                 ${selectedCategory === category.value
-                  ? 'border-b-2 border-primary-500'
-                  : 'border-b-2 border-transparent hover:border-gray-200'
+                  ? 'bg-primary-500 text-white shadow-md'
+                  : 'bg-gray-50 hover:bg-gray-100 text-gray-700'
                 }
               `}
             >
-              <div
-                className={`
-                  p-1.5 sm:p-2 lg:p-3 rounded-full mb-1 transition-colors
-                  ${selectedCategory === category.value
-                    ? 'bg-primary-500 text-white'
-                    : 'bg-gray-100 text-gray-600 group-hover:bg-gray-200'
-                  }
-                `}
-              >
-                <category.icon className="w-3.5 h-3.5 sm:w-4 sm:h-4 lg:w-5 lg:h-5" />
-              </div>
-              <span
-                className={`
-                  text-[9px] sm:text-[10px] lg:text-xs font-medium whitespace-nowrap
-                  ${selectedCategory === category.value
-                    ? 'text-primary-500'
-                    : 'text-gray-600'
-                  }
-                `}
-              >
+              <category.icon 
+                className={`w-4 h-4 ${
+                  selectedCategory === category.value
+                    ? 'text-white'
+                    : 'text-gray-500'
+                }`} 
+              />
+              <span className="text-sm font-medium whitespace-nowrap">
                 {category.name}
               </span>
             </button>
@@ -196,37 +184,40 @@ export function CategoryFilter({ selectedCategory, onSelect }: CategoryFilterPro
         {showRightArrow && (
           <button
             onClick={() => scroll('right')}
-            className="hidden lg:block absolute -right-2 top-1/2 -translate-y-1/2 z-10 
-              bg-white rounded-full p-1.5 shadow-md hover:scale-110 transition-transform"
+            className="absolute -right-3 top-1/2 -translate-y-1/2 z-10 
+              bg-white rounded-full p-2 shadow-lg hover:shadow-xl
+              transition-all duration-300 ease-out
+              hover:scale-110 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             aria-label="Scroll right"
           >
-            <FaChevronRight className="w-3.5 h-3.5 text-gray-600" />
+            <FaChevronRight className="w-4 h-4 text-gray-600" />
           </button>
         )}
       </div>
 
-      <div className="relative group w-full lg:w-auto">
+      <div className="relative group">
         <button
           disabled
-          className="flex items-center justify-center lg:justify-start gap-2 px-3 py-2 lg:px-4 lg:py-3 
-            rounded-lg text-xs sm:text-sm font-medium w-full lg:w-auto
+          className="flex items-center gap-2 px-4 py-2.5 rounded-full
             bg-white border border-gray-200 cursor-not-allowed
             transition-all duration-200 hover:shadow-md
-            text-gray-400 hover:text-gray-500"
+            text-gray-400 hover:text-gray-500
+            shadow-sm"
         >
-          <FaFilter className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          Filtros
+          <FaFilter className="w-4 h-4" />
+          <span className="text-sm font-medium">Filtros</span>
         </button>
+
         <div className="absolute bottom-full right-0 mb-2 
           opacity-0 group-hover:opacity-100 transform group-hover:-translate-y-1
-          transition-all duration-200 pointer-events-none z-50"
+          transition-all duration-200 pointer-events-none z-[200]"
         >
-          <div className="bg-primary-500 text-white px-3 py-1.5 lg:px-4 lg:py-2 rounded-lg shadow-lg
-            text-xs sm:text-sm font-medium relative whitespace-nowrap"
+          <div className="bg-primary-500 text-white px-4 py-2 rounded-lg shadow-lg
+            text-sm font-medium relative whitespace-nowrap"
           >
             Disponível em breve
-            <div className="absolute -bottom-2 right-6 w-3 h-3 lg:w-4 lg:h-4 bg-primary-500 
-              transform rotate-45"
+            <div className="absolute -bottom-1 right-6 w-2 h-2 
+              bg-primary-500 transform rotate-45"
             />
           </div>
         </div>

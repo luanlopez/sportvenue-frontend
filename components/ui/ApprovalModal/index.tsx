@@ -15,6 +15,7 @@ interface ApprovalModalProps {
   reservedStartTime: string;
   status: 'requested' | 'approved' | 'rejected';
   user: User;
+  reservationType: "SINGLE" | "MONTHLY";
   onApprove?: (id: string) => void;
   onReject?: (id: string) => void;
 }
@@ -35,6 +36,7 @@ export function ApprovalModal({
   reservedStartTime, 
   status,
   user,
+  reservationType,
   onApprove, 
   onReject 
 }: ApprovalModalProps) {
@@ -87,6 +89,12 @@ export function ApprovalModal({
                 <p className="text-sm text-secondary-500">
                   Valor: <span className="font-medium text-primary-500">R$ {price.toFixed(2)}</span>
                 </p>
+                <p className="text-sm text-secondary-500 flex flex-row gap-2">
+                  Tipo de reserva:
+                  <p className="font-medium text-primary-500">
+                    {reservationType === "MONTHLY" ? "Mensal" : "Avulso"}
+                  </p>
+                </p>
                 <p className="text-sm text-secondary-500">
                   Data e Hora: <span className="font-medium">
                     {reservedStartTime}
@@ -113,13 +121,13 @@ export function ApprovalModal({
               <h4 className="text-sm font-medium text-secondary-500 mb-2">Informações do Usuário</h4>
               <div className="bg-gray-50 rounded-lg p-4 space-y-2">
                 <p className="text-gray-900">
-                  <span className="font-medium">Nome:</span> {user.firstName} {user.lastName}
+                  <span className="font-medium">Nome:</span> {user?.firstName || 'Não informado'} {user?.lastName || 'Não informado'}
                 </p>
                 <p className="text-gray-900">
-                  <span className="font-medium">Email:</span> {user.email}
+                  <span className="font-medium">Email:</span> {user?.email || 'Não informado'}
                 </p>
                 <p className="text-gray-900">
-                  <span className="font-medium">Telefone:</span> {user.phone}
+                  <span className="font-medium">Telefone:</span> {user?.phone || 'Não informado'}
                 </p>
                 {onApprove && (
                   <button

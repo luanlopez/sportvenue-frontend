@@ -1,31 +1,23 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { ChevronDownIcon, GlobeAltIcon } from '@heroicons/react/24/outline';
-import { usePathname } from 'next/navigation';
-import { useAuth } from '@/hooks/useAuth';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import { GlobeAltIcon, Bars3Icon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
+import Image from "next/image";
 
 function getInitials(name: string) {
-  return name.split(' ').map(word => word[0]).join('').toUpperCase();
+  return name
+    .split(" ")
+    .map((word) => word[0])
+    .join("")
+    .toUpperCase();
 }
 
-const authRoutes = ["/", "/register", "/forgot-password"];
-
-const menuItemsByRole = {
-  USER: [
-    { label: "Início", href: "/home" },
-    { label: "Reservas", href: "/bookings" },
-  ],
-  HOUSE_OWNER: [
-    { label: "Início", href: "/home" },
-    { label: "Reservas", href: "/bookings" },
-  ],
-};
-
 const languages = [
-  { code: 'pt', name: 'Português', flag: '🇧🇷' },
-  { code: 'en', name: 'English', flag: '🇺🇸' },
+  { code: "pt", name: "Português", flag: "🇧🇷" },
+  { code: "en", name: "English", flag: "🇺🇸" },
 ];
 
 export function Header() {
@@ -33,109 +25,196 @@ export function Header() {
   const { user, signOut } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
-  const [selectedLanguage, setSelectedLanguage] = useState('pt');
+  const [selectedLanguage, setSelectedLanguage] = useState("pt");
+  const [searchValue, setSearchValue] = useState("");
+  const [isScrolled, setIsScrolled] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
 
-  if (authRoutes.includes(pathname) || !user) {
-    return null;
-  }
+  const isHomePage = pathname === "/";
+  const isDetailsPage = pathname.startsWith('/courts/') && pathname.split('/').length === 3;
 
-  const menuItems = menuItemsByRole[user?.userType];
+  useEffect(() => {
+    const handleScroll = () => {
+      if (isDetailsPage) {
+        setIsScrolled(window.scrollY > 50);
+      }
+    };
 
-  const handleLogout = () => {
-    signOut();
-    setIsDropdownOpen(false);
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [isDetailsPage]);
+
+  const shouldShowSearch = () => {
+    if (isHomePage) return true;
+    if (isDetailsPage && isScrolled) return false;
+    return isHovered;
   };
 
-  const handleLanguageChange = (langCode: string) => {
-    setSelectedLanguage(langCode);
-    document.cookie = `NEXT_LOCALE=${langCode};path=/`;
-    setIsLanguageModalOpen(false);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const params = new URLSearchParams(searchParams);
+    if (searchValue) {
+      params.set("search", searchValue);
+    } else {
+      params.delete("search");
+    }
+    router.push(`/?${params.toString()}`);
   };
 
   return (
-    <header className="bg-white shadow-sm py-3 fixed w-full top-0 z-[100]">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between">
-          <Link href="/home" className="flex items-center">
-            <h2 className="text-2xl font-bold text-primary-500">SportVenue</h2>
-          </Link>
+    <header 
+      className={`bg-white border-b border-gray-200 fixed w-full top-0 z-[100] transition-all duration-500 ease-in-out
+        ${isScrolled ? 'shadow-md' : ''}
+      `}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div>
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-24">
+          <div className={`flex items-center justify-between transition-all duration-500 ease-in-out
+            ${isScrolled || (!isHomePage && !isHovered) ? 'h-14' : 'h-16'}`}
+          >
+            <Link href="/" className="flex-shrink-0 -ml-3">
+              <h2 className={`font-bold text-primary-500 transition-all duration-500 ease-in-out transform
+                ${isScrolled || (!isHomePage && !isHovered) ? 'text-xl' : 'text-2xl'}`}
+              >
+                SportVenue
+              </h2>
+            </Link>
 
-          <nav className="hidden md:flex items-center space-x-8">
-            {menuItems.map((item) => (
+            <nav className="hidden md:flex flex-1 justify-center">
               <Link
-                key={item.href}
-                href={item.href}
-                className={`
-                  text-[15px] font-medium transition-colors
-                  ${pathname === item.href
-                    ? 'text-gray-900'
-                    : 'text-gray-500 hover:text-gray-900'
-                  }
-                `}
+                href="/"
+                className={`text-sm font-medium px-4 py-2 rounded-full transition
+                  ${pathname === "/" 
+                    ? "text-gray-900" 
+                    : "text-gray-600 hover:text-gray-900"
+                  }`}
               >
-                {item.label}
+                Início
               </Link>
-            ))}
-          </nav>
+            </nav>
 
-          <div className="flex items-center space-x-4">
-            <button
-              onClick={() => setIsLanguageModalOpen(true)}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-              aria-label="Mudar idioma"
-            >
-              <GlobeAltIcon className="w-5 h-5 text-gray-600" />
-            </button>
-
-            <div className="relative">
+            <div className="flex items-center gap-4 -mr-3">
               <button
-                onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                className="flex items-center space-x-3 hover:bg-gray-50 p-2 rounded-lg transition-colors"
+                onClick={() => setIsLanguageModalOpen(true)}
+                className="p-2 hover:bg-gray-100 rounded-full transition"
               >
-                <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center text-white text-sm font-medium">
-                  {getInitials(user?.name)}
-                </div>
-                <div className="text-left hidden sm:block">
-                  <p className="text-sm font-medium text-gray-700">{user?.name}</p>
-                  <p className="text-xs text-gray-500">{user?.email}</p>
-                </div>
-                <ChevronDownIcon className="w-5 h-5 text-gray-500" />
+                <GlobeAltIcon className="h-5 w-5 text-gray-700" />
               </button>
 
-              {isDropdownOpen && (
-                <>
-                  <div 
-                    className="fixed inset-0 z-[150]"
-                    onClick={() => setIsDropdownOpen(false)}
-                  />
-                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-1 z-[151]">
-                    <Link
-                      href="/profile"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      Meu Perfil
-                    </Link>
-                    {/* <Link
-                      href="/settings"
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      onClick={() => setIsDropdownOpen(false)}
-                    >
-                      Configurações
-                    </Link> */}
-                    <button
-                      onClick={handleLogout}
-                      className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                    >
-                      Sair
-                    </button>
+              <div className="relative">
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center gap-2 border rounded-full p-2 hover:shadow-md transition"
+                >
+                  <Bars3Icon className="h-5 w-5 text-gray-700" />
+                  <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center">
+                    {user?.picture ? (
+                      <Image
+                        src={user.picture}
+                        alt={user.name}
+                        width={32}
+                        height={32}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <span className="text-sm text-white font-medium">
+                        {user ? getInitials(user.name) : "?"}
+                      </span>
+                    )}
                   </div>
-                </>
-              )}
+                </button>
+
+                {isDropdownOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-[150]"
+                      onClick={() => setIsDropdownOpen(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg py-2 z-[151] border">
+                      {user ? (
+                        <>
+                          <Link
+                            href="/bookings"
+                            className="px-4 py-2 hover:bg-gray-100 text-sm block text-gray-900"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Minhas Reservas
+                          </Link>
+                          <Link
+                            href="/profile"
+                            className="px-4 py-2 hover:bg-gray-100 text-sm block text-gray-900"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Minha Conta
+                          </Link>
+                          <div className="border-t my-1" />
+                          <button
+                            onClick={() => {
+                              signOut();
+                              setIsDropdownOpen(false);
+                            }}
+                            className="px-4 py-2 hover:bg-gray-100 text-sm text-left w-full text-red-600"
+                          >
+                            Sair
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <Link
+                            href="/login"
+                            className="px-4 py-2 hover:bg-gray-100 text-sm font-medium block text-gray-900"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Entrar
+                          </Link>
+                          <Link
+                            href="/register"
+                            className="px-4 py-2 hover:bg-gray-100 text-sm block text-gray-900"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Cadastrar
+                          </Link>
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </div>
       </div>
+
+      {shouldShowSearch() && (
+        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 
+          transition-all duration-500 ease-in-out transform origin-top
+          ${isScrolled || (!isHomePage && !isHovered) ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}
+          ${isScrolled || (!isHomePage && !isHovered) ? 'py-2' : 'py-4'}`}
+        >
+          <div className="max-w-2xl mx-auto">
+            <form onSubmit={handleSearch} className="flex items-center border-2 rounded-full hover:shadow-md 
+              transition-all duration-500 ease-in-out transform 
+              hover:scale-[1.02] focus-within:scale-[1.02]
+              py-2 px-4"
+            >
+              <input 
+                type="text"
+                placeholder="Busque uma quadra..."
+                value={searchValue}
+                onChange={(e) => setSearchValue(e.target.value)}
+                className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 focus:outline-none"
+              />
+              <button type="submit" className="p-2 bg-primary-500 rounded-full text-white hover:bg-primary-600 transition-colors">
+                <MagnifyingGlassIcon className="h-5 w-5" />
+              </button>
+            </form>
+          </div>
+        </div>
+      )}
 
       {isLanguageModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200]">
@@ -147,7 +226,7 @@ export function Header() {
                 </h2>
                 <button
                   onClick={() => setIsLanguageModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-500 transition-colors"
+                  className="text-gray-400 hover:text-gray-500"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -155,19 +234,18 @@ export function Header() {
                 </button>
               </div>
             </div>
-            
             <div className="p-6">
               <div className="space-y-2">
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
-                    onClick={() => handleLanguageChange(lang.code)}
+                    onClick={() => setSelectedLanguage(lang.code)}
                     className={`
                       w-full px-4 py-3 flex items-center space-x-3
                       rounded-lg transition-colors
                       ${selectedLanguage === lang.code
-                        ? 'bg-primary-50 text-primary-500'
-                        : 'hover:bg-gray-50 text-gray-700'
+                        ? "bg-primary-50 text-primary-500"
+                        : "hover:bg-gray-50 text-gray-700"
                       }
                     `}
                   >
@@ -187,4 +265,4 @@ export function Header() {
       )}
     </header>
   );
-} 
+}

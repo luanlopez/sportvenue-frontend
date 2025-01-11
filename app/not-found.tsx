@@ -6,7 +6,7 @@ import { useAuth } from '@/hooks/useAuth';
 
 export default function NotFound() {
   const { user } = useAuth();
-  const redirectPath = user ? '/home' : '/';
+  const redirectPath = user ? '/' : '/';
 
   return (
     <div className="min-h-screen bg-primary-50 flex flex-col items-center justify-center p-4">

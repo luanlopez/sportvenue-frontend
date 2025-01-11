@@ -4,4 +4,5 @@ export interface CreateReservationDTO {
   reservedStartTime: string;
   status: "requested" | "approved" | "rejected" | "cancelled";
   dayOfWeek: string;
+  reservationType: "SINGLE" | "MONTHLY";
 }

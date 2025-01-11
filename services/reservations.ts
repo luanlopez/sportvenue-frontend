@@ -39,6 +39,7 @@ export interface Reservation {
   userId: User;
   courtId: Court;
   reservedStartTime: string;
+  reservationType: "SINGLE" | "MONTHLY";
   status: 'requested' | 'approved' | 'rejected' | 'cancelled';
   createdAt: string;
   updatedAt: string;

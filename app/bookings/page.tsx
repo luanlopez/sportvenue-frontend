@@ -91,7 +91,7 @@ export default function Bookings() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-10">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-gray-900">Minhas Reservas</h1>
@@ -209,6 +209,7 @@ export default function Bookings() {
           courtAddress={`${selectedReservation.courtId.address}, ${selectedReservation.courtId.number} - ${selectedReservation.courtId.neighborhood}, ${selectedReservation.courtId.city}`}
           price={selectedReservation.courtId.pricePerHour}
           reservedStartTime={selectedReservation.reservedStartTime}
+          reservationType={selectedReservation.reservationType}
           status={
             selectedReservation.status as "requested" | "approved" | "rejected"
           }

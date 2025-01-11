@@ -12,6 +12,7 @@ import { BiDumbbell } from "react-icons/bi";
 import { MdSportsSoccer } from "react-icons/md";
 import { useAuth } from "@/hooks/useAuth";
 import { WeeklyScheduleDisplay } from "@/components/ui/WeeklyScheduleDisplay";
+import { AuthRequiredModal } from "@/components/ui/AuthRequiredModal";
 
 export default function CourtDetails() {
   const { id } = useParams();
@@ -19,6 +20,7 @@ export default function CourtDetails() {
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   const { data: court, isLoading } = useQuery({
     queryKey: ['court', id],
@@ -42,6 +44,14 @@ export default function CourtDetails() {
       </div>
     );
   }
+
+  const handleReserveClick = () => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+    setIsReservationModalOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -156,7 +166,7 @@ export default function CourtDetails() {
               <div className="space-y-4">
                 {user?.userType !== 'HOUSE_OWNER' && (
                   <button
-                    onClick={() => setIsReservationModalOpen(true)}
+                    onClick={handleReserveClick}
                     className="w-full px-6 py-4 bg-primary-500 text-white rounded-xl
                       hover:bg-primary-600 transition-all duration-300
                       focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
@@ -216,6 +226,11 @@ export default function CourtDetails() {
         isOpen={isContactModalOpen}
         onClose={() => setIsContactModalOpen(false)}
         phoneNumber={court?.user?.phone}
+      />
+
+      <AuthRequiredModal 
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
       />
     </div>
   );

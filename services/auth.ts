@@ -56,5 +56,17 @@ export const authService = {
   async completeRegistration(data: CompleteRegistrationDTO) {
     const response = await api.post('/auth/complete-registration', data);
     return response.data;
+  },
+
+  async googleCallback(code: string) {
+    try {
+      const response = await api.get<SignInResponse>(`/auth/google/callback`, {
+        params: { code }
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Erro na chamada do Google callback:", error);
+      throw error;
+    }
   }
 }; 
