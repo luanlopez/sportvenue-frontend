@@ -72,11 +72,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     checkAuth();
   }, [checkAuth]);
 
-  useEffect(() => {
-    if (!isLoading && !user && !isPublicRoute(window.location.pathname)) {
-      router.push("/");
-    }
-  }, [isLoading, user, router]);
+  // useEffect(() => {
+  //   if (!isLoading && !user && !isPublicRoute(window.location.pathname)) {
+  //     router.push("/");
+  //   }
+  // }, [isLoading, user, router]);
 
   const signIn = async (credentials: { email: string; password: string }) => {
     const { accessToken, refreshToken } = await authService.signIn(credentials);

@@ -2,8 +2,10 @@
 
 import Link from "next/link";
 import { FaInstagram, FaEnvelope, FaMapMarkerAlt } from "react-icons/fa";
+import { useAuth } from "@/hooks/useAuth";
 
 export function Footer() {
+  const { user } = useAuth();
   const currentYear = new Date().getFullYear();
 
   return (
@@ -26,27 +28,27 @@ export function Footer() {
             </h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/home" className="text-gray-600 hover:text-primary-500 text-sm">
+                <Link href="/" className="text-gray-600 hover:text-primary-500 text-sm">
                   Início
                 </Link>
               </li>
               <li>
-                <Link href="/bookings" className="text-gray-600 hover:text-primary-500 text-sm">
+                <Link href={user ? "/bookings" : "/login"} className="text-gray-600 hover:text-primary-500 text-sm">
                   Minhas Reservas
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-gray-600 hover:text-primary-500 text-sm">
+                <Link href="/construction" className="text-gray-600 hover:text-primary-500 text-sm">
                   Termos de Uso
                 </Link>
               </li>
               <li>
-                <Link href="/privacy" className="text-gray-600 hover:text-primary-500 text-sm">
+                <Link href="/construction" className="text-gray-600 hover:text-primary-500 text-sm">
                   Política de Privacidade
                 </Link>
               </li>
               <li>
-                <Link href="/faq" className="text-gray-600 hover:text-primary-500 text-sm">
+                <Link href="/construction" className="text-gray-600 hover:text-primary-500 text-sm">
                   FAQ
                 </Link>
               </li>
