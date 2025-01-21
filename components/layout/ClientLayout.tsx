@@ -21,6 +21,7 @@ const validRoutes = [
   "/courts/[id]",
   "/courts/[id]/edit",
   "/profile",
+  "/payments",
 ];
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {

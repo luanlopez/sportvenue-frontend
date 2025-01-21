@@ -8,9 +8,11 @@ import {
   MapPinIcon, 
   UserGroupIcon,
   ClockIcon,
-  HeartIcon
+  HeartIcon,
+  BanknotesIcon
 } from "@heroicons/react/24/outline";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 const authRoutes = ["/", "/register"];
 
@@ -23,26 +25,34 @@ interface MenuItem {
   icon: React.ElementType;
   label: string;
   href: string;
+  userType?: 'USER' | 'HOUSE_OWNER';
 }
-
-const menuItems: MenuItem[] = [
-  { icon: HomeIcon, label: "Início", href: "/home" },
-  { icon: CalendarIcon, label: "Agendamentos", href: "/bookings" },
-  { icon: MapPinIcon, label: "Explorar Quadras", href: "/explore" },
-  { icon: UserGroupIcon, label: "Times", href: "/teams" },
-  { icon: ClockIcon, label: "Histórico", href: "/history" },
-  { icon: HeartIcon, label: "Favoritos", href: "/favorites" },
-];
 
 export function Navbar({ isOpen, onClose }: NavbarProps) {
   const [showNavbar, setShowNavbar] = useState(true);
   const pathname = usePathname();
+  const { user } = useAuth();
 
   useEffect(() => {
     setShowNavbar(!authRoutes.includes(pathname));
   }, [pathname]);
 
   if (!showNavbar) return null;
+
+  const menuItems: MenuItem[] = [
+    { icon: HomeIcon, label: "Início", href: "/home" },
+    { icon: CalendarIcon, label: "Agendamentos", href: "/bookings" },
+    { icon: MapPinIcon, label: "Explorar Quadras", href: "/explore" },
+    { icon: UserGroupIcon, label: "Times", href: "/teams" },
+    { icon: ClockIcon, label: "Histórico", href: "/history" },
+    { icon: HeartIcon, label: "Favoritos", href: "/favorites" },
+    { 
+      icon: BanknotesIcon, 
+      label: "Pagamentos", 
+      href: "/payments",
+      userType: 'HOUSE_OWNER'
+    },
+  ];
 
   return (
     <>
@@ -58,29 +68,31 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
         <div className="flex flex-col h-full">
           <nav className="flex-1 px-3 py-4">
             <div className="space-y-1">
-              {menuItems.map((item) => {
-                const Icon = item.icon;
-                const isActive = pathname === item.href;
-                
-                return (
-                  <Link
-                    key={item.href}
-                    href={item.href}
-                    className={`
-                      flex items-center px-4 py-3 text-sm font-medium rounded-lg
-                      transition-colors duration-200
-                      ${isActive 
-                        ? "bg-gray-100 text-gray-900"
-                        : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                      }
-                    `}
-                    onClick={onClose}
-                  >
-                    <Icon className="mr-3 h-5 w-5" />
-                    {item.label}
-                  </Link>
-                );
-              })}
+              {menuItems
+                .filter(item => !item.userType || item.userType === user?.userType)
+                .map((item) => {
+                  const Icon = item.icon;
+                  const isActive = pathname === item.href;
+                  
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className={`
+                        flex items-center px-4 py-3 text-sm font-medium rounded-lg
+                        transition-colors duration-200
+                        ${isActive 
+                          ? "bg-gray-100 text-gray-900"
+                          : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                        }
+                      `}
+                      onClick={onClose}
+                    >
+                      <Icon className="mr-3 h-5 w-5" />
+                      {item.label}
+                    </Link>
+                  );
+                })}
             </div>
           </nav>
 

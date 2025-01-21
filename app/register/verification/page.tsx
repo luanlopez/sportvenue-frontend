@@ -14,6 +14,26 @@ export default function VerificationCode() {
   const router = useRouter();
 
   const handleChange = (index: number, value: string) => {
+    // Se for uma operação de colar (valor maior que 1 caractere)
+    if (value.length > 1) {
+      const digits = value.slice(0, 6).split('');
+      const newCode = [...code];
+      
+      // Preenche os campos com os dígitos colados
+      digits.forEach((digit, i) => {
+        if (i < 6) newCode[i] = digit;
+      });
+      
+      setCode(newCode);
+      
+      // Foca no último campo preenchido ou no próximo vazio
+      const lastIndex = Math.min(digits.length, 5);
+      const nextInput = document.getElementById(`code-${lastIndex}`);
+      nextInput?.focus();
+      return;
+    }
+
+    // Comportamento normal para digitação
     if (value.length > 1) return;
     
     const newCode = [...code];

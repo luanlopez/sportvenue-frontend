@@ -2,7 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { GlobeAltIcon, Bars3Icon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import {
+  GlobeAltIcon,
+  Bars3Icon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
 import { FaVolleyballBall } from "react-icons/fa";
 import { usePathname, useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
@@ -34,7 +38,8 @@ export function Header() {
   const router = useRouter();
 
   const isHomePage = pathname === "/";
-  const isDetailsPage = pathname.startsWith('/courts/') && pathname.split('/').length === 3;
+  const isDetailsPage =
+    pathname.startsWith("/courts/") && pathname.split("/").length === 3;
 
   useEffect(() => {
     const handleScroll = () => {
@@ -43,8 +48,8 @@ export function Header() {
       }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [isDetailsPage]);
 
   const shouldShowSearch = () => {
@@ -65,21 +70,27 @@ export function Header() {
   };
 
   return (
-    <header 
+    <header
       className={`bg-white border-b border-gray-200 fixed w-full top-0 z-[100] transition-all duration-500 ease-in-out
-        ${isScrolled ? 'shadow-md' : ''}
+        ${isScrolled ? "shadow-md" : ""}
       `}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       <div>
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-24">
-          <div className={`flex items-center justify-between transition-all duration-500 ease-in-out
-            ${isScrolled || (!isHomePage && !isHovered) ? 'h-16' : 'h-16'}`}
+          <div
+            className={`flex items-center justify-between transition-all duration-500 ease-in-out
+            ${isScrolled || (!isHomePage && !isHovered) ? "h-16" : "h-16"}`}
           >
             <Link href="/" className="flex-shrink-0 -ml-3">
-              <h2 className={`font-bold text-primary-500 transition-all duration-500 ease-in-out transform
-                ${isScrolled || (!isHomePage && !isHovered) ? 'text-2xl' : 'text-3xl'}`}
+              <h2
+                className={`font-bold text-primary-500 transition-all duration-500 ease-in-out transform
+                ${
+                  isScrolled || (!isHomePage && !isHovered)
+                    ? "text-2xl"
+                    : "text-3xl"
+                }`}
               >
                 SportVenue
               </h2>
@@ -89,9 +100,10 @@ export function Header() {
               <Link
                 href="/"
                 className={`text-md font-medium px-4 py-2 rounded-full transition
-                  ${pathname === "/" 
-                    ? "text-gray-900" 
-                    : "text-gray-600 hover:text-gray-900"
+                  ${
+                    pathname === "/"
+                      ? "text-gray-900"
+                      : "text-gray-600 hover:text-gray-900"
                   }`}
               >
                 Início
@@ -99,17 +111,17 @@ export function Header() {
             </nav>
 
             <div className="flex items-center gap-4 -mr-3">
-              {!user && (
+              {(!user || user.userType === "HOUSE_OWNER" && user.subscriptionPlanId === 'undefined') && (
                 <Link
                   href="/owner-plans"
                   className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-medium
                     text-gray-500 hover:text-primary-600
                     hover:bg-primary-50 rounded-full transition-all duration-200"
-                  >
-                    <FaVolleyballBall className="w-4 h-4" />
-                    <span>Anuncie seu espaço</span>
-                  </Link>
-                )}
+                >
+                  <FaVolleyballBall className="w-4 h-4" />
+                  <span>Anuncie seu espaço</span>
+                </Link>
+              )}
 
               <button
                 onClick={() => setIsLanguageModalOpen(true)}
@@ -164,6 +176,15 @@ export function Header() {
                           >
                             Minha Conta
                           </Link>
+                          {user?.userType === "HOUSE_OWNER" && (
+                            <Link
+                              href="/payments"
+                              className="px-4 py-2 hover:bg-gray-100 text-sm block text-gray-900"
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              Pagamentos
+                            </Link>
+                          )}
                           <div className="border-t my-1" />
                           <button
                             onClick={() => {
@@ -203,25 +224,35 @@ export function Header() {
       </div>
 
       {shouldShowSearch() && (
-        <div className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 
+        <div
+          className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 
           transition-all duration-500 ease-in-out transform origin-top
-          ${isScrolled || (!isHomePage && !isHovered) ? 'scale-95 opacity-0' : 'scale-100 opacity-100'}
-          ${isScrolled || (!isHomePage && !isHovered) ? 'py-2' : 'py-4'}`}
+          ${
+            isScrolled || (!isHomePage && !isHovered)
+              ? "scale-95 opacity-0"
+              : "scale-100 opacity-100"
+          }
+          ${isScrolled || (!isHomePage && !isHovered) ? "py-2" : "py-4"}`}
         >
           <div className="max-w-2xl mx-auto">
-            <form onSubmit={handleSearch} className="flex items-center border-2 rounded-full hover:shadow-md 
+            <form
+              onSubmit={handleSearch}
+              className="flex items-center border-2 rounded-full hover:shadow-md 
               transition-all duration-500 ease-in-out transform 
               hover:scale-[1.02] focus-within:scale-[1.02]
               py-2 px-4"
             >
-              <input 
+              <input
                 type="text"
                 placeholder="Busque uma quadra..."
                 value={searchValue}
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 focus:outline-none"
               />
-              <button type="submit" className="p-2 bg-primary-500 rounded-full text-white hover:bg-primary-600 transition-colors">
+              <button
+                type="submit"
+                className="p-2 bg-primary-500 rounded-full text-white hover:bg-primary-600 transition-colors"
+              >
                 <MagnifyingGlassIcon className="h-5 w-5" />
               </button>
             </form>
@@ -241,8 +272,18 @@ export function Header() {
                   onClick={() => setIsLanguageModalOpen(false)}
                   className="text-gray-400 hover:text-gray-500"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -256,17 +297,26 @@ export function Header() {
                     className={`
                       w-full px-4 py-3 flex items-center space-x-3
                       rounded-lg transition-colors
-                      ${selectedLanguage === lang.code
-                        ? "bg-primary-50 text-primary-500"
-                        : "hover:bg-gray-50 text-gray-700"
+                      ${
+                        selectedLanguage === lang.code
+                          ? "bg-primary-50 text-primary-500"
+                          : "hover:bg-gray-50 text-gray-700"
                       }
                     `}
                   >
                     <span className="text-xl">{lang.flag}</span>
                     <span className="font-medium">{lang.name}</span>
                     {selectedLanguage === lang.code && (
-                      <svg className="w-5 h-5 ml-auto" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      <svg
+                        className="w-5 h-5 ml-auto"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                          clipRule="evenodd"
+                        />
                       </svg>
                     )}
                   </button>

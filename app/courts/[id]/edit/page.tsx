@@ -57,7 +57,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
         });
       } catch {
         showToast.error("Erro", "Não foi possível carregar os dados da quadra");
-        router.push("/home");
+        router.push("/");
       } finally {
         setIsLoading(false);
       }
@@ -70,7 +70,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
     try {
       await courtService.updateCourt(id, data);
       showToast.success("Sucesso", "Quadra atualizada com sucesso");
-      router.push("/home");
+      router.push("/");
     } catch {
       showToast.error("Erro", "Não foi possível atualizar a quadra");
     }

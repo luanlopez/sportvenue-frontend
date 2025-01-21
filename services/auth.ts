@@ -70,8 +70,13 @@ export const authService = {
     }
   },
 
-  async updateUserType(type: 'USER' | 'HOUSE_OWNER') {
-    const response = await api.patch('/auth/update-type', { userType: type });
-    return response.data;
+  async updateUserType(type: 'USER' | 'HOUSE_OWNER', document: string) {
+    try {
+      const response = await api.patch('/auth/update-type', { userType: type, document });
+      return response.data;
+    } catch (error) {
+      console.error("Erro ao atualizar o tipo de usuário:", error);
+      throw error;
+    }
   }
 }; 

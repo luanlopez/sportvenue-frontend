@@ -8,7 +8,12 @@ import {
   useCallback,
 } from "react";
 import { authService } from "@/services/auth";
-import { getAccessToken, getRefreshToken, setTokens, removeTokens } from "@/lib/auth/token";
+import {
+  getAccessToken,
+  getRefreshToken,
+  setTokens,
+  removeTokens,
+} from "@/lib/auth/token";
 import { useRouter } from "next/navigation";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { UserTypeModal } from "@/components/ui/UserTypeModal";
@@ -23,6 +28,7 @@ interface User {
   userType: "USER" | "HOUSE_OWNER";
   picture?: string;
   googleId?: string;
+  subscriptionPlanId?: string;
 }
 
 interface AuthContextData {
@@ -77,6 +83,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userData = await authService.getProfile();
     setUser(userData);
 
+    if (userData && !userData.userType) {
+      setShowTypeModal(true);
+    }
+
     router.push("/");
   };
 
@@ -86,17 +96,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     router.push("/");
   };
 
-  const handleUserTypeSelect = async (type: 'USER' | 'HOUSE_OWNER') => {
+  const handleUserTypeSelect = async (
+    type: "USER" | "HOUSE_OWNER",
+    document: string
+  ) => {
     try {
-      await authService.updateUserType(type);
+      await authService.updateUserType(type, document);
+
       const currentRefreshToken = getRefreshToken();
       if (currentRefreshToken) {
-        const { accessToken, refreshToken } = await authService.refreshToken(currentRefreshToken);
+        const { accessToken, refreshToken } = await authService.refreshToken(
+          currentRefreshToken
+        );
         setTokens(accessToken, refreshToken);
+        
+        const userData = await authService.getProfile();
+        setUser(userData);
+        setShowTypeModal(false);
       }
-      window.location.reload();
-    } catch (error) {
-      console.error("Erro ao definir tipo de usuário:", error);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (error: any) {
+      throw error;
     }
   };
 
@@ -111,10 +131,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {isLoading ? <LoadingScreen /> : children}
-      <UserTypeModal
-        isOpen={showTypeModal}
-        onSelect={handleUserTypeSelect}
-      />
+      <UserTypeModal isOpen={showTypeModal} onSelect={handleUserTypeSelect} />
     </AuthContext.Provider>
   );
 }

@@ -5,6 +5,12 @@ import { FaCheck, FaVolleyballBall } from "react-icons/fa";
 import { HiOutlineChartBar, HiOutlineClock, HiOutlineCash } from "react-icons/hi";
 import Link from "next/link";
 import Image from "next/image";
+import { useQuery } from "@tanstack/react-query";
+import { subscriptionService } from "@/services/subscription";
+import { LoadingScreen } from "@/components/ui/LoadingScreen";
+import { useAuth } from "@/hooks/useAuth";
+import { useRouter } from "next/navigation";
+import { showToast } from "@/components/ui/Toast";
 
 const benefits = [
   {
@@ -27,16 +33,6 @@ const benefits = [
     title: "Aumente seu faturamento",
     description: "Otimize a ocupação da sua quadra com mais visibilidade"
   }
-];
-
-const features = [
-  "Página personalizada da sua quadra",
-  "Sistema de reservas online",
-  "Gestão de horários disponíveis",
-  "Suporte via email",
-  "Sem taxas por reserva",
-  "Contato direto com clientes",
-  "Exposição premium nos resultados"
 ];
 
 const processSteps = [
@@ -63,6 +59,43 @@ const processSteps = [
 ];
 
 export default function OwnerPlans() {
+  const { data: plans, isLoading } = useQuery({
+    queryKey: ['plans'],
+    queryFn: subscriptionService.getPlans,
+    staleTime: 1000 * 60 * 5,
+  });
+  const router = useRouter();
+  const { user } = useAuth();
+
+  const handleSelectPlan = async (planId: string) => {
+    try {
+      if (!user) {
+        router.push(`/register?type=HOUSE_OWNER&plan=${planId}`);
+        return;
+      }
+
+      await subscriptionService.subscribeToPlan(planId);
+      showToast.success("Sucesso", "Plano selecionado com sucesso!");
+      router.push("/");
+    } catch {
+      showToast.error(
+        "Erro",
+        "Não foi possível selecionar o plano. Tente novamente."
+      );
+    }
+  };
+
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat('pt-BR', {
+      style: 'currency',
+      currency: 'BRL'
+    }).format(price / 100); 
+  };
+
   return (
     <div className="min-h-screen relative">
       <AnimatedBackground />
@@ -301,47 +334,69 @@ export default function OwnerPlans() {
         </div>
       </div>
 
-      <div className="relative z-10 max-w-4xl mx-auto px-4 py-16">
-        <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-          <div className="p-8 text-center border-b">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4">
-              Plano Premium
-            </h2>
-            <div className="flex justify-center items-baseline mb-4">
-              <span className="text-5xl font-extrabold text-gray-900">R$99</span>
-              <span className="text-gray-500 ml-1">/mês</span>
-            </div>
-            <p className="text-gray-600">
-              Tudo que você precisa para gerenciar sua quadra
-            </p>
-          </div>
-          
-          <div className="p-8">
-            <ul className="space-y-4">
-              {features.map((feature, index) => (
-                <li key={index} className="flex items-center text-gray-600">
-                  <FaCheck className="w-5 h-5 text-primary-500 mr-3" />
-                  {feature}
-                </li>
-              ))}
-            </ul>
+      <div className="relative z-10 max-w-7xl mx-auto px-4 py-16">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-white mb-4">
+            Escolha o plano ideal para você
+          </h2>
+          <p className="text-xl text-white/80">
+            Comece a receber reservas hoje mesmo
+          </p>
+        </div>
 
-            <Link
-              href="/register?type=HOUSE_OWNER"
-              className="mt-8 w-full inline-flex justify-center items-center px-6 py-3
-                text-white bg-primary-500 rounded-lg
-                hover:bg-primary-600 transition-colors duration-300
-                font-medium text-lg"
-            >
-              Começar teste grátis
-            </Link>
-            
-            <p className="text-sm text-gray-500 text-center mt-4">
-              7 dias grátis, cancele quando quiser
-            </p>
-          </div>
+        <div className="grid md:grid-cols-3 gap-8">
+          {plans?.map((plan) => (
+            <div key={plan._id} className="bg-white rounded-2xl shadow-xl overflow-hidden">
+              <div className="p-8 text-center border-b">
+                <h2 className="text-2xl font-bold text-gray-900 mb-4">
+                  {plan.name}
+                </h2>
+                <div className="flex justify-center items-baseline mb-4">
+                  <span className="text-5xl font-extrabold text-gray-900">
+                    {formatPrice(plan.price)}
+                  </span>
+                  <span className="text-gray-500 ml-1">/mês</span>
+                </div>
+                <p className="text-gray-600">
+                  {plan.description}
+                </p>
+              </div>
+              
+              <div className="p-8">
+                <ul className="space-y-4">
+                  <li className="flex items-center text-gray-600">
+                    <FaCheck className="w-5 h-5 text-primary-500 mr-3" />
+                    {plan.courtLimit === 0 
+                      ? "Quadras ilimitadas" 
+                      : `Até ${plan.courtLimit} quadras`}
+                  </li>
+                  
+                  {plan.features?.map((feature, index) => (
+                    <li key={index} className="flex items-center text-gray-600">
+                      <FaCheck className="w-5 h-5 text-primary-500 mr-3" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                <button
+                  onClick={() => handleSelectPlan(plan._id)}
+                  className="mt-8 w-full inline-flex justify-center items-center px-6 py-3
+                    text-white bg-primary-500 rounded-lg
+                    hover:bg-primary-600 transition-colors duration-300
+                    font-medium text-lg"
+                >
+                  Começar agora
+                </button>
+                
+                <p className="text-sm text-gray-500 text-center mt-4">
+                  7 dias grátis, cancele quando quiser
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
-} 
+}

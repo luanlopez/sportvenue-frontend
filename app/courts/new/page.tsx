@@ -11,6 +11,9 @@ import { TagSelect } from "@/components/ui/TagSelect";
 import { useAuth } from "@/hooks/useAuth";
 import { WeeklyScheduleSelector } from "@/components/ui/WeeklyScheduleSelector";
 import { WeeklySchedule } from "@/types/courts";
+import { PostalCode } from "@/components/ui/PostalCode";
+import { Select } from "@/components/ui/Select";
+import { STATES } from "@/constants/states";
 
 export interface CreateCourtDTO {
   name: string;
@@ -19,6 +22,8 @@ export interface CreateCourtDTO {
   neighborhood: string;
   city: string;
   number: string;
+  postalCode: string;
+  state: string;
   pricePerHour: number;
   amenities: string[];
   categories: string[];
@@ -34,6 +39,8 @@ const schema: yup.ObjectSchema<CreateCourtDTO> = yup.object().shape({
   neighborhood: yup.string().required("Bairro é obrigatório"),
   city: yup.string().required("Cidade é obrigatória"),
   number: yup.string().required("Número é obrigatório"),
+  postalCode: yup.string().required("CEP é obrigatório"),
+  state: yup.string().required("Estado é obrigatório"),
   pricePerHour: yup.number().required("Preço por hora é obrigatório"),
   amenities: yup.array(yup.string().defined()).required().min(1),
   categories: yup.array(yup.string().defined()).required().min(1),
@@ -80,7 +87,7 @@ export default function CreateCourt() {
       setIsSubmitting(true);
       await courtService.createCourt(data);
       showToast.success("Sucesso", "Quadra criada com sucesso");
-      router.push("/home");
+      router.push("/");
     } catch {
       showToast.error("Erro", "Não foi possível criar a quadra");
     } finally {
@@ -157,6 +164,25 @@ export default function CreateCourt() {
               <div className="bg-white p-6 rounded-lg shadow-sm">
                 <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Endereço</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                  <div className="col-span-2 md:col-span-1">
+                    <PostalCode
+                      value={watch("postalCode") || ""}
+                      onChange={(value) => setValue("postalCode", value)}
+                      error={errors.postalCode?.message}
+                    />
+                  </div>
+
+                  <div className="col-span-2 md:col-span-1">
+                    <Select
+                      label="Estado"
+                      value={watch("state") || ""}
+                      onChange={(value) => setValue("state", value)}
+                      options={STATES}
+                      error={errors.state?.message}
+                      placeholder="Selecione um estado"
+                    />
+                  </div>
+
                   <div className="col-span-2">
                     <label className="block text-sm font-medium text-gray-700">Endereço</label>
                     <input
