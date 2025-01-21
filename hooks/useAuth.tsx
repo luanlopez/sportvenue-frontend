@@ -8,15 +8,10 @@ import {
   useCallback,
 } from "react";
 import { authService } from "@/services/auth";
-import {
-  getAccessToken,
-  getRefreshToken,
-  setTokens,
-  removeTokens,
-} from "@/lib/auth/token";
+import { getAccessToken, setTokens, removeTokens } from "@/lib/auth/token";
 import { useRouter } from "next/navigation";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
-import { UserTypeModal } from "@/components/ui/UserTypeModal";
+import { useUserTypeModal } from "@/contexts/UserTypeModalContext";
 
 interface User {
   id: string;
@@ -44,7 +39,7 @@ const AuthContext = createContext({} as AuthContextData);
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showTypeModal, setShowTypeModal] = useState(false);
+  const { openModal } = useUserTypeModal();
   const router = useRouter();
 
   const checkAuth = useCallback(async () => {
@@ -61,7 +56,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(userData);
 
       if (userData && !userData.userType) {
-        setShowTypeModal(true);
+        openModal();
       }
 
       setIsLoading(false);
@@ -70,11 +65,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(null);
       setIsLoading(false);
     }
-  }, []);
+  }, [openModal]);
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    const pathname = window.location.pathname;
+    const publicRoutes = ['/login', '/register'];
+    
+    if (user && publicRoutes.includes(pathname)) {
+      router.replace('/');
+    }
+  }, [user, router]);
 
   const signIn = async (credentials: { email: string; password: string }) => {
     const { accessToken, refreshToken } = await authService.signIn(credentials);
@@ -84,7 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUser(userData);
 
     if (userData && !userData.userType) {
-      setShowTypeModal(true);
+      openModal();
     }
 
     router.push("/");
@@ -94,30 +98,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     removeTokens();
     setUser(null);
     router.push("/");
-  };
-
-  const handleUserTypeSelect = async (
-    type: "USER" | "HOUSE_OWNER",
-    document: string
-  ) => {
-    try {
-      await authService.updateUserType(type, document);
-
-      const currentRefreshToken = getRefreshToken();
-      if (currentRefreshToken) {
-        const { accessToken, refreshToken } = await authService.refreshToken(
-          currentRefreshToken
-        );
-        setTokens(accessToken, refreshToken);
-        
-        const userData = await authService.getProfile();
-        setUser(userData);
-        setShowTypeModal(false);
-      }
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } catch (error: any) {
-      throw error;
-    }
   };
 
   return (
@@ -131,7 +111,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }}
     >
       {isLoading ? <LoadingScreen /> : children}
-      <UserTypeModal isOpen={showTypeModal} onSelect={handleUserTypeSelect} />
     </AuthContext.Provider>
   );
 }

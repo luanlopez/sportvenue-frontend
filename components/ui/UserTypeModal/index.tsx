@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { FaVolleyballBall, FaUser } from "react-icons/fa";
 import { Input } from "@/components/ui/Input";
 import { showToast } from "@/components/ui/Toast";
@@ -17,7 +17,9 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = useCallback(async () => {
+  if (!isOpen) return null;
+
+  const handleSubmit = async () => {
     if (!selectedType || !document || isSubmitting) {
       return;
     }
@@ -36,7 +38,7 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
     setIsSubmitting(true);
 
     try {
-      await onSelect(selectedType, document);
+      await onSelect(selectedType, numbers);
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       if (error?.response?.data?.message?.includes('CPF já existente, tente outro por favor!')) {
@@ -47,9 +49,7 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
     } finally {
       setIsSubmitting(false);
     }
-  }, [selectedType, document, documentType, isSubmitting, onSelect]);
-
-  if (!isOpen) return null;
+  };
 
   const formatDocument = (value: string) => {
     const numbers = value.replace(/\D/g, '');

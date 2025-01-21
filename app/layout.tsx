@@ -5,6 +5,7 @@ import { AuthProvider } from '@/hooks/useAuth';
 import { ClientLayout } from "@/components/layout/ClientLayout";
 import type { Metadata } from 'next'
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { UserTypeModalProvider } from "@/contexts/UserTypeModalContext";
 
 export const metadata: Metadata = {
   title: {
@@ -27,14 +28,16 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={montserrat.variable}>
       <body className="antialiased font-sans">
-        <QueryProvider>
-          <AuthProvider>
-            <ClientLayout>
-              {children}
-            </ClientLayout>
-            <Toast />
-          </AuthProvider>
-        </QueryProvider>
+        <UserTypeModalProvider>
+          <QueryProvider>
+            <AuthProvider>
+              <ClientLayout>
+                {children}
+              </ClientLayout>
+              <Toast />
+            </AuthProvider>
+          </QueryProvider>
+        </UserTypeModalProvider>
       </body>
     </html>
   );
