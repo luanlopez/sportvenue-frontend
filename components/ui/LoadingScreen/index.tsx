@@ -9,7 +9,7 @@ export function LoadingScreen() {
         <div className="animate-bounce mb-4">
           <Image
             src="/logo.png"
-            alt="SportVenue"
+            alt="SportMap"
             width={100}
             height={100}
             className="drop-shadow-lg"

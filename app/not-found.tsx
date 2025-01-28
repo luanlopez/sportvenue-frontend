@@ -12,7 +12,7 @@ export default function NotFound() {
         <div className="mb-8">
           <Image
             src="/logo.png"
-            alt="SportVenue"
+            alt="SportMap"
             width={150}
             height={150}
             className="mx-auto"

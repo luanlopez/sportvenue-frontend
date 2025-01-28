@@ -32,6 +32,7 @@ interface AuthContextData {
   isLoading: boolean;
   signIn: (credentials: { email: string; password: string }) => Promise<void>;
   signOut: () => Promise<void>;
+  setUser: (user: User | null) => void;
 }
 
 const AuthContext = createContext({} as AuthContextData);
@@ -108,6 +109,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         isLoading,
         signIn,
         signOut,
+        setUser,
       }}
     >
       {isLoading ? <LoadingScreen /> : children}

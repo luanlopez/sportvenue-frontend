@@ -87,7 +87,7 @@ export default function Register() {
       <AnimatedBackground />
       <div className="relative z-10">
         <div className="flex flex-col items-center justify-center">
-          <Image src="/logo.png" alt="SportVenue" width={200} height={200} />
+          <Image src="/logo.png" alt="SportMap" width={200} height={200} />
         </div>
         <Card>
           <Formik

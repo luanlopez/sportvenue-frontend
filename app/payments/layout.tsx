@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Pagamentos | SportVenue'
+  title: 'Pagamentos | SportMap'
 }
 
 export default function PaymentsLayout({

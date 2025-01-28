@@ -1,7 +1,22 @@
 import { parseCookies, setCookie, destroyCookie } from 'nookies';
+import { jwtDecode } from 'jwt-decode';
 
 export const TOKEN_KEY = '@courts:accessToken';
 export const REFRESH_TOKEN_KEY = '@courts:refreshToken';
+
+interface TokenPayload {
+  exp: number;
+}
+
+export const isTokenExpired = (token: string): boolean => {
+  try {
+    const decoded = jwtDecode<TokenPayload>(token);
+    const currentTime = Date.now() / 1000;
+    return decoded.exp < currentTime;
+  } catch {
+    return true;
+  }
+};
 
 export const getAccessToken = () => {
   const { [TOKEN_KEY]: token } = parseCookies();

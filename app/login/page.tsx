@@ -50,7 +50,7 @@ function LoginPage() {
         <div className="flex flex-col items-center justify-center mb-6 sm:mb-8">
           <Image 
             src="/logo.png" 
-            alt="SportVenue" 
+            alt="SportMap" 
             width={150} 
             height={150}
             className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48"

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Verificação de Email | SportVenue'
+  title: 'Verificação de Email | SportMap'
 }
 
 export default function VerificationLayout({

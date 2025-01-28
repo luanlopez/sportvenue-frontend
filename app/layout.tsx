@@ -9,8 +9,8 @@ import { UserTypeModalProvider } from "@/contexts/UserTypeModalContext";
 
 export const metadata: Metadata = {
   title: {
-    template: '%s | SportVenue',
-    default: 'SportVenue - Agendamento de quadras esportivas'
+    template: '%s | SportMap',
+    default: 'SportMap - Agendamento de quadras esportivas'
   },
   description: 'Plataforma de agendamento de quadras esportivas',
   icons: {

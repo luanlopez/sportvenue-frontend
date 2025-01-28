@@ -98,7 +98,7 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
 
           <div className="p-4 border-t border-gray-200">
             <div className="px-4 py-3 text-sm text-gray-500">
-              © 2024 SportVenue
+              © 2024 SportMap
             </div>
           </div>
         </div>

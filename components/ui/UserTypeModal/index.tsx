@@ -88,7 +88,7 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
       <div className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-enter">
         <div className="p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
-            Bem-vindo ao SportVenue!
+            Bem-vindo ao SportMap!
           </h2>
           <p className="text-gray-600 text-center mb-8">
             Como você deseja usar nossa plataforma?

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Perfil | SportVenue'
+  title: 'Perfil | SportMap'
 }
 
 export default function ProfileLayout({

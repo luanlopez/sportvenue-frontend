@@ -15,7 +15,7 @@ export function Footer() {
 
           <div>
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
-              SportVenue
+            SportMap
             </h3>
             <p className="text-gray-600 text-sm">
               Encontre e reserve as melhores quadras esportivas da sua região de forma rápida e fácil.
@@ -62,7 +62,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li className="flex items-center text-gray-600 text-sm">
                 <FaEnvelope className="w-4 h-4 mr-2" />
-                contato@sportvenue.com
+                contato@sportmap.com
               </li>
               <li className="flex items-center text-gray-600 text-sm">
                 <FaMapMarkerAlt className="w-4 h-4 mr-2" />
@@ -90,7 +90,7 @@ export function Footer() {
 
         <div className="border-t border-gray-200 mt-12 pt-8">
           <p className="text-center text-gray-600 text-sm">
-            © {currentYear} SportVenue. Todos os direitos reservados.
+            © {currentYear} SportMap. Todos os direitos reservados.
           </p>
         </div>
       </div>

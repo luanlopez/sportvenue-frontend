@@ -8,7 +8,7 @@ export default function ForgotPassword() {
     <main className="min-h-screen p-8 flex justify-center items-center flex-col relative bg-gray-50">
       <div className="relative z-10">
         <div className="flex flex-col items-center justify-center mb-8">
-          <Image src="/logo.png" alt="SportVenue" width={200} height={200} />
+          <Image src="/logo.png" alt="SportMap" width={200} height={200} />
         </div>
         <div className="bg-white p-8 rounded-xl shadow-lg max-w-md mx-auto">
           <h1 className="text-2xl font-bold text-gray-900 mb-4 text-center">

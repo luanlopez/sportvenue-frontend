@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Reservas | SportVenue'
+  title: 'Reservas | SportMap'
 }
 
 export default function BookingsLayout({

@@ -92,7 +92,7 @@ export function Header() {
                     : "text-3xl"
                 }`}
               >
-                SportVenue
+                SportMap
               </h2>
             </Link>
 
