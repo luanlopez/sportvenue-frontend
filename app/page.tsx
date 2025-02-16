@@ -5,12 +5,11 @@ import { useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { CategoryFilter } from "@/components/ui/CategoryFilter";
 import { Pagination } from "@/components/ui/Pagination";
-import Image from "next/image";
 import Link from "next/link";
 import { courtService } from "@/services/courts";
-import { CourtImagePlaceholder } from "@/components/ui/CourtImagePlaceholder";
 import { useSearchParams } from "next/navigation";
 import { CourtCardSkeleton } from "@/components/ui/CourtCardSkeleton";
+import { CourtCardNew } from "@/components/ui/CourtCardNew";
 
 const ITEMS_PER_PAGE = 10;
 
@@ -56,7 +55,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-tertiary-500">
       <div className="h-36"></div>
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div className="flex flex-col gap-4 mb-6">
@@ -73,65 +72,9 @@ export default function Home() {
             ))}
           </div>
         ) : data?.courts && data?.courts?.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.courts.map((court) => (
-              <div
-                key={court._id}
-                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden"
-              >
-                <div className="relative h-40 sm:h-48">
-                  {court.images && court.images.length > 0 ? (
-                    <Image
-                      src={court.images[0]}
-                      alt={court.name}
-                      fill
-                      className="object-cover"
-                    />
-                  ) : (
-                    <CourtImagePlaceholder />
-                  )}
-                </div>
-                <div className="p-3 sm:p-4">
-                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-1 sm:mb-2">
-                    {court.name}
-                  </h3>
-                  <p className="text-gray-600 text-xs sm:text-sm mb-1 sm:mb-2">
-                    {`${court.address}, ${court.number} - ${court.neighborhood}, ${court.city}`}
-                  </p>
-                  <p className="text-primary-500 font-medium text-xs sm:text-sm mb-3 sm:mb-4">
-                    R$ {court.pricePerHour.toFixed(2)}/hora
-                  </p>
-
-                  <div className="flex gap-2 flex-col sm:flex-row">
-                    <Link
-                      href={`/courts/${court._id}`}
-                      className="flex-1 px-4 py-2 text-white rounded-md
-                        bg-primary-500 hover:bg-primary-600
-                        transition-colors duration-300
-                        focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-                        flex items-center justify-center
-                        text-sm sm:text-base"
-                    >
-                      Ver Detalhes
-                    </Link>
-
-                    {user?.userType === 'HOUSE_OWNER' && (
-                      <Link
-                        href={`/courts/${court._id}/edit`}
-                        className="px-4 py-2 text-primary-500 rounded-md
-                          border-2 border-primary-500
-                          hover:bg-primary-50
-                          transition-colors duration-300
-                          focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-                          flex items-center justify-center
-                          text-sm sm:text-base"
-                      >
-                        Editar
-                      </Link>
-                    )}
-                  </div>
-                </div>
-              </div>
+              <CourtCardNew key={court._id} court={court} />
             ))}
           </div>
         ) : (

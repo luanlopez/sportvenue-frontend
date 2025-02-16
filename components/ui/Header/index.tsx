@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import {
   GlobeAltIcon,
@@ -8,7 +8,7 @@ import {
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
 import { FaVolleyballBall } from "react-icons/fa";
-import { usePathname, useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
 
@@ -22,41 +22,17 @@ function getInitials(name: string) {
 
 const languages = [
   { code: "pt", name: "Português", flag: "🇧🇷" },
-  { code: "en", name: "English", flag: "🇺🇸" },
+  // { code: "en", name: "English", flag: "🇺🇸" },
 ];
 
 export function Header() {
-  const pathname = usePathname();
   const { user, signOut } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("pt");
   const [searchValue, setSearchValue] = useState("");
-  const [isScrolled, setIsScrolled] = useState(false);
-  const [isHovered, setIsHovered] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
-
-  const isHomePage = pathname === "/";
-  const isDetailsPage =
-    pathname.startsWith("/courts/") && pathname.split("/").length === 3;
-
-  useEffect(() => {
-    const handleScroll = () => {
-      if (isDetailsPage) {
-        setIsScrolled(window.scrollY > 50);
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [isDetailsPage]);
-
-  const shouldShowSearch = () => {
-    if (isHomePage) return true;
-    if (isDetailsPage && isScrolled) return false;
-    return isHovered;
-  };
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,52 +47,54 @@ export function Header() {
 
   return (
     <header
-      className={`bg-white border-b border-gray-200 fixed w-full top-0 z-[100] transition-all duration-500 ease-in-out
-        ${isScrolled ? "shadow-md" : ""}
-      `}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      className={`bg-tertiary-500 fixed w-full top-0 z-[100] transition-all duration-500 ease-in-out`}
     >
       <div>
         <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-24">
-          <div
-            className={`flex items-center justify-between transition-all duration-500 ease-in-out
-            ${isScrolled || (!isHomePage && !isHovered) ? "h-16" : "h-16"}`}
-          >
-            <Link href="/" className="flex-shrink-0 -ml-3">
-              <h2
-                className={`font-bold text-primary-500 transition-all duration-500 ease-in-out transform
-                ${
-                  isScrolled || (!isHomePage && !isHovered)
-                    ? "text-2xl"
-                    : "text-3xl"
-                }`}
-              >
-                SportMap
-              </h2>
+          <div className="flex items-center justify-between h-24">
+            <Link href="/" className="flex-shrink-0">
+              <Image
+                src="/logo.png"
+                alt="SportMap"
+                width={150}
+                height={60}
+                className="transition-all duration-500 ease-in-out"
+                priority
+              />
             </Link>
 
-            <nav className="hidden md:flex flex-1 justify-center">
-              <Link
-                href="/"
-                className={`text-md font-medium px-4 py-2 rounded-full transition
-                  ${
-                    pathname === "/"
-                      ? "text-gray-900"
-                      : "text-gray-600 hover:text-gray-900"
-                  }`}
+            <div className="flex-1 max-w-3xl mx-auto px-8">
+              <form
+                onSubmit={handleSearch}
+                className="flex items-center border-2 border-primary-500 rounded-full 
+                transition-all duration-500 ease-in-out
+                py-2 px-4 bg-tertiary-500"
               >
-                Início
-              </Link>
-            </nav>
+                <input
+                  type="text"
+                  placeholder="Busque uma quadra..."
+                  value={searchValue}
+                  onChange={(e) => setSearchValue(e.target.value)}
+                  className="flex-1 bg-tertiary-500 border-none outline-none text-gray-900 placeholder-gray-500 focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  className="p-2 rounded-full text-primary-500 hover:text-primary-600 transition-colors"
+                >
+                  <MagnifyingGlassIcon className="h-5 w-5" />
+                </button>
+              </form>
+            </div>
 
-            <div className="flex items-center gap-4 -mr-3">
-              {(!user || user.userType === "HOUSE_OWNER" && user.subscriptionPlanId === 'undefined') && (
+            <div className="flex items-center gap-4">
+              {(!user ||
+                (user.userType === "HOUSE_OWNER" &&
+                  user.subscriptionPlanId === "undefined")) && (
                 <Link
                   href="/owner-plans"
                   className="hidden sm:flex items-center gap-2 px-4 py-2 text-sm font-medium
-                    text-gray-500 hover:text-primary-600
-                    hover:bg-primary-50 rounded-full transition-all duration-200"
+                    text-primary-500 hover:text-tertiary-500
+                    hover:bg-primary-500 rounded-full transition-all duration-200"
                 >
                   <FaVolleyballBall className="w-4 h-4" />
                   <span>Anuncie seu espaço</span>
@@ -125,18 +103,18 @@ export function Header() {
 
               <button
                 onClick={() => setIsLanguageModalOpen(true)}
-                className="p-2 hover:bg-gray-100 rounded-full transition"
+                className="p-2 text-primary-500 hover:text-primary-600 transition-colors"
               >
-                <GlobeAltIcon className="h-5 w-5 text-gray-700" />
+                <GlobeAltIcon className="h-6 w-6" />
               </button>
 
               <div className="relative">
                 <button
                   onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                  className="flex items-center gap-2 border rounded-full p-2 hover:shadow-md transition"
+                  className="flex items-center gap-2 border border-primary-500 rounded-full p-2 hover:shadow-md transition"
                 >
-                  <Bars3Icon className="h-5 w-5 text-gray-700" />
-                  <div className="w-8 h-8 rounded-full bg-gray-500 flex items-center justify-center">
+                  <Bars3Icon className="h-5 w-5 text-primary-500" />
+                  <div className="w-8 h-8 rounded-full bg-primary-500 flex items-center justify-center">
                     {user?.picture ? (
                       <Image
                         src={user.picture}
@@ -159,19 +137,19 @@ export function Header() {
                       className="fixed inset-0 z-[150]"
                       onClick={() => setIsDropdownOpen(false)}
                     />
-                    <div className="absolute right-0 mt-2 w-64 bg-white rounded-xl shadow-lg py-2 z-[151] border">
+                    <div className="absolute right-0 mt-2 w-64 bg-tertiary-500 rounded-xl shadow-lg py-2 z-[151] border">
                       {user ? (
                         <>
                           <Link
                             href="/bookings"
-                            className="px-4 py-2 hover:bg-gray-100 text-sm block text-gray-900"
+                            className="px-4 py-2 hover:bg-primary-500 hover:text-tertiary-500 text-sm block text-gray-900"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             Minhas Reservas
                           </Link>
                           <Link
                             href="/profile"
-                            className="px-4 py-2 hover:bg-gray-100 text-sm block text-gray-900"
+                            className="px-4 py-2 hover:bg-primary-500 hover:text-tertiary-500 text-sm block text-gray-900"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             Minha Conta
@@ -179,7 +157,7 @@ export function Header() {
                           {user?.userType === "HOUSE_OWNER" && (
                             <Link
                               href="/payments"
-                              className="px-4 py-2 hover:bg-gray-100 text-sm block text-gray-900"
+                              className="px-4 py-2 hover:bg-primary-500 hover:text-tertiary-500 text-sm block text-gray-900"
                               onClick={() => setIsDropdownOpen(false)}
                             >
                               Pagamentos
@@ -200,14 +178,14 @@ export function Header() {
                         <>
                           <Link
                             href="/login"
-                            className="px-4 py-2 hover:bg-gray-100 text-sm font-medium block text-gray-900"
+                            className="px-4 py-2 hover:bg-primary-500 hover:text-tertiary-500 text-sm font-medium block text-primary-500"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             Entrar
                           </Link>
                           <Link
                             href="/register"
-                            className="px-4 py-2 hover:bg-gray-100 text-sm block text-gray-900"
+                            className="px-4 py-2 hover:bg-primary-500 hover:text-tertiary-500 text-sm block text-primary-500"
                             onClick={() => setIsDropdownOpen(false)}
                           >
                             Cadastrar
@@ -223,54 +201,17 @@ export function Header() {
         </div>
       </div>
 
-      {shouldShowSearch() && (
-        <div
-          className={`max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 
-          transition-all duration-500 ease-in-out transform origin-top
-          ${
-            isScrolled || (!isHomePage && !isHovered)
-              ? "scale-95 opacity-0"
-              : "scale-100 opacity-100"
-          }
-          ${isScrolled || (!isHomePage && !isHovered) ? "py-2" : "py-4"}`}
-        >
-          <div className="max-w-2xl mx-auto">
-            <form
-              onSubmit={handleSearch}
-              className="flex items-center border-2 rounded-full hover:shadow-md 
-              transition-all duration-500 ease-in-out transform 
-              hover:scale-[1.02] focus-within:scale-[1.02]
-              py-2 px-4"
-            >
-              <input
-                type="text"
-                placeholder="Busque uma quadra..."
-                value={searchValue}
-                onChange={(e) => setSearchValue(e.target.value)}
-                className="flex-1 bg-transparent border-none outline-none text-gray-900 placeholder-gray-500 focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="p-2 bg-primary-500 rounded-full text-white hover:bg-primary-600 transition-colors"
-              >
-                <MagnifyingGlassIcon className="h-5 w-5" />
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
-
       {isLanguageModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200]">
-          <div className="bg-white rounded-xl shadow-xl max-w-sm w-full mx-4 overflow-hidden">
+          <div className="bg-tertiary-500 rounded-xl shadow-xl max-w-sm w-full mx-4 overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">
+                <h2 className="text-lg font-semibold text-primary-500">
                   Escolha seu idioma
                 </h2>
                 <button
                   onClick={() => setIsLanguageModalOpen(false)}
-                  className="text-gray-400 hover:text-gray-500"
+                  className="text-primary-500 hover:text-primary-600"
                 >
                   <svg
                     className="w-5 h-5"
@@ -299,8 +240,8 @@ export function Header() {
                       rounded-lg transition-colors
                       ${
                         selectedLanguage === lang.code
-                          ? "bg-primary-50 text-primary-500"
-                          : "hover:bg-gray-50 text-gray-700"
+                          ? "bg-primary-500 text-tertiary-500"
+                          : "hover:bg-primary-500 text-primary-500"
                       }
                     `}
                   >

@@ -15,7 +15,7 @@ export function TimeSelect({ value, isSelected, onChange }: TimeSelectProps) {
         transition-all duration-200 ease-in-out
         ${isSelected 
           ? 'bg-primary-500 text-white shadow-sm hover:bg-primary-600' 
-          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          : 'bg-tertiary-500 text-primary-500 hover:bg-primary-500 border border-primary-500 shadow-sm hover:text-tertiary-500'
         }
       `}
     >

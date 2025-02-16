@@ -1,3 +1,4 @@
+import * as React from "react";
 import toast, { Toast } from "react-hot-toast";
 import { CustomToast } from "./CustomToast";
 

@@ -11,9 +11,7 @@ import { TagSelect } from "@/components/ui/TagSelect";
 import { useAuth } from "@/hooks/useAuth";
 import { WeeklyScheduleSelector } from "@/components/ui/WeeklyScheduleSelector";
 import { WeeklySchedule } from "@/types/courts";
-import { PostalCode } from "@/components/ui/PostalCode";
-import { Select } from "@/components/ui/Select";
-import { STATES } from "@/constants/states";
+import { cepService } from "@/services/cep";
 
 export interface CreateCourtDTO {
   name: string;
@@ -61,6 +59,7 @@ export default function CreateCourt() {
   const router = useRouter();
   const { user } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoadingCep, setIsLoadingCep] = useState(false);
 
   const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<CreateCourtDTO>({
     resolver: yupResolver(schema),
@@ -95,243 +94,279 @@ export default function CreateCourt() {
     }
   };
 
+  const handleCepBlur = async (e: React.FocusEvent<HTMLInputElement>) => {
+    const cep = e.target.value;
+    if (!cep || cep.length !== 8) return;
+
+    try {
+      setIsLoadingCep(true);
+      const address = await cepService.findAddress(cep);
+      
+      setValue('address', address.logradouro);
+      setValue('neighborhood', address.bairro);
+      setValue('city', address.localidade);
+      setValue('state', address.uf);
+      
+    } catch {
+      showToast.error("Erro", "CEP não encontrado");
+    } finally {
+      setIsLoadingCep(false);
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-2 sm:px-4">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">Criar Nova Quadra</h1>
+    <div className="min-h-screen bg-tertiary-500 py-20">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-10">
+        <h1 className="text-2xl sm:text-3xl font-bold text-primary-500 mb-8">Criar Nova Quadra</h1>
         
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
+        <div className="max-w-4xl mx-auto">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+            <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500">
+              <h2 className="text-xl font-bold text-primary-500 mb-6">Informações Básicas</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold text-primary-500 mb-2">Nome da Quadra</label>
+                  <input
+                    {...register("name")}
+                    className="w-full px-4 py-3 rounded-xl
+                      border border-primary-500/20
+                      bg-tertiary-500 text-primary-500 placeholder-primary-500/50
+                      focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
+                      transition-colors duration-200"
+                    placeholder="Digite o nome da quadra"
+                  />
+                  {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
+                </div>
 
-          <div className="flex-1">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Informações Básicas</h2>
-                <div className="grid grid-cols-1 gap-4 sm:gap-6">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Nome da Quadra</label>
+                <div>
+                  <label className="block text-sm font-bold text-primary-500 mb-2">Valor por Hora</label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-1/2 -translate-y-1/2 text-primary-500">R$</span>
                     <input
-                      {...register("name")}
-                      className="mt-2 block w-full px-4 py-3 rounded-md 
-                        border border-gray-300 
-                        bg-white text-gray-900 placeholder-gray-400
-                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
+                      type="number"
+                      step="0.01"
+                      {...register("pricePerHour")}
+                      className="w-full pl-10 pr-4 py-3 rounded-xl
+                        border border-primary-500/20
+                        bg-tertiary-500 text-primary-500 placeholder-primary-500/50
+                        focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
                         transition-colors duration-200"
-                      placeholder="Digite o nome da quadra"
+                      placeholder="0,00"
                     />
-                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
                   </div>
+                  {errors.pricePerHour && (
+                    <p className="mt-1 text-sm text-red-600">{errors.pricePerHour.message}</p>
+                  )}
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Valor por Hora</label>
-                    <div className="relative mt-2">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">R$</span>
-                      <input
-                        type="number"
-                        step="0.01"
-                        {...register("pricePerHour")}
-                        className="block w-full pl-10 pr-4 py-3 rounded-md 
-                          border border-gray-300 
-                          bg-white text-gray-900 placeholder-gray-400
-                          focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
-                          transition-colors duration-200"
-                        placeholder="0,00"
-                      />
-                    </div>
-                    {errors.pricePerHour && (
-                      <p className="mt-1 text-sm text-red-600">{errors.pricePerHour.message}</p>
-                    )}
-                  </div>
-
-                  <div className="col-span-1 sm:col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">Descrição</label>
-                    <textarea
-                      {...register("description")}
-                      rows={3}
-                      className="mt-2 block w-full px-4 py-3 rounded-md 
-                        border border-gray-300 
-                        bg-white text-gray-900 placeholder-gray-400
-                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
-                        transition-colors duration-200 resize-none"
-                      placeholder="Descreva os detalhes da quadra"
-                    />
-                    {errors.description && (
-                      <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
-                    )}
-                  </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold text-primary-500 mb-2">Descrição</label>
+                  <textarea
+                    {...register("description")}
+                    rows={4}
+                    className="w-full px-4 py-3 rounded-xl
+                      border border-primary-500/20
+                      bg-tertiary-500 text-primary-500 placeholder-primary-500/50
+                      focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
+                      transition-colors duration-200 resize-none"
+                    placeholder="Descreva os detalhes da quadra"
+                  />
+                  {errors.description && (
+                    <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+                  )}
                 </div>
               </div>
+            </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Endereço</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                  <div className="col-span-2 md:col-span-1">
-                    <PostalCode
-                      value={watch("postalCode") || ""}
-                      onChange={(value) => setValue("postalCode", value)}
-                      error={errors.postalCode?.message}
-                    />
-                  </div>
-
-                  <div className="col-span-2 md:col-span-1">
-                    <Select
-                      label="Estado"
-                      value={watch("state") || ""}
-                      onChange={(value) => setValue("state", value)}
-                      options={STATES}
-                      error={errors.state?.message}
-                      placeholder="Selecione um estado"
-                    />
-                  </div>
-
-                  <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">Endereço</label>
+            <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500">
+              <h2 className="text-xl font-bold text-primary-500 mb-6">Endereço</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-bold text-primary-500 mb-2">CEP</label>
+                  <div className="relative">
                     <input
-                      {...register("address")}
-                      className="mt-2 block w-full px-4 py-3 rounded-md 
-                        border border-gray-300 
-                        bg-white text-gray-900 placeholder-gray-400
-                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
+                      {...register("postalCode")}
+                      onBlur={handleCepBlur}
+                      maxLength={8}
+                      className="w-full px-4 py-3 rounded-xl
+                        border border-primary-500/20
+                        bg-tertiary-500 text-primary-500 placeholder-primary-500/50
+                        focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
                         transition-colors duration-200"
-                      placeholder="Rua, Avenida..."
+                      placeholder="Digite apenas números"
                     />
-                    {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address.message}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Número</label>
-                    <input
-                      {...register("number")}
-                      className="mt-2 block w-full px-4 py-3 rounded-md 
-                        border border-gray-300 
-                        bg-white text-gray-900 placeholder-gray-400
-                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
-                        transition-colors duration-200"
-                      placeholder="Nº"
-                    />
-                    {errors.number && <p className="mt-1 text-sm text-red-600">{errors.number.message}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Bairro</label>
-                    <input
-                      {...register("neighborhood")}
-                      className="mt-2 block w-full px-4 py-3 rounded-md 
-                        border border-gray-300 
-                        bg-white text-gray-900 placeholder-gray-400
-                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
-                        transition-colors duration-200"
-                      placeholder="Digite o bairro"
-                    />
-                    {errors.neighborhood && (
-                      <p className="mt-1 text-sm text-red-600">{errors.neighborhood.message}</p>
+                    {isLoadingCep && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-500" />
+                      </div>
                     )}
                   </div>
+                  {errors.postalCode && (
+                    <p className="mt-1 text-sm text-red-600">{errors.postalCode.message}</p>
+                  )}
+                </div>
 
-                  <div className="col-span-2 md:col-span-1">
-                    <label className="block text-sm font-medium text-gray-700">Cidade</label>
+                <div>
+                  <label className="block text-sm font-bold text-primary-500 mb-2">Número</label>
+                  <input
+                    {...register("number")}
+                    className="w-full px-4 py-3 rounded-xl
+                      border border-primary-500/20
+                      bg-tertiary-500 text-primary-500 placeholder-primary-500/50
+                      focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
+                      transition-colors duration-200"
+                    placeholder="Nº"
+                  />
+                  {errors.number && (
+                    <p className="mt-1 text-sm text-red-600">{errors.number.message}</p>
+                  )}
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-bold text-primary-500 mb-2">Endereço</label>
+                  <input
+                    {...register("address")}
+                    readOnly
+                    disabled
+                    className="w-full px-4 py-3 rounded-xl
+                      border border-primary-500/20
+                      bg-tertiary-500/50 text-primary-500/80
+                      cursor-not-allowed"
+                    placeholder="Preenchido automaticamente pelo CEP"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-primary-500 mb-2">Bairro</label>
+                  <input
+                    {...register("neighborhood")}
+                    readOnly
+                    disabled
+                    className="w-full px-4 py-3 rounded-xl
+                      border border-primary-500/20
+                      bg-tertiary-500/50 text-primary-500/80
+                      cursor-not-allowed"
+                    placeholder="Preenchido automaticamente pelo CEP"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-bold text-primary-500 mb-2">Cidade/UF</label>
+                  <div className="flex gap-2">
                     <input
                       {...register("city")}
-                      className="mt-2 block w-full px-4 py-3 rounded-md 
-                        border border-gray-300 
-                        bg-white text-gray-900 placeholder-gray-400
-                        focus:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:ring-opacity-20
-                        transition-colors duration-200"
-                      placeholder="Digite a cidade"
+                      readOnly
+                      disabled
+                      className="flex-1 px-4 py-3 rounded-xl
+                        border border-primary-500/20
+                        bg-tertiary-500/50 text-primary-500/80
+                        cursor-not-allowed"
+                      placeholder="Cidade"
                     />
-                    {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>}
+                    <input
+                      {...register("state")}
+                      readOnly
+                      disabled
+                      className="w-20 px-4 py-3 rounded-xl
+                        border border-primary-500/20
+                        bg-tertiary-500/50 text-primary-500/80
+                        cursor-not-allowed text-center uppercase"
+                      placeholder="UF"
+                    />
                   </div>
                 </div>
               </div>
+            </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Horários e Categorias</h2>
-                <div className="space-y-4 sm:space-y-8">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">Categorias</label>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                      {Object.entries(CATEGORY_LABELS).map(([value, label]) => {
-                        const categories = watch("categories") || [];
-                        return (
-                          <TagSelect
-                            key={value}
-                            value={value as Category}
-                            label={label}
-                            isSelected={categories.includes(value as Category)}
-                            onChange={(value) => {
-                              const current = categories;
-                              const updated = current.includes(value as Category)
-                                ? current.filter(v => v !== value)
-                                : [...current, value];
-                              setValue("categories", updated as Category[]);
-                            }}
-                          />
-                        );
-                      })}
-                    </div>
-                    {errors.categories && (
-                      <p className="mt-2 text-sm text-red-600">{errors.categories.message}</p>
-                    )}
+            <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500">
+              <h2 className="text-xl font-bold text-primary-500 mb-6">Horários e Categorias</h2>
+              <div className="space-y-8">
+                <div>
+                  <label className="block text-sm font-bold text-primary-500 mb-4">Categorias</label>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(CATEGORY_LABELS).map(([value, label]) => {
+                      const categories = watch("categories") || [];
+                      return (
+                        <TagSelect
+                          key={value}
+                          value={value as Category}
+                          label={label}
+                          isSelected={categories.includes(value as Category)}
+                          onChange={(value) => {
+                            const current = categories;
+                            const updated = current.includes(value as Category)
+                              ? current.filter(v => v !== value)
+                              : [...current, value];
+                            setValue("categories", updated as Category[]);
+                          }}
+                        />
+                      );
+                    })}
                   </div>
+                  {errors.categories && (
+                    <p className="mt-2 text-sm text-red-600">{errors.categories.message}</p>
+                  )}
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2 sm:mb-3">Comodidades</label>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2">
-                      {Object.entries(AMENITY_LABELS).map(([value, label]) => {
-                        const amenities = watch("amenities") || [];
-                        return (
-                          <TagSelect
-                            key={value}
-                            value={value as Amenity}
-                            label={label}
-                            isSelected={amenities.includes(value as Amenity)}
-                            onChange={(value) => {
-                              const current = amenities;
-                              const updated = current.includes(value as Amenity)
-                                ? current.filter(v => v !== value)
-                                : [...current, value];
-                              setValue("amenities", updated as Amenity[]);
-                            }}
-                          />
-                        );
-                      })}
-                    </div>
-                    {errors.amenities && (
-                      <p className="mt-2 text-sm text-red-600">{errors.amenities.message}</p>
-                    )}
+                <div>
+                  <label className="block text-sm font-bold text-primary-500 mb-4">Comodidades</label>
+                  <div className="flex flex-wrap gap-2">
+                    {Object.entries(AMENITY_LABELS).map(([value, label]) => {
+                      const amenities = watch("amenities") || [];
+                      return (
+                        <TagSelect
+                          key={value}
+                          value={value as Amenity}
+                          label={label}
+                          isSelected={amenities.includes(value as Amenity)}
+                          onChange={(value) => {
+                            const current = amenities;
+                            const updated = current.includes(value as Amenity)
+                              ? current.filter(v => v !== value)
+                              : [...current, value];
+                            setValue("amenities", updated as Amenity[]);
+                          }}
+                        />
+                      );
+                    })}
                   </div>
+                  {errors.amenities && (
+                    <p className="mt-2 text-sm text-red-600">{errors.amenities.message}</p>
+                  )}
                 </div>
               </div>
+            </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Horários de Funcionamento</h2>
-                <WeeklyScheduleSelector
-                  value={watch('weeklySchedule') || defaultSchedule}
-                  onChange={(schedule) => setValue('weeklySchedule', schedule)}
-                />
-                {errors.weeklySchedule && (
-                  <p className="mt-1 text-sm text-red-600">{errors.weeklySchedule.message}</p>
-                )}
-              </div>
+            <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500">
+              <h2 className="text-xl font-bold text-primary-500 mb-6">Horários de Funcionamento</h2>
+              <WeeklyScheduleSelector
+                value={watch('weeklySchedule') || defaultSchedule}
+                onChange={(schedule) => setValue('weeklySchedule', schedule)}
+              />
+            </div>
 
-              <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4">
-                <button
-                  type="button"
-                  onClick={() => router.back()}
-                  className="px-4 sm:px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 text-sm sm:text-base"
-                  disabled={isSubmitting}
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 sm:px-6 py-2 text-white bg-primary-500 rounded-md hover:bg-primary-600 text-sm sm:text-base"
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Criando..." : "Criar Quadra"}
-                </button>
-              </div>
-            </form>
-          </div>
+            <div className="flex justify-end gap-4 pt-4">
+              <button
+                type="button"
+                onClick={() => router.back()}
+                className="px-6 py-3 text-primary-500 bg-tertiary-500 border border-primary-500 rounded-full
+                  hover:bg-primary-500 hover:text-tertiary-500
+                  transition-colors duration-200 font-bold"
+                disabled={isSubmitting}
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                className="px-6 py-3 text-primary-500 bg-secondary-500 rounded-full
+                  hover:bg-secondary-600 transition-colors duration-200
+                  shadow-md hover:shadow-lg font-bold"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Criando..." : "Criar Quadra"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>

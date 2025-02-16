@@ -35,12 +35,12 @@ export function FilterBar({
   onDateChange 
 }: FilterBarProps) {
   return (
-    <div className="bg-white p-4 rounded-xl border border-gray-200 mb-6">
+    <div className="bg-tertiary-500 p-4 rounded-2xl border border-primary-500 shadow-md mb-6">
       <div className="flex flex-col sm:flex-row gap-6">
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-3">
-            <FunnelIcon className="w-4 h-4 text-gray-400" />
-            <span className="text-sm font-medium text-gray-600">Status</span>
+            <FunnelIcon className="w-4 h-4 text-primary-500" />
+            <span className="text-sm font-bold text-primary-500">Status</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {statusOptions.map((option) => (
@@ -48,11 +48,11 @@ export function FilterBar({
                 key={option.value}
                 onClick={() => onStatusChange(option.value)}
                 className={`
-                  px-4 py-2 rounded-lg text-sm font-medium
+                  px-4 py-2 rounded-full text-sm font-bold
                   transition-all duration-200
                   ${statusFilter === option.value
-                    ? 'bg-primary-500 text-white shadow-sm'
-                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                    ? 'bg-secondary-500 text-primary-500 shadow-md'
+                    : 'bg-primary-500 text-tertiary-500 hover:bg-primary-600'
                   }
                 `}
               >
@@ -64,8 +64,8 @@ export function FilterBar({
 
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-3">
-            <CalendarIcon className="w-4 h-4 text-gray-400" />
-            <span className="text-sm font-medium text-gray-600">Período</span>
+            <CalendarIcon className="w-4 h-4 text-primary-500" />
+            <span className="text-sm font-bold text-primary-500">Período</span>
           </div>
           <div className="flex flex-wrap gap-2">
             {dateOptions.map((option) => (
@@ -73,11 +73,11 @@ export function FilterBar({
                 key={option.value}
                 onClick={() => onDateChange(option.value)}
                 className={`
-                  px-4 py-2 rounded-lg text-sm font-medium
+                  px-4 py-2 rounded-full text-sm font-bold
                   transition-all duration-200
                   ${dateFilter === option.value
-                    ? 'bg-primary-500 text-white shadow-sm'
-                    : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                    ? 'bg-secondary-500 text-primary-500 shadow-md'
+                    : 'bg-primary-500 text-tertiary-500 hover:bg-primary-600'
                   }
                 `}
               >

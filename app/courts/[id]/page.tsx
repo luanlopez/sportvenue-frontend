@@ -54,7 +54,7 @@ export default function CourtDetails() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-tertiary-500">
       <div className="relative h-[500px] group">
         <Image
           src={court.images[0] || "/placeholder-court.jpg"}
@@ -62,12 +62,12 @@ export default function CourtDetails() {
           fill
           className="object-cover"  
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
-        <div className="absolute bottom-0 left-0 right-0 p-8 text-white">
+        <div className="absolute inset-0 bg-gradient-to-t from-primary-500/90 via-primary-500/50 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 p-8 text-tertiary-500">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-5xl font-bold mb-4">{court.name}</h1>
             <div className="flex items-center gap-2 text-lg">
-              <FaMapMarkerAlt className="text-primary-400" />
+              <FaMapMarkerAlt className="text-secondary-500" />
               <p>{`${court.address}, ${court.number} - ${court.neighborhood}, ${court.city}`}</p>
             </div>
           </div>
@@ -77,8 +77,8 @@ export default function CourtDetails() {
       <div className="max-w-7xl mx-auto px-4 -mt-8 relative z-10 pb-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-8">
-              <h2 className="text-2xl font-bold mb-6 text-black">Fotos da Quadra</h2>
+            <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
+              <h2 className="text-2xl font-bold mb-6 text-primary-500">Fotos da Quadra</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {court.images.length > 0 ? (
                   court.images.map((image, index) => (
@@ -97,23 +97,23 @@ export default function CourtDetails() {
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-full text-center py-8 text-gray-500">
+                  <div className="col-span-full text-center py-8 text-tertiary-500/80">
                     Nenhuma foto disponível
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-8">
-              <h2 className="text-2xl font-bold mb-6 text-black">Sobre a Quadra</h2>
+            <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
+              <h2 className="text-2xl font-bold mb-6 text-primary-500">Sobre a Quadra</h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex items-start gap-4">
-                  <div className="p-3 bg-primary-50 text-primary-500 rounded-lg">
+                  <div className="p-3 bg-primary-500 text-tertiary-500 rounded-lg">
                     <FaMoneyBillWave className="text-2xl" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-2 text-black">Valor por Hora</h3>
-                    <p className="text-2xl font-bold text-primary-500">
+                    <h3 className="font-semibold text-lg mb-2 text-primary-500">Valor por Hora</h3>
+                    <p className="text-2xl font-bold text-secondary-500">
                       R$ {court.pricePerHour?.toFixed(2) || 0}
                     </p>
                   </div>
@@ -121,16 +121,16 @@ export default function CourtDetails() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-8">
+            <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
               <div className="flex items-center gap-3 mb-6">
-                <BiDumbbell className="text-2xl text-primary-500" />
-                <h2 className="text-2xl font-bold text-black">Comodidades</h2>
+                <BiDumbbell className="text-2xl text-secondary-500" />
+                <h2 className="text-2xl font-bold text-primary-500">Comodidades</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {court.amenities?.map((amenity) => (
                   <div
                     key={amenity}
-                    className="px-4 py-3 bg-gray-50 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                    className="px-4 py-3 bg-primary-500 rounded-lg text-tertiary-500 hover:bg-primary-600 transition-colors"
                   >
                     {AMENITY_LABELS[amenity as keyof typeof AMENITY_LABELS]}
                   </div>
@@ -138,16 +138,16 @@ export default function CourtDetails() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-8">
+            <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
               <div className="flex items-center gap-3 mb-6">
-                <MdSportsSoccer className="text-2xl text-primary-500" />
-                <h2 className="text-2xl font-bold text-black">Modalidades</h2>
+                <MdSportsSoccer className="text-2xl text-secondary-500" />
+                <h2 className="text-2xl font-bold text-primary-500">Modalidades</h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {court.categories?.map((category) => (
                   <div
                     key={category}
-                    className="px-4 py-3 bg-gray-50 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors"
+                    className="px-4 py-3 bg-primary-500 rounded-lg text-tertiary-500 hover:bg-primary-600 transition-colors"
                   >
                     {CATEGORY_LABELS[category as keyof typeof CATEGORY_LABELS]}
                   </div>
@@ -155,32 +155,32 @@ export default function CourtDetails() {
               </div>
             </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-sm">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Horários de Funcionamento</h2>
+            <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
+              <h2 className="text-2xl font-bold text-primary-500 mb-4">Horários de Funcionamento</h2>
               <WeeklyScheduleDisplay schedule={court.weeklySchedule} />
             </div>
           </div>
 
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-xl shadow-sm p-6 sticky top-8">
+            <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-6 sticky top-8">
               <div className="space-y-4">
                 {user?.userType !== 'HOUSE_OWNER' && (
                   <button
                     onClick={handleReserveClick}
-                    className="w-full px-6 py-4 bg-primary-500 text-white rounded-xl
-                      hover:bg-primary-600 transition-all duration-300
-                      focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-                      font-semibold text-lg shadow-lg hover:shadow-xl"
+                    className="w-full px-6 py-4 bg-secondary-500 text-primary-500 rounded-full
+                      hover:bg-secondary-600 transition-all duration-300
+                      focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2
+                      font-bold text-lg shadow-lg hover:shadow-xl"
                   >
                     Reservar Horário
                   </button>
                 )}
                 <button
                   onClick={() => setIsContactModalOpen(true)}
-                  className="w-full px-6 py-4 border-2 border-primary-500 text-primary-500 rounded-xl
-                    hover:bg-primary-50 transition-all duration-300
+                  className="w-full px-6 py-4 bg-primary-500 text-tertiary-500 rounded-full
+                    hover:bg-primary-600 transition-all duration-300
                     focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-                    font-semibold text-lg"
+                    font-bold text-lg shadow-md hover:shadow-lg"
                 >
                   Contatar Proprietário
                 </button>

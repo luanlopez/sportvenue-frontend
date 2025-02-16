@@ -16,10 +16,10 @@ function getInitials(name: string) {
 
 function LoadingState() {
   return (
-    <div className="min-h-screen bg-gray-50 flex justify-center items-center">
-      <div className="bg-white p-8 rounded-lg shadow-sm flex flex-col items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500 mb-4" />
-        <p className="text-gray-500">Carregando perfil...</p>
+    <div className="min-h-screen bg-tertiary-500 flex justify-center items-center">
+      <div className="bg-primary-500 p-8 rounded-2xl shadow-md flex flex-col items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary-500 mb-4" />
+        <p className="text-tertiary-500">Carregando perfil...</p>
       </div>
     </div>
   );
@@ -62,12 +62,12 @@ export default function Profile() {
   if (!user) return <LoadingState />;
 
   return (
-    <div className="min-h-screen bg-gray-50 px-20 py-20">
-      <div className="container max-w-2xl mx-auto px-4">
-        <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+    <div className="min-h-screen bg-tertiary-500 px-20 py-20">
+      <div className="container max-w-2xl mx-auto px-4 mt-10">
+        <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md overflow-hidden">
           <div className="p-8">
             <div className="flex flex-col items-center mb-8">
-              <div className="w-32 h-32 rounded-full bg-primary-500 flex items-center justify-center text-white text-4xl font-medium shadow-lg mb-4">
+              <div className="w-32 h-32 rounded-full bg-secondary-500 flex items-center justify-center text-primary-500 text-4xl font-bold shadow-lg mb-4">
                 {user?.picture ? (
                   <Image
                     src={user.picture}
@@ -80,24 +80,24 @@ export default function Profile() {
                   getInitials(user.name)
                 )}
               </div>
-              <h1 className="text-2xl font-bold text-gray-900">{user.name}</h1>
-              <span className="text-gray-500 mt-1">{user.email}</span>
+              <h1 className="text-2xl font-bold text-primary-500">{user.name}</h1>
+              <span className="text-primary-500/80 mt-1">{user.email}</span>
             </div>
 
-            <div className="border-t border-gray-100 my-6" />
+            <div className="border-t border-primary-500/20 my-6" />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  <h2 className="text-sm font-bold text-secondary-500 uppercase tracking-wider">
                     Informações de Contato
                   </h2>
                   <div className="mt-2 space-y-2">
-                    <p className="text-gray-900">
-                      <span className="font-medium">Email:</span> {user.email}
+                    <p className="text-primary-500">
+                      <span className="font-bold">Email:</span> {user.email}
                     </p>
-                    <p className="text-gray-900">
-                      <span className="font-medium">Telefone:</span>{" "}
+                    <p className="text-primary-500">
+                      <span className="font-bold">Telefone:</span>{" "}
                       {user.phone || "Não informado"}
                     </p>
                   </div>
@@ -106,20 +106,20 @@ export default function Profile() {
 
               <div className="space-y-4">
                 <div>
-                  <h2 className="text-sm font-medium text-gray-500 uppercase tracking-wider">
+                  <h2 className="text-sm font-bold text-secondary-500 uppercase tracking-wider">
                     Detalhes da Conta
                   </h2>
                   <div className="mt-2 space-y-2">
-                    <p className="text-gray-900">
-                      <span className="font-medium">Tipo de Usuário:</span>{" "}
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800">
+                    <p className="text-primary-500">
+                      <span className="font-bold">Tipo de Usuário:</span>{" "}
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-secondary-500 text-primary-500">
                         {user.userType === "HOUSE_OWNER"
                           ? "Proprietário"
                           : "Usuário"}
                       </span>
                     </p>
-                    <p className="text-gray-900">
-                      <span className="font-medium">Nome Completo:</span>{" "}
+                    <p className="text-primary-500">
+                      <span className="font-bold">Nome Completo:</span>{" "}
                       {user.name}
                     </p>
                   </div>
@@ -128,7 +128,7 @@ export default function Profile() {
             </div>
           </div>
 
-          <div className="bg-gray-50 px-8 py-4">
+          <div className="bg-tertiary-500 px-8 py-4">
             <div className="flex justify-end">
               {isEditing ? (
                 <form onSubmit={handleSubmit} className="w-full space-y-4">
@@ -139,7 +139,7 @@ export default function Profile() {
                       value={formData.firstName}
                       onChange={handleChange}
                       placeholder="Nome"
-                      className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+                      className="px-4 py-2 border rounded-lg bg-tertiary-500 text-primary-500 placeholder-primary-500/50 border-primary-500/20 focus:ring-2 focus:ring-secondary-500"
                     />
                     <input
                       type="text"
@@ -147,7 +147,7 @@ export default function Profile() {
                       value={formData.lastName}
                       onChange={handleChange}
                       placeholder="Sobrenome"
-                      className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+                      className="px-4 py-2 border rounded-lg bg-tertiary-500 text-primary-500 placeholder-primary-500/50 border-primary-500/20 focus:ring-2 focus:ring-secondary-500"
                     />
                     <input
                       type="text"
@@ -155,21 +155,21 @@ export default function Profile() {
                       value={formData.phone}
                       onChange={handleChange}
                       placeholder="Telefone"
-                      className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary-500"
+                      className="px-4 py-2 border rounded-lg bg-tertiary-500 text-primary-500 placeholder-primary-500/50 border-primary-500/20 focus:ring-2 focus:ring-secondary-500"
                     />
                   </div>
                   <div className="flex justify-end space-x-3">
                     <button
                       type="button"
                       onClick={() => setIsEditing(false)}
-                      className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                      className="px-4 py-2 border border-primary-500 rounded-full text-sm font-bold text-primary-500 bg-tertiary-500 hover:bg-primary-500 hover:text-tertiary-500 transition-colors"
                     >
                       Cancelar
                     </button>
                     <button
                       type="submit"
                       disabled={isLoading}
-                      className="px-4 py-2 bg-primary-500 text-white rounded-md shadow-sm text-sm font-medium hover:bg-primary-600 disabled:opacity-50"
+                      className="px-4 py-2 bg-secondary-500 text-primary-500 rounded-full shadow-md text-sm font-bold hover:bg-secondary-600 disabled:opacity-50 transition-colors"
                     >
                       {isLoading ? "Salvando..." : "Salvar"}
                     </button>
@@ -178,7 +178,7 @@ export default function Profile() {
               ) : (
                 <button
                   onClick={() => setIsEditing(true)}
-                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+                  className="px-6 py-3 bg-secondary-500 text-primary-500 rounded-full shadow-md text-sm font-bold hover:bg-secondary-600 transition-colors focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2"
                 >
                   Editar Perfil
                 </button>

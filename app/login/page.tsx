@@ -51,9 +51,9 @@ function LoginPage() {
           <Image 
             src="/logo.png" 
             alt="SportMap" 
-            width={150} 
-            height={150}
-            className="w-32 h-32 sm:w-40 sm:h-40 md:w-48 md:h-48"
+            width={300} 
+            height={300}
+            className="w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 bg-tertiary-500 rounded-full"
           />
         </div>
         <Card variant="modal">
