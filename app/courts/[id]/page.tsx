@@ -130,7 +130,7 @@ export default function CourtDetails() {
                 {court.amenities?.map((amenity) => (
                   <div
                     key={amenity}
-                    className="px-4 py-3 bg-primary-500 rounded-lg text-tertiary-500 hover:bg-primary-600 transition-colors"
+                    className="px-4 py-3 bg-tertiary-500 border border-primary-500 rounded-lg text-primary-500 font-bold transition-colors"
                   >
                     {AMENITY_LABELS[amenity as keyof typeof AMENITY_LABELS]}
                   </div>
@@ -147,7 +147,7 @@ export default function CourtDetails() {
                 {court.categories?.map((category) => (
                   <div
                     key={category}
-                    className="px-4 py-3 bg-primary-500 rounded-lg text-tertiary-500 hover:bg-primary-600 transition-colors"
+                    className="px-4 py-3 bg-tertiary-500 border border-primary-500 rounded-lg text-primary-500 font-bold transition-colors"
                   >
                     {CATEGORY_LABELS[category as keyof typeof CATEGORY_LABELS]}
                   </div>

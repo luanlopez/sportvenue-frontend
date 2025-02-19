@@ -121,33 +121,40 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
-      <div className="container mx-auto px-4">
-        <h1 className="text-2xl font-bold text-gray-900 mb-8">Editar Quadra</h1>
+    <div className="min-h-screen bg-tertiary-500 py-20">
+      <div className="container mx-auto px-4 mt-10">
+        <h1 className="text-2xl font-bold text-primary-500 mb-8">Editar Quadra</h1>
         
         <div className="flex flex-col lg:flex-row gap-8">
-
           <div className="flex-1">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Informações Básicas</h2>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500">
+                <h2 className="text-xl font-bold text-primary-500 mb-6">Informações Básicas</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Nome da Quadra</label>
+                    <label className="block text-sm font-bold text-primary-500 mb-2">Nome da Quadra</label>
                     <input
                       {...register("name")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
+                      className="w-full px-4 py-3 rounded-xl
+                        border border-primary-500/20
+                        bg-tertiary-500 text-primary-500 placeholder-primary-500/50
+                        focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
+                        transition-colors duration-200"
                     />
                     {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">Valor por Hora</label>
+                    <label className="block text-sm font-bold text-primary-500 mb-2">Valor por Hora</label>
                     <input
                       type="number"
                       step="0.01"
                       {...register("pricePerHour")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
+                      className="w-full px-4 py-3 rounded-xl
+                        border border-primary-500/20
+                        bg-tertiary-500 text-primary-500 placeholder-primary-500/50
+                        focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
+                        transition-colors duration-200"
                     />
                     {errors.pricePerHour && (
                       <p className="mt-1 text-sm text-red-600">{errors.pricePerHour.message}</p>
@@ -155,11 +162,15 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                   </div>
 
                   <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">Descrição</label>
+                    <label className="block text-sm font-bold text-primary-500 mb-2">Descrição</label>
                     <textarea
                       {...register("description")}
-                      rows={3}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
+                      rows={4}
+                      className="w-full px-4 py-3 rounded-xl
+                        border border-primary-500/20
+                        bg-tertiary-500 text-primary-500 placeholder-primary-500/50
+                        focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
+                        transition-colors duration-200 resize-none"
                     />
                     {errors.description && (
                       <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
@@ -168,54 +179,11 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                 </div>
               </div>
 
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Endereço</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="col-span-2">
-                    <label className="block text-sm font-medium text-gray-700">Endereço</label>
-                    <input
-                      {...register("address")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
-                    />
-                    {errors.address && <p className="mt-1 text-sm text-red-600">{errors.address.message}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Número</label>
-                    <input
-                      {...register("number")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
-                    />
-                    {errors.number && <p className="mt-1 text-sm text-red-600">{errors.number.message}</p>}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Bairro</label>
-                    <input
-                      {...register("neighborhood")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
-                    />
-                    {errors.neighborhood && (
-                      <p className="mt-1 text-sm text-red-600">{errors.neighborhood.message}</p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700">Cidade</label>
-                    <input
-                      {...register("city")}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-primary-500 focus:ring-primary-500 text-black"
-                    />
-                    {errors.city && <p className="mt-1 text-sm text-red-600">{errors.city.message}</p>}
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white p-6 rounded-lg shadow-sm">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">Horários e Categorias</h2>
+              <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500">
+                <h2 className="text-xl font-bold text-primary-500 mb-6">Horários e Categorias</h2>
                 <div className="space-y-8">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Categorias</label>
+                    <label className="block text-sm font-bold text-primary-500 mb-4">Categorias</label>
                     <div className="flex flex-wrap gap-2">
                       {Object.entries(CATEGORY_LABELS).map(([value, label]) => {
                         const categories = watch("categories") || [];
@@ -242,7 +210,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-3">Comodidades</label>
+                    <label className="block text-sm font-bold text-primary-500 mb-4">Comodidades</label>
                     <div className="flex flex-wrap gap-2">
                       {Object.entries(AMENITY_LABELS).map(([value, label]) => {
                         const amenities = watch("amenities") || [];
@@ -270,17 +238,22 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                 </div>
               </div>
 
-              <div className="flex justify-end space-x-4">
+              <div className="flex justify-end gap-4">
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="px-6 py-2 text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 transition-colors"
+                  className="px-6 py-3 text-primary-500 bg-tertiary-500 
+                    border-2 border-primary-500 rounded-full
+                    hover:bg-primary-500 hover:text-tertiary-500
+                    transition-colors duration-200 font-bold"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-2 text-white bg-primary-500 rounded-md hover:bg-primary-600 transition-colors"
+                  className="px-6 py-3 text-primary-500 bg-secondary-500 rounded-full
+                    hover:bg-secondary-600 transition-colors duration-200
+                    shadow-md hover:shadow-lg font-bold"
                 >
                   Salvar Alterações
                 </button>
@@ -289,12 +262,12 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
           </div>
 
           <div className="lg:w-96">
-            <div className="bg-white p-6 rounded-lg shadow-sm space-y-6 sticky top-8">
-              <h2 className="text-lg font-semibold text-gray-900">Imagens da Quadra</h2>
+            <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500 space-y-6 sticky top-8">
+              <h2 className="text-xl font-bold text-primary-500">Imagens da Quadra</h2>
               
               {currentImages.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-medium text-gray-700 mb-2">Imagens Atuais</h3>
+                  <h3 className="text-sm font-bold text-primary-500 mb-4">Imagens Atuais</h3>
                   <div className="grid grid-cols-2 gap-4">
                     {currentImages.map((imageUrl, index) => (
                       <div key={index} className="relative group">
@@ -334,15 +307,17 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
               )}
 
               <div className="space-y-4">
-                <h3 className="text-sm font-medium text-gray-700">Adicionar Novas Imagens</h3>
+                <h3 className="text-sm font-bold text-primary-500">Adicionar Novas Imagens</h3>
                 <div className="flex items-center justify-center w-full">
-                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
+                  <label className="flex flex-col items-center justify-center w-full h-32 
+                    border-2 border-primary-500/20 border-dashed rounded-xl cursor-pointer 
+                    bg-tertiary-500/50 hover:bg-primary-500/5 transition-colors">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <FiUpload className="w-8 h-8 mb-3 text-gray-400" />
-                      <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">Clique para fazer upload</span> ou arraste e solte
+                      <FiUpload className="w-8 h-8 mb-3 text-primary-500" />
+                      <p className="mb-2 text-sm text-primary-500">
+                        <span className="font-bold">Clique para fazer upload</span> ou arraste e solte
                       </p>
-                      <p className="text-xs text-gray-500">PNG, JPG ou JPEG (MAX. 800x400px)</p>
+                      <p className="text-xs text-primary-500/70">PNG, JPG ou JPEG (MAX. 800x400px)</p>
                     </div>
                     <input
                       type="file"
@@ -355,15 +330,17 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                 </div>
 
                 {selectedFiles.length > 0 && (
-                  <div className="space-y-2">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-gray-500">
+                      <p className="text-sm text-primary-500">
                         {selectedFiles.length} arquivo(s) selecionado(s)
                       </p>
                       <button
                         type="button"
                         onClick={handleUpload}
-                        className="px-4 py-2 text-sm text-white bg-primary-500 rounded-md hover:bg-primary-600 transition-colors"
+                        className="px-4 py-2 text-primary-500 bg-secondary-500 rounded-full
+                          hover:bg-secondary-600 transition-colors duration-200
+                          text-sm font-bold shadow-md hover:shadow-lg"
                       >
                         Enviar Imagens
                       </button>

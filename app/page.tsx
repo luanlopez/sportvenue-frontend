@@ -56,9 +56,10 @@ export default function Home() {
 
   return (
     <div className="min-h-screen bg-tertiary-500">
-      <div className="h-36"></div>
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="flex flex-col gap-4 mb-6">
+      <div className="h-24 sm:h-28 md:h-32 lg:h-36"></div>
+      
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+        <div className="flex flex-col gap-4 mb-4 sm:mb-6">
           <CategoryFilter
             selectedCategory={selectedCategory}
             onSelect={handleCategorySelect}
@@ -66,53 +67,58 @@ export default function Home() {
         </div>
 
         {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-            {[...Array(6)].map((_, index) => (
+          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+            {[...Array(8)].map((_, index) => (
               <CourtCardSkeleton key={index} />
             ))}
           </div>
         ) : data?.courts && data?.courts?.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {data.courts.map((court) => (
               <CourtCardNew key={court._id} court={court} />
             ))}
           </div>
         ) : (
-          <div className="col-span-full text-center py-8 text-secondary-500">
+          <div className="col-span-full text-center py-6 sm:py-8 text-primary-500">
             <p>Nenhuma quadra encontrada.</p>
           </div>
         )}
 
         {data?.totalPages && data?.totalPages > 1 && !isLoading && (
-          <Pagination
-            currentPage={currentPage}
-            totalPages={data?.totalPages || 0}
-            onPageChange={setCurrentPage}
-          />
+          <div className="mt-6 sm:mt-8">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={data?.totalPages || 0}
+              onPageChange={setCurrentPage}
+            />
+          </div>
         )}
       </div>
 
       {user?.userType === 'HOUSE_OWNER' && (
         <Link
           href="/courts/new"
-          className="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 px-4 sm:px-6 py-2 sm:py-3 
-            bg-primary-500 text-white rounded-full
-            hover:bg-primary-600 transition-all duration-300 shadow-lg hover:shadow-xl
+          className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 
+            px-4 sm:px-5 py-2 sm:py-3
+            bg-primary-500 text-tertiary-500 rounded-full
+            hover:bg-primary-600 transition-all duration-300 
+            shadow-lg hover:shadow-xl
             focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
             flex items-center gap-2 z-10
-            text-sm sm:text-base"
+            text-sm sm:text-base font-bold"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
-            strokeWidth={1.5}
+            strokeWidth={2}
             stroke="currentColor"
             className="w-4 h-4 sm:w-5 sm:h-5"
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
-          Criar Quadra
+          <span className="hidden xs:inline">Criar Quadra</span>
+          <span className="xs:hidden">Criar</span>
         </Link>
       )}
     </div>

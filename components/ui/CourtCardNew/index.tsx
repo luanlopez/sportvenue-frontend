@@ -61,9 +61,9 @@ export function CourtCardNew({ court }: CourtCardNewProps) {
           {user?.userType === 'HOUSE_OWNER' && (
             <Link
               href={`/courts/${court._id}/edit`}
-              className="px-4 py-2 text-tertiary-500 rounded-full
+              className="px-4 py-2 text-tertiary-500 bg-primary-500 rounded-full
                 border-2 border-tertiary-500
-                hover:bg-tertiary-500 hover:text-primary-500
+                hover:bg-tertiary-500 hover:text-primary-500 hover:border-primary-500
                 transition-all duration-300
                 focus:outline-none focus:ring-2 focus:ring-tertiary-500 focus:ring-offset-2
                 flex items-center justify-center
