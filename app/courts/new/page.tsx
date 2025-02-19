@@ -115,7 +115,7 @@ export default function CreateCourt() {
   };
 
   return (
-    <div className="min-h-screen bg-tertiary-500 py-20">
+    <div className="min-h-screen bg-tertiary-500 py-20 sm:py-20 mt-28 sm:mt-0">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 mt-10">
         <h1 className="text-2xl sm:text-3xl font-bold text-primary-500 mb-8">Criar Nova Quadra</h1>
         

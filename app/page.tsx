@@ -55,10 +55,8 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-tertiary-500">
-      <div className="h-24 sm:h-28 md:h-32 lg:h-36"></div>
-      
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-6">
+    <div className="min-h-screen bg-tertiary-500 overflow-x-hidden py-20 sm:py-20 sm:mt-10 mt-20">
+      <div className="w-full max-w-8xl mx-auto px-2 sm:px-4 lg:px-20 py-20 sm:py-6">
         <div className="flex flex-col gap-4 mb-4 sm:mb-6">
           <CategoryFilter
             selectedCategory={selectedCategory}

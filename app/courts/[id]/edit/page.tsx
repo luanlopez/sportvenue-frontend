@@ -121,27 +121,28 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
   }
 
   return (
-    <div className="min-h-screen bg-tertiary-500 py-20">
-      <div className="container mx-auto px-4 mt-10">
-        <h1 className="text-2xl font-bold text-primary-500 mb-8">Editar Quadra</h1>
+    <div className="min-h-screen bg-tertiary-500 py-20 sm:py-20 mt-28 sm:mt-0">
+      <div className="container mx-auto px-2 sm:px-4 lg:px-8">
+        <h1 className="text-xl sm:text-2xl font-bold text-primary-500 mb-6 sm:mb-8">Editar Quadra</h1>
         
-        <div className="flex flex-col lg:flex-row gap-8">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
           <div className="flex-1">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-              <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500">
-                <h2 className="text-xl font-bold text-primary-500 mb-6">Informações Básicas</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+              <div className="bg-tertiary-500 p-4 sm:p-8 rounded-2xl shadow-md border border-primary-500">
+                <h2 className="text-lg sm:text-xl font-bold text-primary-500 mb-4 sm:mb-6">Informações Básicas</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
                   <div>
                     <label className="block text-sm font-bold text-primary-500 mb-2">Nome da Quadra</label>
                     <input
                       {...register("name")}
-                      className="w-full px-4 py-3 rounded-xl
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl
                         border border-primary-500/20
                         bg-tertiary-500 text-primary-500 placeholder-primary-500/50
                         focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
-                        transition-colors duration-200"
+                        transition-colors duration-200
+                        text-sm sm:text-base"
                     />
-                    {errors.name && <p className="mt-1 text-sm text-red-600">{errors.name.message}</p>}
+                    {errors.name && <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.name.message}</p>}
                   </div>
 
                   <div>
@@ -150,14 +151,15 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                       type="number"
                       step="0.01"
                       {...register("pricePerHour")}
-                      className="w-full px-4 py-3 rounded-xl
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl
                         border border-primary-500/20
                         bg-tertiary-500 text-primary-500 placeholder-primary-500/50
                         focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
-                        transition-colors duration-200"
+                        transition-colors duration-200
+                        text-sm sm:text-base"
                     />
                     {errors.pricePerHour && (
-                      <p className="mt-1 text-sm text-red-600">{errors.pricePerHour.message}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.pricePerHour.message}</p>
                     )}
                   </div>
 
@@ -166,22 +168,23 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                     <textarea
                       {...register("description")}
                       rows={4}
-                      className="w-full px-4 py-3 rounded-xl
+                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl
                         border border-primary-500/20
                         bg-tertiary-500 text-primary-500 placeholder-primary-500/50
                         focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
-                        transition-colors duration-200 resize-none"
+                        transition-colors duration-200
+                        text-sm sm:text-base resize-none"
                     />
                     {errors.description && (
-                      <p className="mt-1 text-sm text-red-600">{errors.description.message}</p>
+                      <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.description.message}</p>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500">
-                <h2 className="text-xl font-bold text-primary-500 mb-6">Horários e Categorias</h2>
-                <div className="space-y-8">
+              <div className="bg-tertiary-500 p-4 sm:p-8 rounded-2xl shadow-md border border-primary-500">
+                <h2 className="text-lg sm:text-xl font-bold text-primary-500 mb-4 sm:mb-6">Horários e Categorias</h2>
+                <div className="space-y-6 sm:space-y-8">
                   <div>
                     <label className="block text-sm font-bold text-primary-500 mb-4">Categorias</label>
                     <div className="flex flex-wrap gap-2">
@@ -205,7 +208,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                       })}
                     </div>
                     {errors.categories && (
-                      <p className="mt-2 text-sm text-red-600">{errors.categories.message}</p>
+                      <p className="mt-2 text-xs sm:text-sm text-red-600">{errors.categories.message}</p>
                     )}
                   </div>
 
@@ -232,28 +235,30 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                       })}
                     </div>
                     {errors.amenities && (
-                      <p className="mt-2 text-sm text-red-600">{errors.amenities.message}</p>
+                      <p className="mt-2 text-xs sm:text-sm text-red-600">{errors.amenities.message}</p>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex justify-end gap-4">
+              <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="px-6 py-3 text-primary-500 bg-tertiary-500 
+                  className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 text-primary-500 bg-tertiary-500 
                     border-2 border-primary-500 rounded-full
                     hover:bg-primary-500 hover:text-tertiary-500
-                    transition-colors duration-200 font-bold"
+                    transition-colors duration-200 font-bold
+                    text-sm sm:text-base"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="px-6 py-3 text-primary-500 bg-secondary-500 rounded-full
+                  className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 text-primary-500 bg-secondary-500 rounded-full
                     hover:bg-secondary-600 transition-colors duration-200
-                    shadow-md hover:shadow-lg font-bold"
+                    shadow-md hover:shadow-lg font-bold
+                    text-sm sm:text-base"
                 >
                   Salvar Alterações
                 </button>
@@ -262,8 +267,8 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
           </div>
 
           <div className="lg:w-96">
-            <div className="bg-tertiary-500 p-8 rounded-2xl shadow-md border border-primary-500 space-y-6 sticky top-8">
-              <h2 className="text-xl font-bold text-primary-500">Imagens da Quadra</h2>
+            <div className="bg-tertiary-500 p-4 sm:p-8 rounded-2xl shadow-md border border-primary-500 space-y-4 sm:space-y-6 sticky top-24">
+              <h2 className="text-lg sm:text-xl font-bold text-primary-500">Imagens da Quadra</h2>
               
               {currentImages.length > 0 && (
                 <div>

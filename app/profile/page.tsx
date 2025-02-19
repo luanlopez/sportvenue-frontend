@@ -62,7 +62,7 @@ export default function Profile() {
   if (!user) return <LoadingState />;
 
   return (
-    <div className="min-h-screen bg-tertiary-500 px-20 py-20">
+    <div className="min-h-screen bg-tertiary-500 px-20 py-20 sm:py-20 mt-28 sm:mt-0">
       <div className="container max-w-2xl mx-auto px-4 mt-10">
         <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md overflow-hidden">
           <div className="p-8">
