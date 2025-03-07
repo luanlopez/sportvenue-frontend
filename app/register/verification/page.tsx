@@ -14,33 +14,36 @@ export default function VerificationCode() {
   const router = useRouter();
 
   const handleChange = (index: number, value: string) => {
-    // Se for uma operação de colar (valor maior que 1 caractere)
     if (value.length > 1) {
-      const digits = value.slice(0, 6).split('');
+      const cleanValue = value.replace(/[^0-9]/g, '').slice(0, 6);
+      const digits = cleanValue.split('');
       const newCode = [...code];
       
-      // Preenche os campos com os dígitos colados
-      digits.forEach((digit, i) => {
-        if (i < 6) newCode[i] = digit;
-      });
+      for (let i = 0; i < 6; i++) {
+        newCode[i] = digits[i] || '';
+      }
       
       setCode(newCode);
-      
-      // Foca no último campo preenchido ou no próximo vazio
-      const lastIndex = Math.min(digits.length, 5);
-      const nextInput = document.getElementById(`code-${lastIndex}`);
-      nextInput?.focus();
+
+      if (digits.length >= 6) {
+        const lastInput = document.getElementById('code-5');
+        lastInput?.focus();
+      } else {
+        const nextEmptyIndex = digits.length;
+        if (nextEmptyIndex < 6) {
+          const nextInput = document.getElementById(`code-${nextEmptyIndex}`);
+          nextInput?.focus();
+        }
+      }
       return;
     }
 
-    // Comportamento normal para digitação
-    if (value.length > 1) return;
+    if (!/^\d*$/.test(value)) return;
     
     const newCode = [...code];
     newCode[index] = value;
     setCode(newCode);
 
-    // Move to next input
     if (value && index < 5) {
       const nextInput = document.getElementById(`code-${index + 1}`);
       nextInput?.focus();
@@ -51,6 +54,25 @@ export default function VerificationCode() {
     if (e.key === 'Backspace' && !code[index] && index > 0) {
       const prevInput = document.getElementById(`code-${index - 1}`);
       prevInput?.focus();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pastedData = e.clipboardData.getData('text');
+    const cleanValue = pastedData.replace(/[^0-9]/g, '').slice(0, 6);
+    const digits = cleanValue.split('');
+    const newCode = [...code];
+    
+    for (let i = 0; i < 6; i++) {
+      newCode[i] = digits[i] || '';
+    }
+    
+    setCode(newCode);
+
+    if (digits.length >= 6) {
+      const lastInput = document.getElementById('code-5');
+      lastInput?.focus();
     }
   };
 
@@ -86,8 +108,14 @@ export default function VerificationCode() {
     <main className="min-h-screen p-8 flex justify-center items-center flex-col relative">
       <AnimatedBackground />
       <div className="relative z-10">
-        <div className="flex flex-col items-center justify-center">
-          <Image src="/logo.png" alt="SportMap" width={200} height={200} />
+      <div className="flex flex-col items-center justify-center mb-6 sm:mb-8">
+          <Image 
+            src="/logo.png" 
+            alt="SportMap" 
+            width={300} 
+            height={300}
+            className="w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 bg-tertiary-500 rounded-full"
+          />
         </div>
         <Card>
           <div className="max-w-md mx-auto text-center">
@@ -109,6 +137,7 @@ export default function VerificationCode() {
                     value={digit}
                     onChange={(e) => handleChange(index, e.target.value)}
                     onKeyDown={(e) => handleKeyDown(index, e)}
+                    onPaste={handlePaste}
                     className="w-12 h-12 text-center text-2xl font-bold rounded-lg border-2 border-gray-300 
                       focus:border-primary-500 focus:ring-primary-500 text-gray-900"
                     disabled={isSubmitting}

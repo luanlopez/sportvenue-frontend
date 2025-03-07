@@ -46,12 +46,14 @@ export default function PaymentsPage() {
 
   const getStatusText = (status: string) => {
     switch (status) {
-      case "completed":
+      case "PAID":
         return "Pago";
-      case "pending":
+      case "PENDENTE":
         return "Aguardando";
-      case "failed":
-        return "Falhou";
+      case "EXPIRED":
+        return "Expirado";
+      case "CANCELED":
+        return "Cancelado";
       default:
         return status;
     }
@@ -137,7 +139,7 @@ export default function PaymentsPage() {
                           {new Intl.NumberFormat("pt-BR", {
                             style: "currency",
                             currency: "BRL",
-                          }).format(payment.amount)}
+                          }).format(payment.amount / 100)}
                         </span>
                       </td>
                       <td className="px-6 py-5 whitespace-nowrap">
@@ -156,13 +158,10 @@ export default function PaymentsPage() {
                       </td>
                       <td className="px-6 py-5 whitespace-nowrap">
                         {payment.paymentMethod === "boleto" &&
-                          payment.status === "pending" && (
+                          payment.status === "PENDING" && (
                             <button
                               onClick={() =>
-                                window.open(
-                                  `/api/payment/boleto/${payment.stripePaymentIntentId}`,
-                                  "_blank"
-                                )
+                                window.open(payment.boletoUrl, "_blank")
                               }
                               className="inline-flex items-center px-4 py-2 rounded-full
                             bg-secondary-500 text-primary-500 hover:bg-secondary-600

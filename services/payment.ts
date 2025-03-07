@@ -17,9 +17,10 @@ interface Payment {
   amount: number;
   userId: string;
   stripePaymentIntentId: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: 'PENDING' | 'PAID' | 'EXPIRED' | 'CANCELED';
   paymentMethod: 'boleto' | 'pix';
   boletoExpirationDate?: Date;
+  boletoUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }

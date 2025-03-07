@@ -84,22 +84,20 @@ export function ApprovalModal({
             <div>
               <h4 className="text-sm font-medium text-secondary-500 mb-2">Informações da Quadra</h4>
               <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                <p className="text-lg font-semibold text-gray-900">{courtName}</p>
-                <p className="text-sm text-secondary-500">{courtAddress}</p>
-                <p className="text-sm text-secondary-500">
+                <div className="text-lg font-semibold text-gray-900">{courtName}</div>
+                <div className="text-sm text-secondary-500">{courtAddress}</div>
+                <div className="text-sm text-secondary-500">
                   Valor: <span className="font-medium text-primary-500">R$ {price.toFixed(2)}</span>
-                </p>
-                <p className="text-sm text-secondary-500 flex flex-row gap-2">
+                </div>
+                <div className="text-sm text-secondary-500 flex flex-row gap-2">
                   Tipo de reserva:
-                  <p className="font-medium text-primary-500">
+                  <span className="font-medium text-primary-500">
                     {reservationType === "MONTHLY" ? "Mensal" : "Avulso"}
-                  </p>
-                </p>
-                <p className="text-sm text-secondary-500">
-                  Data e Hora: <span className="font-medium">
-                    {reservedStartTime}
                   </span>
-                </p>
+                </div>
+                <div className="text-sm text-secondary-500">
+                  Data e Hora: <span className="font-medium">{reservedStartTime}</span>
+                </div>
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-secondary-500">Status:</span>
                   <span className={`
@@ -120,15 +118,15 @@ export function ApprovalModal({
             <div>
               <h4 className="text-sm font-medium text-secondary-500 mb-2">Informações do Usuário</h4>
               <div className="bg-gray-50 rounded-lg p-4 space-y-2">
-                <p className="text-gray-900">
+                <div className="text-gray-900">
                   <span className="font-medium">Nome:</span> {user?.firstName || 'Não informado'} {user?.lastName || 'Não informado'}
-                </p>
-                <p className="text-gray-900">
+                </div>
+                <div className="text-gray-900">
                   <span className="font-medium">Email:</span> {user?.email || 'Não informado'}
-                </p>
-                <p className="text-gray-900">
+                </div>
+                <div className="text-gray-900">
                   <span className="font-medium">Telefone:</span> {user?.phone || 'Não informado'}
-                </p>
+                </div>
                 {onApprove && (
                   <button
                     onClick={handleWhatsAppClick}

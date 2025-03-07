@@ -11,6 +11,7 @@ import { Reservation } from "@/services/reservations";
 import { FaMapMarkerAlt, FaClock, FaMoneyBillWave } from "react-icons/fa";
 import { IoImageOutline } from "react-icons/io5";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import Image from "next/image";
 
 const ITEMS_PER_PAGE = 6;
 
@@ -109,10 +110,12 @@ export default function Bookings() {
               >
                 <div className="relative h-48 rounded-t-2xl overflow-hidden">
                   {reservation.courtId.images?.[0] ? (
-                    <img
+                    <Image
                       src={reservation.courtId.images[0]}
                       alt={reservation.courtId.name}
                       className="w-full h-full object-cover"
+                      width={1000}
+                      height={1000}
                     />
                   ) : (
                     <div className="w-full h-full bg-tertiary-500/50 flex flex-col items-center justify-center">

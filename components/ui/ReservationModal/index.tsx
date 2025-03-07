@@ -137,38 +137,6 @@ export function ReservationModal({
               </div>
             )}
 
-            {selectedHour && (
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-gray-500 mb-2">
-                  Resumo da Reserva
-                </h4>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Tipo de reserva:</span>
-                  <span className="font-semibold text-gray-900">
-                    {reservationType === ReservationType.MONTHLY ? "Mensal" : "Avulso"}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-gray-600">Dia selecionado:</span>
-                  <span className="font-semibold text-gray-900">
-                    {DAYS[selectedDay as keyof typeof DAYS]}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-gray-600">Horário selecionado:</span>
-                  <span className="font-semibold text-gray-900">
-                    {selectedHour}
-                  </span>
-                </div>
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-gray-600">Valor total:</span>
-                  <span className="font-semibold text-primary-600">
-                    R$ {court?.pricePerHour?.toFixed(2) || 0}
-                  </span>
-                </div>
-              </div>
-            )}
-
             <div>
               <label className="flex items-center text-sm font-medium text-gray-500 mb-3">
                 <FaCalendarAlt className="w-4 h-4 mr-2" />

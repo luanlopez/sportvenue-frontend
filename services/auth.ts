@@ -5,6 +5,10 @@ interface SignInResponse {
   refreshToken: string;
 }
 
+interface SignInCredentials {
+  encryptedData: string;
+}
+
 interface RegisterDTO {
   firstName: string;
   lastName: string;
@@ -15,12 +19,7 @@ interface RegisterDTO {
 }
 
 interface PreRegisterDTO {
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  phone: string;
-  userType?: "USER" | "HOUSE_OWNER";
+  encryptedData: string;
 }
 
 interface CompleteRegistrationDTO {
@@ -28,7 +27,7 @@ interface CompleteRegistrationDTO {
 }
 
 export const authService = {
-  async signIn(credentials: { email: string; password: string }): Promise<SignInResponse> {
+  async signIn(credentials: SignInCredentials): Promise<SignInResponse> {
     const response = await api.post('/auth/login', credentials);
     return response.data;
   },

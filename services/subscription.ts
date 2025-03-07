@@ -26,7 +26,6 @@ const DEFAULT_FEATURES = {
     "Sistema de reservas online",
     "Gestão de horários disponíveis",
     "Suporte via email",
-    "Sem taxas por reserva",
     "Contato direto com clientes",
     "Tem direito a 10 quadras"
   ],
@@ -35,9 +34,7 @@ const DEFAULT_FEATURES = {
     "Sistema de reservas online",
     "Gestão de horários disponíveis",
     "Suporte prioritário 24/7",
-    "Sem taxas por reserva",
     "Contato direto com clientes",
-    "Exposição premium nos resultados",
     "Relatórios avançados",
     "Quadras ilimitadas"
   ],

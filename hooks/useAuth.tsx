@@ -26,11 +26,15 @@ interface User {
   subscriptionPlanId?: string;
 }
 
+interface SignInCredentials {
+  encryptedData: string;
+}
+
 interface AuthContextData {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  signIn: (credentials: { email: string; password: string }) => Promise<void>;
+  signIn: (credentials: SignInCredentials) => Promise<void>;
   signOut: () => Promise<void>;
   setUser: (user: User | null) => void;
 }
@@ -81,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, [user, router]);
 
-  const signIn = async (credentials: { email: string; password: string }) => {
+  const signIn = async (credentials: SignInCredentials) => {
     const { accessToken, refreshToken } = await authService.signIn(credentials);
     setTokens(accessToken, refreshToken);
 

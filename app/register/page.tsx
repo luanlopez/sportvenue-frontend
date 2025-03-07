@@ -12,6 +12,7 @@ import { Spinner } from "@/components/ui/Spinner";
 import { showToast } from "@/components/ui/Toast";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth";
+import CryptoJS from "crypto-js";
 
 enum UserType {
   USER = "USER",
@@ -49,6 +50,15 @@ const validationSchema = Yup.object({
 export default function Register() {
   const router = useRouter();
 
+  const encryptData = (data: Omit<FormValues, 'confirmPassword'>) => {
+    const secretKey = process.env.NEXT_PUBLIC_ENCRYPTION_KEY;
+    if (!secretKey) {
+      throw new Error("Chave de criptografia não definida");
+    }
+    const jsonString = JSON.stringify(data);
+    return CryptoJS.AES.encrypt(jsonString, secretKey).toString();
+  };
+
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
@@ -62,7 +72,8 @@ export default function Register() {
         phone: values.phone,
       };
 
-      await authService.preRegister(registerData);
+      const encryptedData = encryptData(registerData);
+      await authService.preRegister({ encryptedData });
 
       showToast.success(
         "Código enviado!",
@@ -86,8 +97,14 @@ export default function Register() {
     <main className="min-h-screen p-8 flex justify-center items-center flex-col relative">
       <AnimatedBackground />
       <div className="relative z-10">
-        <div className="flex flex-col items-center justify-center">
-          <Image src="/logo.png" alt="SportMap" width={200} height={200} />
+      <div className="flex flex-col items-center justify-center mb-6 sm:mb-8">
+          <Image 
+            src="/logo.png" 
+            alt="SportMap" 
+            width={300} 
+            height={300}
+            className="w-32 h-32 sm:w-40 sm:h-40 md:w-52 md:h-52 bg-tertiary-500 rounded-full"
+          />
         </div>
         <Card>
           <Formik
