@@ -5,7 +5,7 @@ interface MongoDBPayment {
   userId: { $oid: string };
   amount: number;
   stripePaymentIntentId: string;
-  status: 'pending' | 'completed' | 'failed';
+  status: 'PENDING' | 'PAID' | 'EXPIRED' | 'CANCELED';
   paymentMethod: 'boleto' | 'pix';
   boletoExpirationDate?: string;
   createdAt: string;
