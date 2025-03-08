@@ -19,7 +19,7 @@ export const cepService = {
     const data = await response.json();
 
     if (data.erro) {
-      throw new Error('CEP não encontrado');
+      throw new Error('CEP não encontrado.');
     }
 
     return data;
