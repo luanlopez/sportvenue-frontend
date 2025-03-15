@@ -27,6 +27,11 @@ interface CompleteRegistrationDTO {
   code: string;
 }
 
+export interface ResetPasswordDTO {
+  code: string;
+  newPassword: string;
+}
+
 export const authService = {
   async signIn(credentials: SignInCredentials): Promise<SignInResponse> {
     const response = await api.post('/auth/login', credentials);
@@ -78,5 +83,15 @@ export const authService = {
       console.error("Erro ao atualizar o tipo de usuário:", error);
       throw error;
     }
+  },
+
+  async forgotPassword(email: string) {
+    const response = await api.post("/auth/forgot-password", { email });
+    return response.data;
+  },
+
+  async resetPassword(data: ResetPasswordDTO) {
+    const response = await api.post("/auth/reset-password", data);
+    return response.data;
   }
 }; 

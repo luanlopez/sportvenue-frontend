@@ -8,35 +8,60 @@ import Image from "next/image";
 import { AnimatedBackground } from "@/components/background/AnimatedBackground";
 import { Spinner } from "@/components/ui/Spinner";
 import { showToast } from "@/components/ui/Toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { authService } from "@/services/auth";
+import { Password } from "@/components/form/password";
 
 const validationSchema = Yup.object({
-  email: Yup.string().required("Email é obrigatório").email("Email inválido"),
+  code: Yup.string()
+    .required("Código é obrigatório")
+    .length(6, "Código deve ter 6 dígitos"),
+  newPassword: Yup.string()
+    .required("Nova senha é obrigatória")
+    .min(8, "Senha deve ter no mínimo 8 caracteres")
+    .matches(
+      /^(?=.*[A-Za-z])(?=.*\d)/,
+      "Senha deve conter pelo menos uma letra e um número"
+    ),
+  confirmPassword: Yup.string()
+    .required("Confirmação de senha é obrigatória")
+    .oneOf([Yup.ref("newPassword")], "As senhas não conferem"),
 });
 
 interface FormValues {
-  email: string;
+  code: string;
+  newPassword: string;
+  confirmPassword: string;
 }
 
-export default function ForgotPasswordPage() {
+export default function ResetPasswordPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+
+  if (!email) {
+    router.push("/forgot-password");
+    return null;
+  }
 
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     try {
-      await authService.forgotPassword(values.email);
+      await authService.resetPassword({
+        code: values.code,
+        newPassword: values.newPassword,
+      });
       showToast.success(
-        "Código enviado",
-        "Verifique seu email para redefinir sua senha"
+        "Senha alterada",
+        "Sua senha foi alterada com sucesso"
       );
-      router.push(`/reset-password?email=${values.email}`);
+      router.push("/login");
     } catch {
       showToast.error(
         "Erro",
-        "Não foi possível enviar o código. Tente novamente."
+        "Não foi possível alterar sua senha. Verifique o código e tente novamente."
       );
     } finally {
       setSubmitting(false);
@@ -58,24 +83,39 @@ export default function ForgotPasswordPage() {
         </div>
         <Card variant="modal">
           <div className="text-center mb-6">
-            <h1 className="text-2xl font-bold text-primary-500">Esqueceu sua senha?</h1>
+            <h1 className="text-2xl font-bold text-primary-500">Redefinir Senha</h1>
             <p className="text-sm text-primary-500/70 mt-2">
-              Digite seu email para receber um código de recuperação
+              Digite o código recebido no email {email} e sua nova senha
             </p>
           </div>
 
           <Formik
-            initialValues={{ email: "" }}
+            initialValues={{ code: "", newPassword: "", confirmPassword: "" }}
             validationSchema={validationSchema}
             onSubmit={handleSubmit}
           >
             {({ isSubmitting }) => (
               <Form className="space-y-6">
                 <Input
-                  name="email"
-                  type="email"
-                  label="Email"
-                  placeholder="Digite seu email"
+                  name="code"
+                  type="text"
+                  label="Código de verificação"
+                  placeholder="Digite o código recebido"
+                  disabled={isSubmitting}
+                  maxLength={6}
+                />
+
+                <Password
+                  name="newPassword"
+                  label="Nova senha"
+                  placeholder="Digite sua nova senha"
+                  disabled={isSubmitting}
+                />
+
+                <Password
+                  name="confirmPassword"
+                  label="Confirmar senha"
+                  placeholder="Confirme sua nova senha"
                   disabled={isSubmitting}
                 />
 
@@ -95,16 +135,16 @@ export default function ForgotPasswordPage() {
                     {isSubmitting ? (
                       <>
                         <Spinner />
-                        <span>Enviando...</span>
+                        <span>Alterando senha...</span>
                       </>
                     ) : (
-                      "Enviar código"
+                      "Alterar senha"
                     )}
                   </button>
 
                   <button
                     type="button"
-                    onClick={() => router.push("/login")}
+                    onClick={() => router.push("/forgot-password")}
                     className="w-full px-4 py-2.5 sm:py-3 text-sm sm:text-base text-primary-500 rounded-md
                       border-2 border-primary-500
                       hover:bg-primary-50
@@ -113,7 +153,7 @@ export default function ForgotPasswordPage() {
                       shadow-lg hover:shadow-xl
                       flex items-center justify-center"
                   >
-                    Voltar para login
+                    Reenviar código
                   </button>
                 </div>
               </Form>
