@@ -48,7 +48,7 @@ export default function PaymentsPage() {
     switch (status) {
       case "PAID":
         return "Pago";
-      case "PENDENTE":
+      case "PENDING":
         return "Aguardando";
       case "EXPIRED":
         return "Expirado";

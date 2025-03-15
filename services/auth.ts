@@ -16,6 +16,7 @@ interface RegisterDTO {
   password: string;
   phone: string;
   userType?: 'USER' | 'HOUSE_OWNER';
+  planID?: string;
 }
 
 interface PreRegisterDTO {
