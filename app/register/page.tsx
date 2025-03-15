@@ -26,6 +26,8 @@ interface FormValues {
   password: string;
   confirmPassword: string;
   phone: string;
+  userType: UserType;
+  planID?: string;
 }
 
 const validationSchema = Yup.object({
@@ -59,6 +61,10 @@ export default function Register() {
     return CryptoJS.AES.encrypt(jsonString, secretKey).toString();
   };
 
+  const searchParams = new URLSearchParams(window.location.search);
+  const type = searchParams.get('type');
+  const plan = searchParams.get('plan');
+
   const handleSubmit = async (
     values: FormValues,
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
@@ -70,6 +76,8 @@ export default function Register() {
         email: values.email,
         password: values.password,
         phone: values.phone,
+        userType: type ? (type as UserType) : values.userType,
+        ...(plan && { planID: plan })
       };
 
       const encryptedData = encryptData(registerData);

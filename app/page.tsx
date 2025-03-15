@@ -99,11 +99,13 @@ export default function Home() {
           className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 
             px-4 sm:px-5 py-2 sm:py-3
             bg-primary-500 text-tertiary-500 rounded-full
-            hover:bg-primary-600 transition-all duration-300 
+            hover:bg-primary-600 hover:scale-110 active:scale-95
+            transition-all duration-300 ease-out
             shadow-lg hover:shadow-xl
             focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
             flex items-center gap-2 z-10
-            text-sm sm:text-base font-bold"
+            text-sm sm:text-base font-bold
+            transform-gpu"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -111,7 +113,7 @@ export default function Home() {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className="w-4 h-4 sm:w-5 sm:h-5"
+            className="w-4 h-4 sm:w-5 sm:h-5 transition-transform duration-300 group-hover:rotate-90"
           >
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
           </svg>
