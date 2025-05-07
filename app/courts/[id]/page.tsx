@@ -13,6 +13,7 @@ import { MdSportsSoccer } from "react-icons/md";
 import { useAuth } from "@/hooks/useAuth";
 import { WeeklyScheduleDisplay } from "@/components/ui/WeeklyScheduleDisplay";
 import { AuthRequiredModal } from "@/components/ui/AuthRequiredModal";
+import { CourtMap } from "@/components/ui/CourtMap";
 
 export default function CourtDetails() {
   const { id } = useParams();
@@ -158,6 +159,16 @@ export default function CourtDetails() {
             <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
               <h2 className="text-2xl font-bold text-primary-500 mb-4">Horários de Funcionamento</h2>
               <WeeklyScheduleDisplay schedule={court.weeklySchedule} />
+            </div>
+
+            <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
+              <h2 className="text-2xl font-bold text-primary-500 mb-4">Localização</h2>
+              <CourtMap
+                address={court.address}
+                number={court.number}
+                neighborhood={court.neighborhood}
+                city={court.city}
+              />
             </div>
           </div>
 
