@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   GlobeAltIcon,
   Bars3Icon,
   MagnifyingGlassIcon,
 } from "@heroicons/react/24/outline";
-import { FaVolleyballBall } from "react-icons/fa";
+import { FaVolleyballBall, FaBell } from "react-icons/fa";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import Image from "next/image";
@@ -26,13 +26,28 @@ const languages = [
 ];
 
 export function Header() {
-  const { user, signOut } = useAuth();
+  const { user, signOut, ownerPendingInvoices } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isLanguageModalOpen, setIsLanguageModalOpen] = useState(false);
   const [selectedLanguage, setSelectedLanguage] = useState("pt");
   const [searchValue, setSearchValue] = useState("");
+  const [showNotifications, setShowNotifications] = useState(false);
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  const hasPending = user?.userType === "HOUSE_OWNER" && ownerPendingInvoices;
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest(".notifications-container")) {
+        setShowNotifications(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,7 +63,7 @@ export function Header() {
   return (
     <header className="bg-tertiary-500 fixed w-full top-0 z-[100] transition-all duration-500 ease-in-out">
       <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Mobile Header (< 640px) */}
+
         <div className="sm:hidden py-4">
           <div className="flex items-center justify-between mb-4">
             <Link href="/" className="flex-shrink-0">
@@ -69,6 +84,50 @@ export function Header() {
               >
                 <GlobeAltIcon className="h-5 w-5" />
               </button>
+
+              <div className="relative notifications-container">
+                <button
+                  onClick={() => setShowNotifications((v) => !v)}
+                  className="relative p-2 text-primary-500 hover:text-primary-600 transition-colors"
+                  aria-label="Notificações"
+                >
+                  <FaBell className="h-5 w-5" />
+                  {hasPending && (
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-tertiary-500"></span>
+                  )}
+                </button>
+                {showNotifications && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white border border-red-300 rounded-xl shadow-2xl z-50 p-5 animate-enter">
+                    {hasPending ? (
+                      <div className="flex items-start gap-3">
+                        <span className="mt-1 text-red-500 animate-pulse">
+                          <FaBell className="w-6 h-6" />
+                        </span>
+                        <div>
+                          <div className="font-bold text-red-700 text-lg mb-1 flex items-center gap-2">
+                            Boletos pendentes
+                            <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                          </div>
+                          <div className="text-sm text-red-900 mb-3">
+                            Você possui boletos pendentes.<br />
+                            <span className="font-semibold">Entre em contato com o suporte para regularizar sua situação.</span>
+                          </div>
+                          <a
+                            href="mailto:sportmap@suporte.com.br?subject=Regularização%20de%20Boletos%20Pendentes"
+                            className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors text-sm"
+                          >
+                            Enviar e-mail para o suporte
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-gray-500 text-sm text-center">
+                        Nenhuma notificação.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
 
               <div className="relative">
                 <button
@@ -123,6 +182,15 @@ export function Header() {
                               onClick={() => setIsDropdownOpen(false)}
                             >
                               Pagamentos
+                            </Link>
+                          )}
+                          {user?.userType === "HOUSE_OWNER" && (
+                            <Link
+                              href="/dashboards"
+                              className="px-4 py-2 hover:bg-primary-500 hover:text-tertiary-500 text-sm block text-gray-900"
+                              onClick={() => setIsDropdownOpen(false)}
+                            >
+                              Dashboards
                             </Link>
                           )}
                           <div className="border-t my-1" />
@@ -182,7 +250,6 @@ export function Header() {
           </form>
         </div>
 
-        {/* Tablet and Desktop Header (≥ 640px) */}
         <div className="hidden sm:flex items-center justify-between h-24">
           <Link href="/" className="flex-shrink-0">
             <Image
@@ -239,6 +306,50 @@ export function Header() {
               <GlobeAltIcon className="h-6 w-6" />
             </button>
 
+            <div className="relative notifications-container">
+              <button
+                onClick={() => setShowNotifications((v) => !v)}
+                className="relative p-2 text-primary-500 hover:text-primary-600 transition-colors"
+                aria-label="Notificações"
+              >
+                <FaBell className="h-6 w-6" />
+                {hasPending && (
+                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-tertiary-500"></span>
+                )}
+              </button>
+              {showNotifications && (
+                <div className="absolute right-0 mt-2 w-80 bg-white border border-red-300 rounded-xl shadow-2xl z-50 p-5 animate-enter">
+                  {hasPending ? (
+                    <div className="flex items-start gap-3">
+                      <span className="mt-1 text-red-500 animate-pulse">
+                        <FaBell className="w-6 h-6" />
+                      </span>
+                      <div>
+                        <div className="font-bold text-red-700 text-lg mb-1 flex items-center gap-2">
+                          Boletos pendentes
+                          <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                        </div>
+                        <div className="text-sm text-red-900 mb-3">
+                          Você possui boletos pendentes.<br />
+                          <span className="font-semibold">Entre em contato com o suporte para regularizar sua situação.</span>
+                        </div>
+                        <a
+                          href="mailto:sportmap@suporte.com.br?subject=Regularização%20de%20Boletos%20Pendentes"
+                          className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors text-sm"
+                        >
+                          Enviar e-mail para o suporte
+                        </a>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-gray-500 text-sm text-center">
+                      Nenhuma notificação.
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="relative">
               <button
                 onClick={() => setIsDropdownOpen(!isDropdownOpen)}
@@ -294,13 +405,22 @@ export function Header() {
                             Pagamentos
                           </Link>
                         )}
+                        {user?.userType === "HOUSE_OWNER" && (
+                          <Link
+                            href="/dashboards"
+                            className="px-4 py-2 hover:bg-primary-500 hover:text-tertiary-500 text-sm block text-gray-900"
+                            onClick={() => setIsDropdownOpen(false)}
+                          >
+                            Dashboards
+                          </Link>
+                        )}
                         <div className="border-t my-1" />
                         <button
                           onClick={() => {
                             signOut();
                             setIsDropdownOpen(false);
                           }}
-                          className="px-4 py-2 hover:bg-gray-100 text-sm text-left w-full text-red-600"
+                          className="px-4 py-2 hover:bg-primary-500 hover:text-tertiary-500 text-sm text-left w-full text-gray-600"
                         >
                           Sair
                         </button>

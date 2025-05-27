@@ -52,6 +52,12 @@ export function Navbar({ isOpen, onClose }: NavbarProps) {
       href: "/payments",
       userType: 'HOUSE_OWNER'
     },
+    {
+      icon: BanknotesIcon,
+      label: "Dashboards",
+      href: "/dashboards",
+      userType: "HOUSE_OWNER",
+    },
   ];
 
   return (

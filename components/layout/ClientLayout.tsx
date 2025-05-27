@@ -9,7 +9,7 @@ const authRoutes = [
   "/register",
   "/forgot-password",
   "/register/verification",
-  "/auth/google/callback"
+  "/auth/google/callback",
 ];
 
 const validRoutes = [
@@ -22,6 +22,7 @@ const validRoutes = [
   "/courts/[id]/edit",
   "/profile",
   "/payments",
+  "/dashboards",
 ];
 
 export function ClientLayout({ children }: { children: React.ReactNode }) {
@@ -43,7 +44,9 @@ export function ClientLayout({ children }: { children: React.ReactNode }) {
   return (
     <>
       {!isPublicPage && <Header />}
-      <main>{children}</main>
+      <main>
+        {children}
+      </main>
       {!isPublicPage && <Footer />}
     </>
   );
