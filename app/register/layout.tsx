@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Cadastro | SportMap'
+  title: 'Cadastro'
 }
 
 export default function RegisterLayout({

@@ -117,9 +117,9 @@ export default function PaymentsPage() {
                   </tr>
                 </thead>
                 <tbody className="bg-tertiary-500 divide-y divide-primary-500/20">
-                  {payments?.map((payment) => (
+                  {payments?.map((payment, idx) => (
                     <tr
-                      key={payment._id}
+                      key={payment._id || idx}
                       className="hover:bg-primary-500/5 transition-colors"
                     >
                       <td className="px-6 py-5 whitespace-nowrap">
@@ -172,6 +172,16 @@ export default function PaymentsPage() {
                               Ver Boleto
                             </button>
                           )}
+                        {payment.status === "EXPIRED" && (
+                          <a
+                            href="https://sportmap.atlassian.net/servicedesk/customer/portal/1"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center px-4 py-2 rounded-full bg-primary-500 text-white hover:bg-primary-600 transition-colors duration-200 text-sm font-bold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 mt-2"
+                          >
+                            Negociar
+                          </a>
+                        )}
                       </td>
                     </tr>
                   ))}

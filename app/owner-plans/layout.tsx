@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Planos para Proprietários | SportMap'
+  title: 'Planos para Proprietários'
 }
 
 export default function OwnerPlansLayout({

@@ -5,7 +5,7 @@
 @import './styles/animations.css';
 
 body {
-  background-color: var(--background);
+  background-color: #fdf6e3;
 }
 
 @layer utilities {
@@ -93,6 +93,6 @@ body {
     @apply border-gray-200;
   }
   body {
-    @apply bg-gray-50;
+    background: #fdf6e3
   }
 }

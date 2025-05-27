@@ -85,49 +85,51 @@ export function Header() {
                 <GlobeAltIcon className="h-5 w-5" />
               </button>
 
-              <div className="relative notifications-container">
-                <button
-                  onClick={() => setShowNotifications((v) => !v)}
-                  className="relative p-2 text-primary-500 hover:text-primary-600 transition-colors"
-                  aria-label="Notificações"
-                >
-                  <FaBell className="h-5 w-5" />
-                  {hasPending && (
-                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-tertiary-500"></span>
-                  )}
-                </button>
-                {showNotifications && (
-                  <div className="absolute right-0 mt-2 w-80 bg-white border border-red-300 rounded-xl shadow-2xl z-50 p-5 animate-enter">
-                    {hasPending ? (
-                      <div className="flex items-start gap-3">
-                        <span className="mt-1 text-red-500 animate-pulse">
-                          <FaBell className="w-6 h-6" />
-                        </span>
-                        <div>
-                          <div className="font-bold text-red-700 text-lg mb-1 flex items-center gap-2">
-                            Boletos pendentes
-                            <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
-                          </div>
-                          <div className="text-sm text-red-900 mb-3">
-                            Você possui boletos pendentes.<br />
-                            <span className="font-semibold">Entre em contato com o suporte para regularizar sua situação.</span>
-                          </div>
-                          <a
-                            href="mailto:sportmap@suporte.com.br?subject=Regularização%20de%20Boletos%20Pendentes"
-                            className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors text-sm"
-                          >
-                            Enviar e-mail para o suporte
-                          </a>
-                        </div>
-                      </div>
-                    ) : (
-                      <div className="text-gray-500 text-sm text-center">
-                        Nenhuma notificação.
-                      </div>
+              {user && (
+                <div className="relative notifications-container">
+                  <button
+                    onClick={() => setShowNotifications((v) => !v)}
+                    className="relative p-2 text-primary-500 hover:text-primary-600 transition-colors"
+                    aria-label="Notificações"
+                  >
+                    <FaBell className="h-5 w-5" />
+                    {hasPending && (
+                      <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-tertiary-500"></span>
                     )}
-                  </div>
-                )}
-              </div>
+                  </button>
+                  {showNotifications && (
+                    <div className="absolute right-0 mt-2 w-80 bg-white border border-red-300 rounded-xl shadow-2xl z-50 p-5 animate-enter">
+                      {hasPending ? (
+                        <div className="flex items-start gap-3">
+                          <span className="mt-1 text-red-500 animate-pulse">
+                            <FaBell className="w-6 h-6" />
+                          </span>
+                          <div>
+                            <div className="font-bold text-red-700 text-lg mb-1 flex items-center gap-2">
+                              Boletos pendentes
+                              <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                            </div>
+                            <div className="text-sm text-red-900 mb-3">
+                              Você possui boletos pendentes.<br />
+                              <span className="font-semibold">Entre em contato com o suporte para regularizar sua situação.</span>
+                            </div>
+                            <a
+                              href="mailto:sportmap@suporte.com.br?subject=Regularização%20de%20Boletos%20Pendentes"
+                              className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors text-sm"
+                            >
+                              Enviar e-mail para o suporte
+                            </a>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="text-gray-500 text-sm text-center">
+                          Nenhuma notificação.
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
 
               <div className="relative">
                 <button
@@ -306,49 +308,53 @@ export function Header() {
               <GlobeAltIcon className="h-6 w-6" />
             </button>
 
-            <div className="relative notifications-container">
-              <button
-                onClick={() => setShowNotifications((v) => !v)}
-                className="relative p-2 text-primary-500 hover:text-primary-600 transition-colors"
-                aria-label="Notificações"
-              >
-                <FaBell className="h-6 w-6" />
-                {hasPending && (
-                  <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-tertiary-500"></span>
-                )}
-              </button>
-              {showNotifications && (
-                <div className="absolute right-0 mt-2 w-80 bg-white border border-red-300 rounded-xl shadow-2xl z-50 p-5 animate-enter">
-                  {hasPending ? (
-                    <div className="flex items-start gap-3">
-                      <span className="mt-1 text-red-500 animate-pulse">
-                        <FaBell className="w-6 h-6" />
-                      </span>
-                      <div>
-                        <div className="font-bold text-red-700 text-lg mb-1 flex items-center gap-2">
-                          Boletos pendentes
-                          <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
-                        </div>
-                        <div className="text-sm text-red-900 mb-3">
-                          Você possui boletos pendentes.<br />
-                          <span className="font-semibold">Entre em contato com o suporte para regularizar sua situação.</span>
-                        </div>
-                        <a
-                          href="mailto:sportmap@suporte.com.br?subject=Regularização%20de%20Boletos%20Pendentes"
-                          className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors text-sm"
-                        >
-                          Enviar e-mail para o suporte
-                        </a>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="text-gray-500 text-sm text-center">
-                      Nenhuma notificação.
-                    </div>
+            {user && (
+              <div className="relative notifications-container">
+                <button
+                  onClick={() => setShowNotifications((v) => !v)}
+                  className="relative p-2 text-primary-500 hover:text-primary-600 transition-colors"
+                  aria-label="Notificações"
+                >
+                  <FaBell className="h-6 w-6" />
+                  {hasPending && (
+                    <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full border-2 border-tertiary-500"></span>
                   )}
-                </div>
-              )}
-            </div>
+                </button>
+                {showNotifications && (
+                  <div className="absolute right-0 mt-2 w-80 bg-white border border-red-300 rounded-xl shadow-2xl z-50 p-5 animate-enter">
+                    {hasPending ? (
+                      <div className="flex items-start gap-3">
+                        <span className="mt-1 text-red-500 animate-pulse">
+                          <FaBell className="w-6 h-6" />
+                        </span>
+                        <div>
+                          <div className="font-bold text-red-700 text-lg mb-1 flex items-center gap-2">
+                            Boletos pendentes
+                            <span className="inline-block w-2 h-2 bg-red-500 rounded-full animate-ping"></span>
+                          </div>
+                          <div className="text-sm text-red-900 mb-3">
+                            Você possui boletos pendentes.<br />
+                            <span className="font-semibold">Entre em contato com o suporte para regularizar sua situação.</span>
+                          </div>
+                          <a
+                            href="https://sportmap.atlassian.net/servicedesk/customer/portal/1"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-block bg-red-600 hover:bg-red-700 text-white font-semibold px-4 py-2 rounded-lg shadow transition-colors text-sm"
+                          >
+                            Enviar e-mail para o suporte
+                          </a>
+                        </div>
+                      </div>
+                    ) : (
+                      <div className="text-gray-500 text-sm text-center">
+                        Nenhuma notificação.
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="relative">
               <button
