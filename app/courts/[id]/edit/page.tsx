@@ -10,6 +10,7 @@ import { showToast } from "@/components/ui/Toast";
 import { FiUpload } from 'react-icons/fi';
 import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
 import { TagSelect } from "@/components/ui/TagSelect";
+import { decryptId } from "@/lib/utils";
 
 const schema: yup.ObjectSchema<UpdateCourtDTO> = yup.object().shape({
   name: yup.string().required("Nome é obrigatório"),
@@ -36,6 +37,7 @@ const schema: yup.ObjectSchema<UpdateCourtDTO> = yup.object().shape({
 export default function EditCourt({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const router = useRouter();
+  const realId = decryptId(id as string);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [currentImages, setCurrentImages] = useState<string[]>([]);
@@ -48,7 +50,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
   useEffect(() => {
     const fetchCourt = async () => {
       try {
-        const court = await courtService.getCourtById(id);
+        const court = await courtService.getCourtById(realId);
         setCurrentImages(court.images || []);
         Object.entries(court).forEach(([key, value]) => {
           if (key in schema.fields) {
@@ -64,11 +66,11 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
     };
 
     fetchCourt();
-  }, [id, router, setValue]);
+  }, [realId, router, setValue]);
 
   const onSubmit = async (data: UpdateCourtDTO) => {
     try {
-      await courtService.updateCourt(id, data);
+      await courtService.updateCourt(realId, data);
       showToast.success("Sucesso", "Quadra atualizada com sucesso");
       router.push("/");
     } catch {
@@ -84,7 +86,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
 
   const handleUpload = async () => {
     try {
-      await courtService.uploadImages(id, selectedFiles);
+      await courtService.uploadImages(realId, selectedFiles);
       showToast.success("Sucesso", "Imagens enviadas com sucesso");
       setSelectedFiles([]);
     } catch {
@@ -95,7 +97,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
   const handleRemoveImages = async () => {
     try {
       const remainingImages = currentImages.filter(img => !selectedImagesToRemove.includes(img));
-      await courtService.removeImages(id, remainingImages);
+      await courtService.removeImages(realId, remainingImages);
       setCurrentImages(remainingImages);
       setSelectedImagesToRemove([]);
       showToast.success("Sucesso", "Imagens atualizadas com sucesso");

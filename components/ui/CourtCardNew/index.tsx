@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { CourtImagePlaceholder } from "../CourtImagePlaceholder";
 import { useAuth } from "@/hooks/useAuth";
+import { encryptId } from "@/lib/utils";
 
 interface CourtCardNewProps {
   court: {
@@ -47,7 +48,7 @@ export function CourtCardNew({ court }: CourtCardNewProps) {
 
         <div className="flex gap-2 flex-col sm:flex-row">
           <Link
-            href={`/courts/${court._id}`}
+            href={`/courts/${encryptId(court._id)}`}
             className="flex-1 px-4 py-2 text-primary-500 rounded-full
               bg-secondary-500 hover:bg-secondary-600 shadow-lg
               transition-colors duration-300
@@ -60,7 +61,7 @@ export function CourtCardNew({ court }: CourtCardNewProps) {
 
           {user?.userType === 'HOUSE_OWNER' && (
             <Link
-              href={`/courts/${court._id}/edit`}
+              href={`/courts/${encryptId(court._id)}/edit`}
               className="px-4 py-2 text-tertiary-500 bg-primary-500 rounded-full
                 border-2 border-tertiary-500
                 hover:bg-tertiary-500 hover:text-primary-500 hover:border-primary-500

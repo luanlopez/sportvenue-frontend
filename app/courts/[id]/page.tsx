@@ -4,7 +4,11 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import Image from "next/image";
 import { useParams } from "next/navigation";
-import { courtService, AMENITY_LABELS, CATEGORY_LABELS } from "@/services/courts";
+import {
+  courtService,
+  AMENITY_LABELS,
+  CATEGORY_LABELS,
+} from "@/services/courts";
 import { ReservationModal } from "@/components/ui/ReservationModal";
 import { ContactModal } from "@/components/ui/ContactModal";
 import { FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa";
@@ -14,20 +18,25 @@ import { useAuth } from "@/hooks/useAuth";
 import { WeeklyScheduleDisplay } from "@/components/ui/WeeklyScheduleDisplay";
 import { AuthRequiredModal } from "@/components/ui/AuthRequiredModal";
 import { CourtMap } from "@/components/ui/CourtMap";
+import { decryptId } from "@/lib/utils";
+import { EventFormModal } from "@/components/ui/EventFormModal";
+import { Button } from "@/components/ui/Button";
 
 export default function CourtDetails() {
   const { id } = useParams();
+  const realId = decryptId(id as string);
   const { user } = useAuth();
   const [isReservationModalOpen, setIsReservationModalOpen] = useState(false);
   const [isContactModalOpen, setIsContactModalOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showEventModal, setShowEventModal] = useState(false);
 
   const { data: court, isLoading } = useQuery({
-    queryKey: ['court', id],
-    queryFn: () => courtService.getCourtById(id as string),
+    queryKey: ["court", realId],
+    queryFn: () => courtService.getCourtById(realId),
     staleTime: 1000 * 60 * 5,
-    retry: 1
+    retry: 1,
   });
 
   if (isLoading) {
@@ -61,7 +70,7 @@ export default function CourtDetails() {
           src={court.images[0] || "/placeholder-court.jpg"}
           alt={court.name}
           fill
-          className="object-cover"  
+          className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-primary-500/90 via-primary-500/50 to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-8 text-tertiary-500">
@@ -79,7 +88,9 @@ export default function CourtDetails() {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-6">
             <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
-              <h2 className="text-2xl font-bold mb-6 text-primary-500">Fotos da Quadra</h2>
+              <h2 className="text-2xl font-bold mb-6 text-primary-500">
+                Fotos da Quadra
+              </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {court.images.length > 0 ? (
                   court.images.map((image, index) => (
@@ -106,14 +117,18 @@ export default function CourtDetails() {
             </div>
 
             <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
-              <h2 className="text-2xl font-bold mb-6 text-primary-500">Sobre a Quadra</h2>
+              <h2 className="text-2xl font-bold mb-6 text-primary-500">
+                Sobre a Quadra
+              </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-primary-500 text-tertiary-500 rounded-lg">
                     <FaMoneyBillWave className="text-2xl" />
                   </div>
                   <div>
-                    <h3 className="font-semibold text-lg mb-2 text-primary-500">Valor por Hora</h3>
+                    <h3 className="font-semibold text-lg mb-2 text-primary-500">
+                      Valor por Hora
+                    </h3>
                     <p className="text-2xl font-bold text-secondary-500">
                       R$ {court.pricePerHour?.toFixed(2) || 0}
                     </p>
@@ -125,7 +140,9 @@ export default function CourtDetails() {
             <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
               <div className="flex items-center gap-3 mb-6">
                 <BiDumbbell className="text-2xl text-secondary-500" />
-                <h2 className="text-2xl font-bold text-primary-500">Comodidades</h2>
+                <h2 className="text-2xl font-bold text-primary-500">
+                  Comodidades
+                </h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {court.amenities?.map((amenity) => (
@@ -142,7 +159,9 @@ export default function CourtDetails() {
             <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
               <div className="flex items-center gap-3 mb-6">
                 <MdSportsSoccer className="text-2xl text-secondary-500" />
-                <h2 className="text-2xl font-bold text-primary-500">Modalidades</h2>
+                <h2 className="text-2xl font-bold text-primary-500">
+                  Modalidades
+                </h2>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                 {court.categories?.map((category) => (
@@ -157,12 +176,16 @@ export default function CourtDetails() {
             </div>
 
             <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
-              <h2 className="text-2xl font-bold text-primary-500 mb-4">Horários de Funcionamento</h2>
+              <h2 className="text-2xl font-bold text-primary-500 mb-4">
+                Horários de Funcionamento
+              </h2>
               <WeeklyScheduleDisplay schedule={court.weeklySchedule} />
             </div>
 
             <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
-              <h2 className="text-2xl font-bold text-primary-500 mb-4">Localização</h2>
+              <h2 className="text-2xl font-bold text-primary-500 mb-4">
+                Localização
+              </h2>
               <CourtMap
                 address={court.address}
                 number={court.number}
@@ -175,8 +198,8 @@ export default function CourtDetails() {
           <div className="lg:col-span-1">
             <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-6 sticky top-8">
               <div className="space-y-4">
-                {user?.userType !== 'HOUSE_OWNER' && (
-                  <button
+                {user?.userType !== "HOUSE_OWNER" && (
+                  <Button
                     onClick={handleReserveClick}
                     className="w-full px-6 py-4 bg-secondary-500 text-primary-500 rounded-full
                       hover:bg-secondary-600 transition-all duration-300
@@ -184,9 +207,9 @@ export default function CourtDetails() {
                       font-bold text-lg shadow-lg hover:shadow-xl"
                   >
                     Reservar Horário
-                  </button>
+                  </Button>
                 )}
-                <button
+                <Button
                   onClick={() => setIsContactModalOpen(true)}
                   className="w-full px-6 py-4 bg-primary-500 text-tertiary-500 rounded-full
                     hover:bg-primary-600 transition-all duration-300
@@ -194,7 +217,18 @@ export default function CourtDetails() {
                     font-bold text-lg shadow-md hover:shadow-lg"
                 >
                   Contatar Proprietário
-                </button>
+                </Button>
+                {user?.userType === "HOUSE_OWNER" && (
+                  <Button
+                    className="w-full px-6 py-4 bg-primary-500 text-tertiary-500 rounded-full
+                    hover:bg-primary-600 transition-all duration-300
+                    focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
+                    font-bold text-lg shadow-md hover:shadow-lg"
+                    onClick={() => setShowEventModal(true)}
+                  >
+                    Adicionar evento
+                  </Button>
+                )}
               </div>
             </div>
           </div>
@@ -202,7 +236,7 @@ export default function CourtDetails() {
       </div>
 
       {selectedImage && (
-        <div 
+        <div
           className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[300] p-4"
           onClick={() => setSelectedImage(null)}
         >
@@ -218,8 +252,18 @@ export default function CourtDetails() {
               onClick={() => setSelectedImage(null)}
               className="absolute top-4 right-4 text-white p-2 rounded-full hover:bg-white/10"
             >
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
           </div>
@@ -239,10 +283,16 @@ export default function CourtDetails() {
         phoneNumber={court?.user?.phone}
       />
 
-      <AuthRequiredModal 
+      <AuthRequiredModal
         isOpen={showAuthModal}
         onClose={() => setShowAuthModal(false)}
       />
+      {/* Modal do formulário de evento */}
+      <EventFormModal
+        isOpen={showEventModal}
+        onClose={() => setShowEventModal(false)}
+        courtId={realId}
+      />
     </div>
   );
-}   
+}
