@@ -63,7 +63,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const userData = await authService.getProfile();
       setUser(userData);
 
-      if (userData.userType === "HOUSE_OWNER") {
+      if (userData?.userType === "HOUSE_OWNER") {
         try {
           const pending = await authService.getOwnerPendingInvoices();
           setOwnerPendingInvoices(pending);
@@ -107,7 +107,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const userData = await authService.getProfile();
     setUser(userData);
 
-    if (userData.userType === "HOUSE_OWNER") {
+    if (userData?.userType === "HOUSE_OWNER") {
       try {
         const pending = await authService.getOwnerPendingInvoices();
         setOwnerPendingInvoices(pending);
