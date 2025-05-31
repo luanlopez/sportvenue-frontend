@@ -142,16 +142,6 @@ export default function CourtDetails() {
                       className="bg-tertiary-500 border border-primary-500 rounded-xl p-4 hover:shadow-lg transition-all duration-300"
                     >
                       <div className="flex flex-col h-full">
-                        {event.image && (
-                          <div className="relative h-48 mb-4 rounded-lg overflow-hidden shadow-lg">
-                            <Image
-                              src={event.image}
-                              alt={event.name}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        )}
                         <h3 className="text-xl font-bold text-primary-500 mb-2">
                           {event.name}
                         </h3>
@@ -398,11 +388,6 @@ export default function CourtDetails() {
               </svg>
             </button>
             <div className="p-6">
-              {selectedEvent.image && (
-                <div className="relative h-48 mb-4 rounded-lg overflow-hidden shadow-lg">
-                  <Image src={selectedEvent.image} alt={selectedEvent.name} fill className="object-cover" />
-                </div>
-              )}
               <h2 className="text-2xl font-bold text-primary-500 mb-2">{selectedEvent.name}</h2>
               <p className="text-primary-500/80 mb-2">{selectedEvent.description}</p>
               <div className="flex items-center gap-2 text-sm text-primary-500/80 mb-2">
@@ -464,6 +449,17 @@ export default function CourtDetails() {
                     allowFullScreen
                   ></iframe>
                 </div>
+              ) : extractTwitchChannel(selectedEvent.streamingUrl) ? (
+                <div className="w-full aspect-video max-w-xl mb-4">
+                  <iframe
+                    src={`https://player.twitch.tv/?channel=${extractTwitchChannel(selectedEvent.streamingUrl)}&parent=${typeof window !== 'undefined' ? window.location.hostname : ''}`}
+                    height="315"
+                    width="100%"
+                    allowFullScreen
+                    frameBorder="0"
+                    title="Twitch Live"
+                  ></iframe>
+                </div>
               ) : (
                 <a
                   href={selectedEvent.streamingUrl}
@@ -487,4 +483,9 @@ function extractYouTubeId(url: string): string | null {
   const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   const match = url.match(regExp);
   return match && match[2].length === 11 ? match[2] : null;
+}
+
+function extractTwitchChannel(url: string): string | null {
+  const match = url.match(/twitch\.tv\/([a-zA-Z0-9_]+)/);
+  return match ? match[1] : null;
 }

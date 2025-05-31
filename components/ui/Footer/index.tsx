@@ -67,14 +67,14 @@ export function Footer() {
               <h3 className="text-tertiary-500 font-bold text-lg mb-2">Contato</h3>
               <div className="flex flex-col items-center md:items-start gap-2">
                 <a
-                  href="mailto:contato@sportmap.com"
+                  href="https://sportmap.atlassian.net/servicedesk/customer/portal/1"
                   className="flex items-center gap-2 text-tertiary-500 hover:text-secondary-500 transition-colors text-sm"
                 >
                   <FaEnvelope className="w-4 h-4" />
-                  <span>contato@sportmap.com</span>
+                  <span>suporte@sportmap.com</span>
                 </a>
                 <a
-                  href="https://wa.me/5511999999999"
+                  href="https://wa.me/5511954079252"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-tertiary-500 hover:text-secondary-500 transition-colors text-sm"
@@ -87,13 +87,13 @@ export function Footer() {
                   <span>São Paulo, SP</span>
                 </div>
                 <a
-                  href="https://instagram.com/sportmap"
+                  href="https://www.instagram.com/sportmap.oficial/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 text-tertiary-500 hover:text-secondary-500 transition-colors text-sm"
                 >
                   <FaInstagram className="w-4 h-4" />
-                  <span>@sportmap</span>
+                  <span>@sportmap.oficial</span>
                 </a>
               </div>
             </div>
