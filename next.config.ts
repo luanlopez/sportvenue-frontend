@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "www.topsporteng.com.br",
       },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ],
   },
 };

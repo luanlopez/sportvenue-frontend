@@ -5,6 +5,7 @@ import { FaWhatsapp, FaHistory } from "react-icons/fa";
 import { showToast } from "@/components/ui/Toast";
 import { User } from "@/services/reservations";
 import { useRouter } from "next/navigation";
+import { encryptId } from "@/lib/utils";
 
 interface ApprovalModalProps {
   isOpen: boolean;
@@ -68,7 +69,7 @@ export function ApprovalModal({
   };
 
   const handleViewBillingHistory = () => {
-    router.push(`/bookings/billing-history/${reservationId}`);
+    router.push(`/bookings/billing-history/${encryptId(reservationId)}`);
     onClose();
   };
 

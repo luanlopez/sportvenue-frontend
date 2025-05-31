@@ -102,7 +102,7 @@ export function Footer() {
 
         <div className="w-full border-t border-tertiary-500/30 mt-8 pt-6">
           <p className="text-tertiary-500 text-xs sm:text-sm text-center">
-            © {currentYear} SportMap. Todos os direitos reservados.
+            © {currentYear} SportMap | CNPJ: 60.518.410/0001-50. Todos os direitos reservados.
           </p>
         </div>
       </div>

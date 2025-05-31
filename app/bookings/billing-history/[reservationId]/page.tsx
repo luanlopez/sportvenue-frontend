@@ -29,6 +29,7 @@ import { showToast } from "@/components/ui/Toast";
 import { api } from "@/lib/axios";
 import { ReactNode } from "react";
 import jsPDF from 'jspdf';
+import { decryptId } from "@/lib/utils";
 
 interface Invoice {
   _id: string;
@@ -136,7 +137,7 @@ function formatCurrency(amount: number) {
 export default function BillingHistoryPage() {
   const params = useParams();
   const router = useRouter();
-  const reservationId = params.reservationId as string;
+  const reservationId = decryptId(params.reservationId as string);
   const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedPaymentType, setSelectedPaymentType] = useState<
