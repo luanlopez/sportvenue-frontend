@@ -11,7 +11,7 @@ import {
 } from "@/services/courts";
 import { ReservationModal } from "@/components/ui/ReservationModal";
 import { ContactModal } from "@/components/ui/ContactModal";
-import { FaMapMarkerAlt, FaMoneyBillWave } from "react-icons/fa";
+import { FaMapMarkerAlt, FaMoneyBillWave, FaCalendarAlt, FaRegImage } from "react-icons/fa";
 import { BiDumbbell } from "react-icons/bi";
 import { MdSportsSoccer } from "react-icons/md";
 import { useAuth } from "@/hooks/useAuth";
@@ -21,6 +21,7 @@ import { CourtMap } from "@/components/ui/CourtMap";
 import { decryptId } from "@/lib/utils";
 import { EventFormModal } from "@/components/ui/EventFormModal";
 import { Button } from "@/components/ui/Button";
+import { getAllEvents, Event } from "@/services/events";
 
 export default function CourtDetails() {
   const { id } = useParams();
@@ -31,12 +32,21 @@ export default function CourtDetails() {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showEventModal, setShowEventModal] = useState(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const [showEventDetailModal, setShowEventDetailModal] = useState(false);
+  const [showLiveModal, setShowLiveModal] = useState(false);
 
   const { data: court, isLoading } = useQuery({
     queryKey: ["court", realId],
     queryFn: () => courtService.getCourtById(realId),
     staleTime: 1000 * 60 * 5,
     retry: 1,
+  });
+
+  const { data: events } = useQuery({
+    queryKey: ["events", realId],
+    queryFn: () => getAllEvents({ courtId: realId }),
+    enabled: !!realId,
   });
 
   if (isLoading) {
@@ -92,7 +102,7 @@ export default function CourtDetails() {
                 Fotos da Quadra
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                {court.images.length > 0 ? (
+                {court.images && court.images.length > 0 ? (
                   court.images.map((image, index) => (
                     <div
                       key={index}
@@ -109,8 +119,87 @@ export default function CourtDetails() {
                     </div>
                   ))
                 ) : (
-                  <div className="col-span-full text-center py-8 text-tertiary-500/80">
-                    Nenhuma foto disponível
+                  <div className="col-span-full flex flex-col items-center justify-center py-12 text-tertiary-500/80">
+                    <FaRegImage className="text-5xl mb-2 text-primary-500" />
+                    <span className="text-lg font-semibold text-primary-500">Nenhuma foto disponível</span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="bg-tertiary-500 border border-primary-500 rounded-2xl shadow-md p-8">
+              <div className="flex items-center gap-3 mb-6">
+                <FaCalendarAlt className="text-2xl text-secondary-500" />
+                <h2 className="text-2xl font-bold text-primary-500">
+                  Eventos
+                </h2>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {events?.data && events.data.length > 0 ? (
+                  events.data.map((event: Event) => (
+                    <div
+                      key={event.id}
+                      className="bg-tertiary-500 border border-primary-500 rounded-xl p-4 hover:shadow-lg transition-all duration-300"
+                    >
+                      <div className="flex flex-col h-full">
+                        {event.image && (
+                          <div className="relative h-48 mb-4 rounded-lg overflow-hidden shadow-lg">
+                            <Image
+                              src={event.image}
+                              alt={event.name}
+                              fill
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <h3 className="text-xl font-bold text-primary-500 mb-2">
+                          {event.name}
+                        </h3>
+                        {event.description && (
+                          <p className="text-primary-500/80 mb-2 line-clamp-3">
+                            {event.description}
+                          </p>
+                        )}
+                        <div className="flex items-center gap-2 text-sm text-primary-500/80 mb-1 mt-auto">
+                          <FaCalendarAlt />
+                          <span>
+                            {new Date(event.startDate).toLocaleDateString('pt-BR')} - {new Date(event.endDate).toLocaleDateString('pt-BR')}
+                          </span>
+                        </div>
+                        {event.price && (
+                          <p className="text-secondary-500 font-bold mb-2">
+                            R$ {event.price.toFixed(2)}
+                          </p>
+                        )}
+                        <div className="flex gap-2 justify-end mt-2">
+                          <Button
+                            className="px-4 py-2 bg-secondary-500 text-tertiary-500 rounded-full hover:bg-secondary-600 transition-all duration-300 font-bold text-sm shadow-md hover:shadow-lg"
+                            onClick={() => {
+                              setSelectedEvent(event);
+                              setShowEventDetailModal(true);
+                            }}
+                          >
+                            Ver detalhes
+                          </Button>
+                          {event.isLive && event.streamingUrl && (
+                            <Button
+                              className="px-4 py-2 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all duration-300 font-bold text-sm shadow-md hover:shadow-lg"
+                              onClick={() => {
+                                setSelectedEvent(event);
+                                setShowLiveModal(true);
+                              }}
+                            >
+                              Ver live
+                            </Button>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full flex flex-col items-center justify-center py-12">
+                    <FaCalendarAlt className="text-5xl mb-2 text-primary-500" />
+                    <span className="text-lg font-semibold text-primary-500">Nenhum evento disponível</span>
                   </div>
                 )}
               </div>
@@ -293,6 +382,109 @@ export default function CourtDetails() {
         onClose={() => setShowEventModal(false)}
         courtId={realId}
       />
+
+      {/* Modal de detalhes do evento */}
+      {showEventDetailModal && selectedEvent && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[400] p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden animate-enter relative">
+            <button
+              onClick={() => setShowEventDetailModal(false)}
+              className="absolute top-3 right-3 z-50 text-primary-500 p-3 rounded-full bg-white shadow hover:bg-primary-50 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              aria-label="Fechar"
+              style={{ boxShadow: '0 2px 8px rgba(0,0,0,0.08)' }}
+            >
+              <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="p-6">
+              {selectedEvent.image && (
+                <div className="relative h-48 mb-4 rounded-lg overflow-hidden shadow-lg">
+                  <Image src={selectedEvent.image} alt={selectedEvent.name} fill className="object-cover" />
+                </div>
+              )}
+              <h2 className="text-2xl font-bold text-primary-500 mb-2">{selectedEvent.name}</h2>
+              <p className="text-primary-500/80 mb-2">{selectedEvent.description}</p>
+              <div className="flex items-center gap-2 text-sm text-primary-500/80 mb-2">
+                <FaCalendarAlt />
+                <span>
+                  {new Date(selectedEvent.startDate).toLocaleDateString('pt-BR')} - {new Date(selectedEvent.endDate).toLocaleDateString('pt-BR')}
+                </span>
+              </div>
+              {selectedEvent.price && (
+                <p className="text-secondary-500 font-bold mb-2">R$ {selectedEvent.price.toFixed(2)}</p>
+              )}
+              {selectedEvent.rules && (
+                <div className="mb-2">
+                  <span className="font-bold text-primary-500">Regras:</span>
+                  <p className="text-primary-500/80">{selectedEvent.rules}</p>
+                </div>
+              )}
+              {selectedEvent.isLive && selectedEvent.streamingUrl && (
+                <div className="flex justify-end mt-6">
+                  <Button
+                    className="px-6 py-3 bg-red-600 text-white rounded-full hover:bg-red-700 transition-all duration-300 font-bold text-base shadow-md hover:shadow-lg"
+                    onClick={() => {
+                      setShowEventDetailModal(false);
+                      setShowLiveModal(true);
+                    }}
+                  >
+                    Ver live
+                  </Button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de live */}
+      {showLiveModal && selectedEvent && selectedEvent.streamingUrl && (
+        <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-[500] p-4">
+          <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full overflow-hidden animate-enter relative">
+            <button
+              onClick={() => setShowLiveModal(false)}
+              className="absolute top-4 right-4 text-gray-500 p-2 rounded-full hover:bg-gray-100"
+            >
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+            <div className="p-6 flex flex-col items-center">
+              <h2 className="text-xl font-bold text-primary-500 mb-4">Live do Evento</h2>
+              {(selectedEvent.streamingUrl.includes("youtube.com") || selectedEvent.streamingUrl.includes("youtu.be")) ? (
+                <div className="w-full aspect-video max-w-xl mb-4">
+                  <iframe
+                    width="100%"
+                    height="315"
+                    src={`https://www.youtube.com/embed/${extractYouTubeId(selectedEvent.streamingUrl || "")}`}
+                    title="YouTube video player"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                </div>
+              ) : (
+                <a
+                  href={selectedEvent.streamingUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-600 underline mb-4"
+                >
+                  Acessar transmissão
+                </a>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
+}
+
+// Função utilitária para extrair o ID do YouTube
+function extractYouTubeId(url: string): string | null {
+  const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+  const match = url.match(regExp);
+  return match && match[2].length === 11 ? match[2] : null;
 }
