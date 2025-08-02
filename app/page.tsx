@@ -138,7 +138,8 @@ export default function Home() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        searchNearbyPlaces(latitude, longitude);
+        console.log(latitude, longitude);
+        // searchNearbyPlaces(latitude, longitude);
         setIsLoadingLocation(false);
       },
       (error) => {
@@ -149,133 +150,136 @@ export default function Home() {
     );
   }, []);
 
-  const searchNearbyPlaces = useCallback(async (lat: number, lng: number) => {
-    try {
-      const response = await fetch(
-        `/api/places/nearby?lat=${lat}&lng=${lng}&radius=5000&keyword=quadra`
-      );
+  // const searchNearbyPlaces = useCallback(async (lat: number, lng: number) => {
+  //   try {
+  //     const response = await fetch(
+  //       `/api/places/nearby?lat=${lat}&lng=${lng}&radius=5000&keyword=quadra`
+  //     );
 
-      if (!response.ok) {
-        throw new Error("Erro na busca de lugares");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Erro na busca de lugares");
+  //     }
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (data.error) {
-        throw new Error(data.error);
-      }
+  //     if (data.error) {
+  //       throw new Error(data.error);
+  //     }
 
-      if (data.results && data.results.length > 0) {
-        const places = data.results
-          .slice(0, 5)
-          .map(
-            (place: {
-              name: string;
-              vicinity: string;
-              geometry: { location: { lat: number; lng: number } };
-            }) => ({
-              value: place.name,
-              icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
-              subtitle: place.vicinity || "Localização próxima",
-              location: place.geometry?.location,
-            })
-          );
-        setNearbyPlaces(places);
-      } else {
-        setNearbyPlaces([
-          {
-            value: "Perto de você",
-            icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
-            subtitle: "Descubra o que há perto de você",
-          },
-          {
-            value: "São Paulo, Estado de São Paulo",
-            icon: <MdSportsTennis className="w-5 h-5 text-primary-50" />,
-            subtitle:
-              "Porque sua lista de favoritos tem acomodações em São Paulo",
-          },
-          {
-            value: "Guarujá, Estado de São Paulo",
-            icon: <MdSportsBasketball className="w-5 h-5 text-primary-50" />,
-            subtitle: "Destino popular por suas praias",
-          },
-        ]);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar lugares próximos:", error);
-      setNearbyPlaces([
-        {
-          value: "Perto de você",
-          icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
-          subtitle: "Descubra o que há perto de você",
-        },
-        {
-          value: "São Paulo, Estado de São Paulo",
-          icon: <MdSportsTennis className="w-5 h-5 text-primary-50" />,
-          subtitle:
-            "Porque sua lista de favoritos tem acomodações em São Paulo",
-        },
-        {
-          value: "Guarujá, Estado de São Paulo",
-          icon: <MdSportsBasketball className="w-5 h-5 text-primary-50" />,
-          subtitle: "Destino popular por suas praias",
-        },
-      ]);
-    }
-  }, []);
+  //     if (data.results && data.results.length > 0) {
+  //       const places = data.results
+  //         .slice(0, 5)
+  //         .map(
+  //           (place: {
+  //             name: string;
+  //             vicinity: string;
+  //             geometry: { location: { lat: number; lng: number } };
+  //           }) => ({
+  //             value: place.name,
+  //             icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
+  //             subtitle: place.vicinity || "Localização próxima",
+  //             location: place.geometry?.location,
+  //           })
+  //         );
+  //       setNearbyPlaces(places);
+  //     } else {
+  //       setNearbyPlaces([
+  //         {
+  //           value: "Perto de você",
+  //           icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
+  //           subtitle: "Descubra o que há perto de você",
+  //         },
+  //         {
+  //           value: "São Paulo, Estado de São Paulo",
+  //           icon: <MdSportsTennis className="w-5 h-5 text-primary-50" />,
+  //           subtitle:
+  //             "Porque sua lista de favoritos tem acomodações em São Paulo",
+  //         },
+  //         {
+  //           value: "Guarujá, Estado de São Paulo",
+  //           icon: <MdSportsBasketball className="w-5 h-5 text-primary-50" />,
+  //           subtitle: "Destino popular por suas praias",
+  //         },
+  //       ]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Erro ao buscar lugares próximos:", error);
+  //     setNearbyPlaces([
+  //       {
+  //         value: "Perto de você",
+  //         icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
+  //         subtitle: "Descubra o que há perto de você",
+  //       },
+  //       {
+  //         value: "São Paulo, Estado de São Paulo",
+  //         icon: <MdSportsTennis className="w-5 h-5 text-primary-50" />,
+  //         subtitle:
+  //           "Porque sua lista de favoritos tem acomodações em São Paulo",
+  //       },
+  //       {
+  //         value: "Guarujá, Estado de São Paulo",
+  //         icon: <MdSportsBasketball className="w-5 h-5 text-primary-50" />,
+  //         subtitle: "Destino popular por suas praias",
+  //       },
+  //     ]);
+  //   }
+  // }, []);
 
-  const searchPlaces = useCallback(async (query: string) => {
-    if (!query.trim()) {
-      setSearchResults([]);
-      return;
-    }
+  // const searchPlaces = useCallback(async (query: string) => {
+  //   if (!query.trim()) {
+  //     setSearchResults([]);
+  //     return;
+  //   }
 
-    setIsSearching(true);
-    try {
-      const response = await fetch(
-        `/api/places/search?query=${encodeURIComponent(query)}`
-      );
+  //   setIsSearching(true);
+  //   try {
+  //     const response = await fetch(
+  //       `/api/places/search?query=${encodeURIComponent(query)}`
+  //     );
 
-      if (!response.ok) {
-        throw new Error("Erro na busca");
-      }
+  //     if (!response.ok) {
+  //       throw new Error("Erro na busca");
+  //     }
 
-      const data = await response.json();
+  //     const data = await response.json();
 
-      if (data.error) {
-        throw new Error(data.error);
-      }
+  //     if (data.error) {
+  //       throw new Error(data.error);
+  //     }
 
-      if (data.results && data.results.length > 0) {
-        const places = data.results.slice(0, 5).map((place: any) => ({
-          value: place.name,
-          icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
-          subtitle: place.formatted_address || place.vicinity || "Localização",
-          location: place.geometry?.location,
-        }));
-        setSearchResults(places);
-      } else {
-        setSearchResults([]);
-      }
-    } catch (error) {
-      console.error("Erro ao buscar lugares:", error);
-      setSearchResults([]);
-    } finally {
-      setIsSearching(false);
-    }
-  }, []);
+  //     if (data.results && data.results.length > 0) {
+  //       const places = data.results.slice(0, 5).map((place: any) => ({
+  //         value: place.name,
+  //         icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
+  //         subtitle: place.formatted_address || place.vicinity || "Localização",
+  //         location: place.geometry?.location,
+  //       }));
+  //       setSearchResults(places);
+  //     } else {
+  //       setSearchResults([]);
+  //     }
+  //   } catch (error) {
+  //     console.error("Erro ao buscar lugares:", error);
+  //     setSearchResults([]);
+  //   } finally {
+  //     setIsSearching(false);
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (searchText.trim()) {
       const timeoutId = setTimeout(() => {
-        searchPlaces(searchText);
+        // searchPlaces(searchText);
+        setSearchResults([]);
+        setNearbyPlaces([]);
+        setIsSearching(false);
       }, 500);
 
       return () => clearTimeout(timeoutId);
     } else {
       setSearchResults([]);
     }
-  }, [searchText, searchPlaces]);
+    }, [searchText]);
 
   useEffect(() => {
     getUserLocation();
