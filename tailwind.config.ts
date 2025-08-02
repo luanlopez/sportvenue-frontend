@@ -14,7 +14,8 @@ const config: Config = {
         'xs': '475px',
       },
       fontFamily: {
-        sans: ['var(--font-montserrat)'],
+        sans: ['Roboto', 'ui-sans-serif', 'system-ui'],
+        poppins: ['Poppins', 'ui-sans-serif', 'system-ui'],
       },
       animation: {
         'float-0': 'float1 30s ease-in-out infinite',

@@ -150,44 +150,42 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
 
             {selectedType && (
               <div className="mt-6 space-y-4">
-                {selectedType === 'HOUSE_OWNER' && (
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => {
-                        setDocumentType('CPF');
-                        setDocument('');
-                      }}
-                      className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium
-                        transition-all duration-200
-                        ${documentType === 'CPF'
-                          ? 'bg-primary-500 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                    >
-                      CPF
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDocumentType('CNPJ');
-                        setDocument('');
-                      }}
-                      className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium
-                        transition-all duration-200
-                        ${documentType === 'CNPJ'
-                          ? 'bg-primary-500 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                    >
-                      CNPJ
-                    </button>
-                  </div>
-                )}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setDocumentType('CPF');
+                      setDocument('');
+                    }}
+                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium
+                      transition-all duration-200
+                      ${documentType === 'CPF'
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                  >
+                    CPF
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDocumentType('CNPJ');
+                      setDocument('');
+                    }}
+                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium
+                      transition-all duration-200
+                      ${documentType === 'CNPJ'
+                        ? 'bg-primary-500 text-white'
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      }`}
+                  >
+                    CNPJ
+                  </button>
+                </div>
 
                 <div className="text-sm text-gray-600">
                   {selectedType === 'HOUSE_OWNER' ? (
                     <p>Informe seu {documentType} para geração das cobranças mensais da plataforma</p>
                   ) : (
-                    <p>Informe seu CPF para identificação na plataforma</p>
+                    <p>Informe seu {documentType} para identificação na plataforma</p>
                   )}
                 </div>
                 

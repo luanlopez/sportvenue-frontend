@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { FaInstagram, FaEnvelope, FaMapMarkerAlt, FaWhatsapp } from "react-icons/fa";
+import { FaInstagram } from "react-icons/fa";
 import { useAuth } from "@/hooks/useAuth";
 
 export function Footer() {
@@ -10,100 +10,126 @@ export function Footer() {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-primary-500 py-8 sm:py-12 relative overflow-hidden">
-      <div 
-        className="absolute inset-0 opacity-10"
-        style={{
-          backgroundImage: 'url("/location.png")',
-          backgroundRepeat: 'repeat',
-          backgroundSize: '40px',
-          backgroundPosition: 'center',
-          transform: 'rotate(-5deg) scale(1.5)',
-        }}
-      />
-
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col items-center md:flex-row md:items-start gap-8">
-          <div className="flex justify-center md:justify-start w-full md:w-auto">
+        <footer className="bg-white border-t border-slate-100 pt-12 pb-6 text-slate-700">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-center md:justify-start mb-8">
+          <Link href="/" className="flex-shrink-0">
             <Image
-              src="/logo-footer.png"
+              src="/logo-blue.svg"
               alt="SportMap"
-              width={80}
-              height={80}
-              className="bg-tertiary-500 rounded-full"
+              width={180}
+              height={40}
+              className="h-10 w-auto"
             />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12 mb-8">
+          <div className="text-center md:text-left">
+            <h3 className="font-semibold text-slate-800 mb-4 text-base">Atendimento</h3>
+            <ul className="space-y-3">
+              <li>
+                <a 
+                  href="https://sportmap.atlassian.net/servicedesk/customer/portal/1" 
+                  className="text-slate-600 hover:text-blue-600 transition-colors duration-200 text-sm"
+                >
+                  Central de Ajuda
+                </a>
+              </li>
+            </ul>
           </div>
 
-          <div className="flex-grow grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-6 w-full">
-            <div className="flex flex-col items-center md:items-start gap-3">
-              <h3 className="text-tertiary-500 font-bold text-lg mb-2">Sobre</h3>
-              <p className="text-tertiary-500 text-sm text-center md:text-left max-w-xs">
-                Encontre e reserve as melhores quadras esportivas da sua região de forma rápida e fácil.
-              </p>
-            </div>
-
-            <div className="flex flex-col items-center md:items-start gap-3">
-              <h3 className="text-tertiary-500 font-bold text-lg mb-2">Links Rápidos</h3>
-              <div className="flex flex-col items-center md:items-start gap-2">
-                <Link href="/" className="text-tertiary-500 hover:text-secondary-500 transition-colors text-sm">
+          <div className="text-center md:text-left">
+            <h3 className="font-semibold text-slate-800 mb-4 text-base">Sobre</h3>
+            <ul className="space-y-3">
+              <li>
+                <Link 
+                  href="/" 
+                  className="text-slate-600 hover:text-blue-600 transition-colors duration-200 text-sm"
+                >
                   Início
                 </Link>
-                <Link href={user ? "/bookings" : "/login"} className="text-tertiary-500 hover:text-secondary-500 transition-colors text-sm">
+              </li>
+              <li>
+                <Link 
+                  href={user ? "/bookings" : "/login"} 
+                  className="text-slate-600 hover:text-blue-600 transition-colors duration-200 text-sm"
+                >
                   Minhas Reservas
                 </Link>
-                <Link href="/construction" className="text-tertiary-500 hover:text-secondary-500 transition-colors text-sm">
+              </li>
+              <li>
+                <Link 
+                  href="/construction" 
+                  className="text-slate-600 hover:text-blue-600 transition-colors duration-200 text-sm"
+                >
                   Termos de Uso
                 </Link>
-                <Link href="/construction" className="text-tertiary-500 hover:text-secondary-500 transition-colors text-sm">
+              </li>
+              <li>
+                <Link 
+                  href="/construction" 
+                  className="text-slate-600 hover:text-blue-600 transition-colors duration-200 text-sm"
+                >
                   Política de Privacidade
                 </Link>
-                <Link href="/construction" className="text-tertiary-500 hover:text-secondary-500 transition-colors text-sm">
-                  FAQ
-                </Link>
-              </div>
-            </div>
+              </li>
+            </ul>
+          </div>
 
-            <div className="flex flex-col items-center md:items-start gap-3">
-              <h3 className="text-tertiary-500 font-bold text-lg mb-2">Contato</h3>
-              <div className="flex flex-col items-center md:items-start gap-2">
-                <a
-                  href="https://sportmap.atlassian.net/servicedesk/customer/portal/1"
-                  className="flex items-center gap-2 text-tertiary-500 hover:text-secondary-500 transition-colors text-sm"
+          <div className="text-center md:text-left">
+            <h3 className="font-semibold text-slate-800 mb-4 text-base">Contato</h3>
+            <ul className="space-y-3">
+              <li>
+                <a 
+                  href="https://sportmap.atlassian.net/servicedesk/customer/portal/1" 
+                  className="text-slate-600 hover:text-blue-600 transition-colors duration-200 text-sm"
                 >
-                  <FaEnvelope className="w-4 h-4" />
-                  <span>suporte@sportmap.com</span>
+                  Suporte SportMap
                 </a>
-                <a
-                  href="https://wa.me/5511954079252"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-tertiary-500 hover:text-secondary-500 transition-colors text-sm"
+              </li>
+              <li>
+                <a 
+                  href="https://wa.me/5511954079252" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-slate-600 hover:text-blue-600 transition-colors duration-200 text-sm"
                 >
-                  <FaWhatsapp className="w-4 h-4" />
-                  <span>Suporte via WhatsApp</span>
+                  WhatsApp
                 </a>
-                <div className="flex items-center gap-2 text-tertiary-500 text-sm">
-                  <FaMapMarkerAlt className="w-4 h-4" />
-                  <span>São Paulo, SP</span>
-                </div>
-                <a
-                  href="https://www.instagram.com/sportmap.oficial/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-2 text-tertiary-500 hover:text-secondary-500 transition-colors text-sm"
+              </li>
+              <li>
+                <a 
+                  href="https://www.instagram.com/sportmap.oficial/" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="text-slate-600 hover:text-blue-600 transition-colors duration-200 text-sm"
                 >
-                  <FaInstagram className="w-4 h-4" />
-                  <span>@sportmap.oficial</span>
+                  Instagram
                 </a>
-              </div>
-            </div>
+              </li>
+            </ul>
           </div>
         </div>
 
-        <div className="w-full border-t border-tertiary-500/30 mt-8 pt-6">
-          <p className="text-tertiary-500 text-xs sm:text-sm text-center">
-            © {currentYear} SportMap | CNPJ: 60.518.410/0001-50. Todos os direitos reservados.
-          </p>
+        <div className="border-t border-slate-200 pt-6">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
+            <p className="text-xs text-slate-500 text-center sm:text-left">
+              © {currentYear} SportMap. Todos os direitos reservados.
+            </p>
+            
+            <div className="flex items-center gap-4">
+              <a 
+                href="https://www.instagram.com/sportmap.oficial/" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                aria-label="Instagram"
+                className="text-slate-400 hover:text-blue-600 transition-colors duration-200 p-2 rounded-full hover:bg-slate-100"
+              >
+                <FaInstagram className="text-lg" />
+              </a>
+            </div>
+          </div>
         </div>
       </div>
     </footer>

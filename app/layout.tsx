@@ -1,5 +1,5 @@
 import "./globals.css";
-import { montserrat } from './fonts';
+
 import { Toast } from "@/components/ui/Toast";
 import { AuthProvider } from '@/hooks/useAuth';
 import { ClientLayout } from "@/components/layout/ClientLayout";
@@ -26,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="pt-BR" className={montserrat.variable}>
-      <body className="antialiased font-sans">
+    <html lang="pt-BR">
+      <body className="antialiased">
         <UserTypeModalProvider>
           <QueryProvider>
             <AuthProvider>

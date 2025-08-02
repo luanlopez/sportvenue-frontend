@@ -1,56 +1,163 @@
 import { api } from "@/lib/axios";
 
-interface Plan {
-  _id: string;
-  name: string;
-  description: string;
-  price: number;
-  courtLimit: number;
-  type: 'BASIC' | 'PREMIUM' | 'ENTERPRISE';
-  isActive: boolean;
-  createdAt: string;
-  updatedAt: string;
-  features?: string[];
+interface CreateSubscriptionDto {
+  userId: string;
+  planId: string;
+  sessionId: string;
 }
 
-const DEFAULT_FEATURES = {
-  BASIC: [
-    "Página personalizada da quadra",
-    "Sistema de reservas online",
-    "Gestão de horários disponíveis",
-    "Suporte via email",
-    "Tem direito a 3 quadras"
-  ],
-  PREMIUM: [
-    "Página personalizada da quadra",
-    "Sistema de reservas online",
-    "Gestão de horários disponíveis",
-    "Suporte via email",
-    "Contato direto com clientes",
-    "Tem direito a 10 quadras"
-  ],
-  ENTERPRISE: [
-    "Página personalizada da quadra",
-    "Sistema de reservas online",
-    "Gestão de horários disponíveis",
-    "Suporte prioritário 24/7",
-    "Contato direto com clientes",
-    "Relatórios avançados",
-    "Quadras ilimitadas"
-  ],
-};
+interface Subscription {
+  _id: string;
+  userId: string;
+  planId: string;
+  stripeCustomerId: string;
+  stripeSubscriptionId: string;
+  status: "active" | "canceled" | "past_due" | "unpaid";
+  currentPeriodStart: Date;
+  currentPeriodEnd: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface UserDto {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
+export interface PlanDto {
+  _id: string;
+  name: string;
+  price: number;
+  type: "BASIC" | "PREMIUM" | "ENTERPRISE";
+}
+
+export interface InvoiceDetailsDto {
+  id: string;
+  number: string;
+  status: string;
+  amount: number;
+  currency: string;
+  created: number;
+  dueDate?: number;
+  paidAt?: number;
+  description?: string;
+  subscription?: string;
+  customer?: string;
+  hostedInvoiceUrl?: string;
+  invoicePdf?: string;
+}
+
+export interface SubscriptionDto {
+  id: string;
+  stripeSubscriptionId: string;
+  status: "active" | "canceled" | "past_due" | "unpaid" | "trialing";
+  user: UserDto;
+  plan: PlanDto;
+}
+
+export interface InvoiceDto {
+  id: string;
+  number: string;
+  amount: number;
+  currency: string;
+  status: string;
+  created: string;
+  dueDate?: string;
+  paid: boolean;
+  paymentMethod: "card" | "boleto";
+}
+
+export interface BillingHistoryDto {
+  subscription: SubscriptionDto;
+  invoices: InvoiceDto[];
+}
+
+export interface BillingHistoryResponseDto {
+  data: BillingHistoryDto;
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasPrevious: boolean;
+  hasNext: boolean;
+}
+
+export interface BillingHistoryFilters {
+  status?: string;
+  startDate?: string;
+  endDate?: string;
+  page?: number;
+  limit?: number;
+}
+
+export interface SubscriptionInfoDto {
+  id: string;
+  stripeSubscriptionId: string;
+  status: "active" | "canceled" | "past_due" | "unpaid" | "trialing";
+  plan: {
+    id: string;
+    name: string;
+    description: string;
+    price: number;
+    currency: string;
+    courtLimit: number;
+    features: string[];
+  };
+  courtUsage: {
+    totalCreated: number;
+    limit: number;
+    available: number;
+  };
+  billing: {
+    currentPeriodStart: string;
+    currentPeriodEnd: string;
+    cancelAtPeriodEnd: boolean;
+    amount: number;
+    currency: string;
+  };
+  createdAt: string;
+  updatedAt: string;
+  paymentMethod: {
+    id: string;
+    brand: string;
+    last4: string;
+  };
+}
 
 export const subscriptionService = {
-  async getPlans(): Promise<Plan[]> {
-    const response = await api.get<Plan[]>('/subscriptions/plans');
-    
-    return response.data.map(plan => ({
-      ...plan,
-      features: DEFAULT_FEATURES[plan.type]
-    }));
+  async createSubscription(data: CreateSubscriptionDto): Promise<Subscription> {
+    const response = await api.post("/subscriptions", data);
+    return response.data;
   },
 
-  async subscribeToPlan(subscriptionPlanId: string): Promise<void> {
-    await api.patch('/users/subscription', { subscriptionPlanId });
-  }
-}; 
+  async getSubscription(userId: string): Promise<Subscription | null> {
+    const response = await api.get(`/subscriptions/user/${userId}`);
+    return response.data;
+  },
+
+  async getSubscriptionInfo(): Promise<SubscriptionInfoDto> {
+    const response = await api.get("/subscriptions/info");
+    return response.data;
+  },
+
+  async cancelSubscription(): Promise<void> {
+    const response = await api.post("/subscriptions/cancel", { confirm: true });
+    return response.data;
+  },
+
+  async getBillingHistory(
+    filters?: BillingHistoryFilters
+  ): Promise<BillingHistoryResponseDto> {
+    const response = await api.get(`/subscriptions/billing-history`, {
+      params: filters,
+    });
+    return response.data;
+  },
+
+  async getInvoiceDetails(invoiceId: string): Promise<InvoiceDetailsDto> {
+    const response = await api.get(`/subscriptions/invoice/${invoiceId}`);
+    return response.data;
+  },
+};

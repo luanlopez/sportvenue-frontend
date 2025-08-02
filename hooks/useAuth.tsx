@@ -24,6 +24,7 @@ interface User {
   picture?: string;
   googleId?: string;
   subscriptionPlanId?: string;
+  stripeCustomerId?: string;
 }
 
 interface SignInCredentials {
