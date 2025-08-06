@@ -29,14 +29,6 @@ interface CheckoutProps {
 export default function Checkout({ onClose, onSuccess, customer, plan }: CheckoutProps) {
   const fetchClientSecretNoParam = async (): Promise<string> => {
     try {
-      console.log("🔍 === COMPLETE ENVIRONMENT VARIABLES ===");
-  console.log("🔑 STRIPE_SECRET_KEY:", process.env.STRIPE_SECRET_KEY);
-  console.log("🔑 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY:", process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
-  console.log("🌍 NODE_ENV:", process.env.NODE_ENV);
-  console.log("🌐 NEXT_PUBLIC_API_URL:", process.env.NEXT_PUBLIC_API_URL);
-  console.log("🔍 All process.env keys:", Object.keys(process.env));
-  console.log("🔍 === END COMPLETE ENVIRONMENT VARIABLES ===");
-  
       const secret = await fetchClientSecret({ customer, plan });
       if (!secret) {
         throw new Error("Failed to get client secret");

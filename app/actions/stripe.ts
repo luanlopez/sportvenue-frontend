@@ -3,7 +3,7 @@
 import { headers } from "next/headers";
 import Stripe from "stripe";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+const stripe = new Stripe(process.env.NEXT_PUBLIC_STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-05-28.basil",
 });
 
@@ -27,62 +27,24 @@ export async function fetchClientSecret({
   plan,
   customer,
 }: FetchClientSecretProps): Promise<string | null> {
-  console.log("🚀 === FETCHCLIENTSECRET EXECUTION ===");
-  console.log("📋 Plan received:", JSON.stringify(plan, null, 2));
-  console.log("👤 Customer received:", JSON.stringify(customer, null, 2));
-  
-  // Verificar se as variáveis críticas existem
-  if (!process.env.STRIPE_SECRET_KEY) {
-    console.error("❌ STRIPE_SECRET_KEY não está definida!");
-    return null;
-  }
-  
-  if (!plan.stripePriceId) {
-    console.error("❌ stripePriceId não fornecido:", plan.stripePriceId);
-    return null;
-  }
-  
-  if (!customer.email) {
-    console.error("❌ customer.email não fornecido:", customer.email);
-    return null;
-  }
+  const origin = (await headers()).get("origin") ?? "";
 
-  try {
-    const origin = (await headers()).get("origin") ?? "";
-    console.log("🌐 Origin detected:", origin);
-    console.log("🔗 Return URL will be:", `${origin}/owner-plans?session_id={CHECKOUT_SESSION_ID}&plan_id=${plan.id}`);
-
-    console.log("🏗️ Creating Stripe session...");
-    const session = await stripe.checkout.sessions.create({
-      ui_mode: "embedded",
-      line_items: [
-        {
-          price: plan.stripePriceId,
-          quantity: 1,
-        },
-      ],
-      customer_email: customer.email,
-      payment_method_types: ["card", "boleto"],
-      mode: "subscription",
-      subscription_data: {
-        trial_period_days: 7,
+  const session = await stripe.checkout.sessions.create({
+    ui_mode: "embedded",
+    line_items: [
+      {
+        price: plan.stripePriceId,
+        quantity: 1,
       },
-      return_url: `${origin}/owner-plans?session_id={CHECKOUT_SESSION_ID}&plan_id=${plan.id}`,
-    });
+    ],
+    customer_email: customer.email,
+    payment_method_types: ["card", "boleto"],
+    mode: "subscription",
+    subscription_data: {
+      trial_period_days: 7,
+    },
+    return_url: `${origin}?session_id={CHECKOUT_SESSION_ID}&plan_id=${plan.id}`,
+  });
 
-    console.log("✅ Stripe session created successfully!");
-    console.log("🆔 Session ID:", session.id);
-    console.log("🔐 Client secret exists:", !!session.client_secret);
-    console.log("🔐 Client secret length:", session.client_secret?.length || 0);
-    console.log("🚀 === END FETCHCLIENTSECRET EXECUTION ===");
-
-    return session.client_secret;
-  } catch (error) {
-    console.error("❌ === STRIPE ERROR ===");
-    console.error("Error type:", error?.constructor?.name);
-    console.error("Error message:", error instanceof Error ? error.message : 'Unknown error');
-    console.error("Full error:", error);
-    console.error("❌ === END STRIPE ERROR ===");
-    return null;
-  }
+  return session.client_secret;
 }
