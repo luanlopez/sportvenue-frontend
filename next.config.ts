@@ -3,21 +3,21 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   async headers() {
     return [
+      {
+        source: "/(.*)",
+        headers: [
           {
-            source: "/(.*)",
-            headers: [
-              {
-                key: "Content-Security-Policy",
-                value: `
-                  default-src 'self';
-                  script-src 'self' 'unsafe-eval' https://js.stripe.com;
-                  style-src 'self' 'unsafe-inline';
-                  connect-src *;
-                  frame-src https://js.stripe.com https://hooks.stripe.com;
-                  img-src * blob: data:;
-                  font-src 'self';
-                `.replace(/\s{2,}/g, ' ').trim()
-              }
+            key: "Content-Security-Policy",
+            value: `
+              default-src 'self';
+              script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://*.stripe.com;
+              style-src 'self' 'unsafe-inline';
+              connect-src *;
+              frame-src https://js.stripe.com https://*.stripe.com https://checkout.stripe.com;
+              img-src * blob: data:;
+              font-src 'self';
+            `.replace(/\s{2,}/g, ' ').trim()
+          }
         ],
       },
     ];
