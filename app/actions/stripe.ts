@@ -3,19 +3,6 @@
 import { headers } from "next/headers";
 import Stripe from "stripe";
 
-// Log das variáveis de ambiente na inicialização
-console.log("🔍 === STRIPE ENVIRONMENT VARIABLES ===");
-console.log("🔑 STRIPE_SECRET_KEY exists:", !!process.env.STRIPE_SECRET_KEY);
-console.log("🔑 STRIPE_SECRET_KEY length:", process.env.STRIPE_SECRET_KEY?.length || 0);
-console.log("🔑 STRIPE_SECRET_KEY starts with 'sk_':", process.env.STRIPE_SECRET_KEY);
-console.log("🔑 STRIPE_SECRET_KEY starts with 'sk_test_':", process.env.STRIPE_SECRET_KEY);
-console.log("🔑 STRIPE_SECRET_KEY first 10 chars:", process.env.STRIPE_SECRET_KEY?.substring(0, 10) || 'NOT_SET');
-console.log("🔑 STRIPE_SECRET_KEY:", process.env.STRIPE_SECRET_KEY);
-console.log("🔑 STRIPE_SECRET_KEY:", process.env.STRIPE_SECRET_KEY);
-console.log("🔑 STRIPE_SECRET_KEY:", process.env.STRIPE_SECRET_KEY);
-console.log("🌍 NODE_ENV:", process.env.NODE_ENV);
-console.log("🔍 === END STRIPE ENVIRONMENT VARIABLES ===");
-
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
   apiVersion: "2025-05-28.basil",
 });
