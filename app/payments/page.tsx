@@ -130,10 +130,8 @@ export default function PaymentsPage() {
           <p className="text-gray-600">Gerencie e visualize todas as suas faturas</p>
         </div>
 
-        {/* Filtros */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {/* Status Filter */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-3">Status</label>
               <div className="flex flex-wrap gap-2">
@@ -185,7 +183,6 @@ export default function PaymentsPage() {
           </div>
         </div>
 
-        {/* Tabela de Pagamentos */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
           {billingHistory?.data.invoices && billingHistory.data.invoices.length > 0 ? (
             <>
@@ -242,7 +239,6 @@ export default function PaymentsPage() {
                 </table>
               </div>
 
-              {/* Paginação */}
               {billingHistory?.totalPages && billingHistory.totalPages > 1 && (
                 <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
                   <div className="flex items-center justify-between">
@@ -273,7 +269,6 @@ export default function PaymentsPage() {
                 <LoadingSpinner />
               ) : (
                 <div className="text-gray-500">
-                  <FaStripe className="w-12 h-12 mx-auto mb-4 text-gray-400" />
                   <p className="text-lg font-medium mb-2">Nenhuma fatura encontrada</p>
                   <p className="text-sm">Tente ajustar os filtros para ver mais resultados</p>
                 </div>
@@ -283,7 +278,6 @@ export default function PaymentsPage() {
         </div>
       </div>
 
-      {/* Modal de Detalhes */}
       <Dialog open={showModal} onClose={handleCloseModal} className="fixed z-50 inset-0 overflow-y-auto">
         <div className="flex items-center justify-center min-h-screen px-4">
           <div className="fixed inset-0 bg-black bg-opacity-25" aria-hidden="true" />

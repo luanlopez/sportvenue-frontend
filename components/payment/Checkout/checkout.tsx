@@ -39,64 +39,90 @@ export default function Checkout({ onClose, onSuccess, customer, plan }: Checkou
     }
   };
 
+  const handleBackdropClick = (e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[1000] p-4">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col">
-        <div className="bg-gradient-to-r from-primary-500 to-primary-600 p-6 text-white flex-shrink-0">
+    <div 
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[1000] p-4"
+      onClick={handleBackdropClick}
+      onKeyDown={handleKeyDown}
+      tabIndex={-1}
+    >
+      <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+        {/* Header minimalista */}
+        <div className="bg-white border-b border-slate-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-2xl font-bold mb-1">Finalizar Assinatura</h2>
+              <h2 className="text-xl font-semibold text-slate-900">Finalizar Assinatura</h2>
+              <p className="text-slate-500 text-sm mt-1">Complete seu pagamento de forma segura</p>
             </div>
+            
             <button
               onClick={onClose}
-              className="text-white/80 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors"
+              className="w-8 h-8 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg flex items-center justify-center transition-colors"
+              aria-label="Fechar modal"
             >
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
         </div>
 
-        <div className="p-6 flex-1 overflow-y-auto">
-          <div className="min-h-[500px]">
-            <EmbeddedCheckoutProvider
-              stripe={stripePromise}
-              options={{
-                fetchClientSecret: fetchClientSecretNoParam,
-                onComplete: () => {
-                  onSuccess?.();
-                },
-              }}
-            >
-              <EmbeddedCheckout />
-            </EmbeddedCheckoutProvider>
+        {/* Conteúdo principal */}
+        <div className="flex-1 overflow-hidden">
+          <div className="h-full p-6">
+            <div className="h-full min-h-[500px] bg-slate-50 rounded-lg">
+              <EmbeddedCheckoutProvider
+                stripe={stripePromise}
+                options={{
+                  fetchClientSecret: fetchClientSecretNoParam,
+                  onComplete: () => {
+                    onSuccess?.();
+                  },
+                }}
+              >
+                <EmbeddedCheckout />
+              </EmbeddedCheckoutProvider>
+            </div>
           </div>
         </div>
-        <div className="bg-gray-50 px-6 py-4 border-t flex-shrink-0">
-          <div className="flex items-center justify-center text-sm text-gray-500">
-            <svg
-              className="w-4 h-4 mr-2"
-              fill="currentColor"
-              viewBox="0 0 20 20"
+        
+        {/* Footer minimalista */}
+        <div className="bg-slate-50 px-6 py-4 border-t border-slate-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4 text-xs text-slate-500">
+              <div className="flex items-center space-x-2">
+                <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                </svg>
+                <span>Pagamento seguro</span>
+              </div>
+              <div className="w-px h-3 bg-slate-300"></div>
+              <div className="flex items-center space-x-2">
+                <svg className="w-4 h-4 text-blue-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <span>Stripe</span>
+              </div>
+            </div>
+            
+            <button
+              onClick={onClose}
+              className="text-slate-500 hover:text-slate-700 text-sm font-medium transition-colors"
             >
-              <path
-                fillRule="evenodd"
-                d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-            Pagamento seguro processado pelo Stripe
+              Cancelar
+            </button>
           </div>
         </div>
       </div>

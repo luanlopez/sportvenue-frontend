@@ -13,7 +13,6 @@ import {
   HiOutlineCalendar,
   HiOutlineChartBar,
   HiOutlineArrowLeftOnRectangle,
-  HiOutlineRectangleGroup,
 } from "react-icons/hi2";
 import { NotificationsDropdown } from "@/components/ui/NotificationsDropdown";
 import { useQuery } from "@tanstack/react-query";
@@ -189,7 +188,7 @@ export function Header() {
                                 setIsDropdownOpen(false);
                               }}
                             >
-                              <HiOutlineRectangleGroup className="w-7 h-7 text-slate-700" />
+                              <FaVolleyballBall className="w-12 h-12 text-slate-700" />
                               <div>
                                 <div className="font-medium text-slate-700 text-sm">
                                   Anuncie sua quadra
@@ -230,24 +229,6 @@ export function Header() {
                               </div>
                               <div className="text-xs text-slate-400">
                                 Acesse sua conta para reservar quadras e eventos
-                              </div>
-                            </div>
-                          </button>
-                          <button
-                            className="w-full flex items-center gap-3 text-left px-6 py-2.5 hover:bg-slate-100 transition font-medium text-slate-700"
-                            onClick={() => {
-                              router.push("/register");
-                              setIsDropdownOpen(false);
-                            }}
-                          >
-                            <HiOutlineUser className="w-5 h-5 text-slate-700" />
-                            <div>
-                              <div className="font-medium text-slate-700 text-sm">
-                                Cadastrar
-                              </div>
-                              <div className="text-xs text-slate-400">
-                                Crie uma conta gratuita para aproveitar todos os
-                                recursos
                               </div>
                             </div>
                           </button>
@@ -400,7 +381,6 @@ export function Header() {
                               setIsDropdownOpen(false);
                             }}
                           >
-                            <HiOutlineRectangleGroup className="w-7 h-7 text-slate-700" />
                             <div>
                               <div className="font-medium text-slate-700 text-sm">
                                 Anuncie sua quadra
@@ -441,24 +421,6 @@ export function Header() {
                             </div>
                             <div className="text-xs text-slate-400">
                               Acesse sua conta para reservar quadras e eventos
-                            </div>
-                          </div>
-                        </button>
-                        <button
-                          className="w-full flex items-center gap-3 text-left px-6 py-2.5 hover:bg-slate-100 transition font-medium text-slate-700"
-                          onClick={() => {
-                            router.push("/register");
-                            setIsDropdownOpen(false);
-                          }}
-                        >
-                          <HiOutlineUser className="w-5 h-5 text-slate-700" />
-                          <div>
-                            <div className="font-medium text-slate-700 text-sm">
-                              Cadastrar
-                            </div>
-                            <div className="text-xs text-slate-400">
-                              Crie uma conta gratuita para aproveitar todos os
-                              recursos
                             </div>
                           </div>
                         </button>

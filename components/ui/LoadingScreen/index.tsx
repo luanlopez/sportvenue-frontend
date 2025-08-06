@@ -8,10 +8,10 @@ export function LoadingScreen() {
       <div className="flex flex-col items-center">
         <div className="animate-bounce mb-4">
           <Image
-            src="/logo.png"
+            src="/logo-blue.svg"
             alt="SportMap"
-            width={100}
-            height={100}
+            width={200}
+            height={200}
             className="drop-shadow-lg"
           />
         </div>

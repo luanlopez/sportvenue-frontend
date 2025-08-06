@@ -7,6 +7,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { Pagination } from "@/components/ui/Pagination";
 import Link from "next/link";
 import { courtService } from "@/services/courts";
+import { placesService, PlaceSearchResult } from "@/services/places";
 import { useSearchParams, useRouter } from "next/navigation";
 import { CourtCardSkeleton } from "@/components/ui/CourtCardSkeleton";
 import { CourtCardNew } from "@/components/ui/CourtCardNew";
@@ -58,6 +59,13 @@ const sportOptions = [
   },
 ];
 
+interface Place {
+  value: string;
+  icon: React.ReactNode;
+  subtitle: string;
+  location?: { lat: number; lng: number };
+}
+
 export default function Home() {
   const { user } = useAuth();
   const router = useRouter();
@@ -71,9 +79,9 @@ export default function Home() {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showSportPanel, setShowSportPanel] = useState(false);
   const sportPanelRef = useRef<HTMLDivElement>(null);
-  const [nearbyPlaces, setNearbyPlaces] = useState<any[]>([]);
+  const [nearbyPlaces, setNearbyPlaces] = useState<Place[]>([]);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
-  const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [searchResults, setSearchResults] = useState<Place[]>([]);
   const [isSearching, setIsSearching] = useState(false);
   const [activeSearchText, setActiveSearchText] = useState("");
 
@@ -128,9 +136,64 @@ export default function Home() {
     };
   }, []);
 
+  const searchNearbyPlaces = useCallback(async (lat: number, lng: number) => {
+    try {
+      const places = await placesService.getNearbyPlaces({
+        lat,
+        lng,
+        radius: 5000,
+        type: "sports",
+        keyword: "quadra",
+      });
+
+      const formattedPlaces = places.slice(0, 5).map((place: PlaceSearchResult) => ({
+        value: place.name,
+        icon: <MdSportsSoccer className="w-5 h-5 text-blue-600" />,
+        subtitle: place.vicinity || place.formatted_address,
+        location: place.geometry.location,
+      }));
+
+      setNearbyPlaces(formattedPlaces);
+    } catch (error) {
+      console.error("Erro ao buscar lugares próximos:", error);
+      setNearbyPlaces([]);
+    }
+  }, []);
+
+  const searchPlaces = useCallback(async (query: string) => {
+    if (!query.trim()) {
+      setSearchResults([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const places = await placesService.searchPlaces({
+        query,
+        type: "sports",
+      });
+
+      const formattedPlaces = places.slice(0, 5).map((place: PlaceSearchResult) => ({
+        value: place.name,
+        icon: <MdSportsSoccer className="w-5 h-5 text-blue-600" />,
+        subtitle: place.formatted_address || place.vicinity || "Localização",
+        location: place.geometry.location,
+      }));
+
+      setSearchResults(formattedPlaces);
+    } catch (error) {
+      console.error("Erro ao buscar lugares:", error);
+      setSearchResults([]);
+    } finally {
+      setIsSearching(false);
+    }
+  }, []);
+
+  // Obtém localização do usuário
   const getUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
       showToast.error("Erro", "Geolocalização não suportada pelo navegador");
+      setNearbyPlaces([]);
       return;
     }
 
@@ -138,149 +201,51 @@ export default function Home() {
     navigator.geolocation.getCurrentPosition(
       (position) => {
         const { latitude, longitude } = position.coords;
-        console.log(latitude, longitude);
-        // searchNearbyPlaces(latitude, longitude);
+        searchNearbyPlaces(latitude, longitude);
         setIsLoadingLocation(false);
       },
       (error) => {
         console.error("Erro ao obter localização:", error);
-        showToast.error("Erro", "Não foi possível obter sua localização");
+        let errorMessage = "Não foi possível obter sua localização";
+        
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = "Permissão de localização negada";
+            break;
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = "Informação de localização indisponível";
+            break;
+          case error.TIMEOUT:
+            errorMessage = "Tempo limite para obter localização";
+            break;
+        }
+        
+        showToast.error("Erro", errorMessage);
         setIsLoadingLocation(false);
+        setNearbyPlaces([]);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 300000 // 5 minutos
       }
     );
-  }, []);
+  }, [searchNearbyPlaces]);
 
-  // const searchNearbyPlaces = useCallback(async (lat: number, lng: number) => {
-  //   try {
-  //     const response = await fetch(
-  //       `/api/places/nearby?lat=${lat}&lng=${lng}&radius=5000&keyword=quadra`
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Erro na busca de lugares");
-  //     }
-
-  //     const data = await response.json();
-
-  //     if (data.error) {
-  //       throw new Error(data.error);
-  //     }
-
-  //     if (data.results && data.results.length > 0) {
-  //       const places = data.results
-  //         .slice(0, 5)
-  //         .map(
-  //           (place: {
-  //             name: string;
-  //             vicinity: string;
-  //             geometry: { location: { lat: number; lng: number } };
-  //           }) => ({
-  //             value: place.name,
-  //             icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
-  //             subtitle: place.vicinity || "Localização próxima",
-  //             location: place.geometry?.location,
-  //           })
-  //         );
-  //       setNearbyPlaces(places);
-  //     } else {
-  //       setNearbyPlaces([
-  //         {
-  //           value: "Perto de você",
-  //           icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
-  //           subtitle: "Descubra o que há perto de você",
-  //         },
-  //         {
-  //           value: "São Paulo, Estado de São Paulo",
-  //           icon: <MdSportsTennis className="w-5 h-5 text-primary-50" />,
-  //           subtitle:
-  //             "Porque sua lista de favoritos tem acomodações em São Paulo",
-  //         },
-  //         {
-  //           value: "Guarujá, Estado de São Paulo",
-  //           icon: <MdSportsBasketball className="w-5 h-5 text-primary-50" />,
-  //           subtitle: "Destino popular por suas praias",
-  //         },
-  //       ]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Erro ao buscar lugares próximos:", error);
-  //     setNearbyPlaces([
-  //       {
-  //         value: "Perto de você",
-  //         icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
-  //         subtitle: "Descubra o que há perto de você",
-  //       },
-  //       {
-  //         value: "São Paulo, Estado de São Paulo",
-  //         icon: <MdSportsTennis className="w-5 h-5 text-primary-50" />,
-  //         subtitle:
-  //           "Porque sua lista de favoritos tem acomodações em São Paulo",
-  //       },
-  //       {
-  //         value: "Guarujá, Estado de São Paulo",
-  //         icon: <MdSportsBasketball className="w-5 h-5 text-primary-50" />,
-  //         subtitle: "Destino popular por suas praias",
-  //       },
-  //     ]);
-  //   }
-  // }, []);
-
-  // const searchPlaces = useCallback(async (query: string) => {
-  //   if (!query.trim()) {
-  //     setSearchResults([]);
-  //     return;
-  //   }
-
-  //   setIsSearching(true);
-  //   try {
-  //     const response = await fetch(
-  //       `/api/places/search?query=${encodeURIComponent(query)}`
-  //     );
-
-  //     if (!response.ok) {
-  //       throw new Error("Erro na busca");
-  //     }
-
-  //     const data = await response.json();
-
-  //     if (data.error) {
-  //       throw new Error(data.error);
-  //     }
-
-  //     if (data.results && data.results.length > 0) {
-  //       const places = data.results.slice(0, 5).map((place: any) => ({
-  //         value: place.name,
-  //         icon: <MdSportsSoccer className="w-5 h-5 text-primary-50" />,
-  //         subtitle: place.formatted_address || place.vicinity || "Localização",
-  //         location: place.geometry?.location,
-  //       }));
-  //       setSearchResults(places);
-  //     } else {
-  //       setSearchResults([]);
-  //     }
-  //   } catch (error) {
-  //     console.error("Erro ao buscar lugares:", error);
-  //     setSearchResults([]);
-  //   } finally {
-  //     setIsSearching(false);
-  //   }
-  // }, []);
-
+  // Busca lugares quando o texto muda
   useEffect(() => {
     if (searchText.trim()) {
       const timeoutId = setTimeout(() => {
-        // searchPlaces(searchText);
-        setSearchResults([]);
-        setNearbyPlaces([]);
-        setIsSearching(false);
+        searchPlaces(searchText);
       }, 500);
 
       return () => clearTimeout(timeoutId);
     } else {
       setSearchResults([]);
     }
-    }, [searchText]);
+  }, [searchText, searchPlaces]);
 
+  // Carrega lugares próximos na inicialização
   useEffect(() => {
     getUserLocation();
   }, [getUserLocation]);
@@ -344,7 +309,7 @@ export default function Home() {
           className="flex items-center bg-white rounded-full shadow-lg px-2 py-1 sm:py-0 sm:h-16 border border-slate-100 divide-x divide-slate-100"
           autoComplete="off"
         >
-          <div className="flex flex-col flex-1 px-4 py-2 relative">
+          <div className="flex flex-col flex-1 px-4 py-2 relative" ref={searchPanelRef}>
             <span className="text-xs font-semibold text-slate-400 mb-0.5">
               Onde
             </span>
@@ -377,7 +342,7 @@ export default function Home() {
                         <button
                           key={place.value + idx}
                           type="button"
-                          className="flex items-start gap-3 w-full px-5 py-3 hover:bg-primary-50/10 transition rounded-xl text-left"
+                          className="flex items-start gap-3 w-full px-5 py-3 hover:bg-blue-50 transition rounded-xl text-left"
                           onClick={() => {
                             setSearchText(place.value);
                             setActiveSearchText(place.value);
@@ -412,12 +377,12 @@ export default function Home() {
                       <div className="px-5 py-3 text-sm text-slate-500">
                         Buscando sua localização...
                       </div>
-                    ) : (
+                    ) : nearbyPlaces.length > 0 ? (
                       nearbyPlaces.map((place, idx) => (
                         <button
                           key={place.value + idx}
                           type="button"
-                          className="flex items-start gap-3 w-full px-5 py-3 hover:bg-primary-50/10 transition rounded-xl text-left"
+                          className="flex items-start gap-3 w-full px-5 py-3 hover:bg-blue-50 transition rounded-xl text-left"
                           onClick={() => {
                             setSearchText(place.value);
                             setActiveSearchText(place.value);
@@ -435,8 +400,7 @@ export default function Home() {
                           </span>
                         </button>
                       ))
-                    )}
-                    {!isLoadingLocation && nearbyPlaces.length === 0 && (
+                    ) : (
                       <div className="px-5 py-3 text-sm text-slate-500">
                         Nenhum lugar próximo encontrado
                       </div>
@@ -478,9 +442,9 @@ export default function Home() {
                       <button
                         key={opt.value}
                         type="button"
-                        className={`flex items-center gap-3 w-full px-5 py-3 hover:bg-sky-50 transition rounded-xl text-base ${
+                        className={`flex items-center gap-3 w-full px-5 py-3 hover:bg-blue-50 transition rounded-xl text-base ${
                           selectedSport === opt.value
-                            ? "bg-sky-100 font-semibold text-blue-700"
+                            ? "bg-blue-100 font-semibold text-blue-700"
                             : "text-slate-700"
                         }`}
                         onClick={() => {
@@ -499,7 +463,7 @@ export default function Home() {
 
           <button
             type="submit"
-            className="ml-2 flex items-center justify-center w-12 h-12 rounded-full bg-primary-50 hover:bg-primary-100 transition-colors shadow text-secondary-50"
+            className="ml-2 flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors shadow text-white"
             aria-label="Buscar"
           >
             <FaSearch className="w-5 h-5" />
@@ -552,12 +516,12 @@ export default function Home() {
             flex items-center gap-3
             px-6 py-3
             rounded-full
-            bg-primary-50 text-primary-500 font-bold text-secondary-50
+            bg-blue-600 text-white font-bold
             shadow-xl
-            hover:bg-primary-100 hover:scale-105 hover:shadow-2xl
+            hover:bg-blue-700 hover:scale-105 hover:shadow-2xl
             active:scale-95
             transition-all duration-200
-            focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2
+            focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2
           "
           aria-label="Criar nova quadra"
         >

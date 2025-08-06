@@ -55,11 +55,12 @@ export function CourtCardNew({ court }: CourtCardNewProps) {
           <CourtImagePlaceholder />
         )}
         
-        <button className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-colors shadow-sm">
+        {/* TODO: Implementar regra de favoritos */}
+        {/* <button className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/90 backdrop-blur-sm hover:bg-white transition-colors shadow-sm">
           <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
           </svg>
-        </button>
+        </button> */}
         
         {categories.length > 0 && (
           <div className="absolute bottom-3 left-3 flex gap-1">
@@ -90,12 +91,13 @@ export function CourtCardNew({ court }: CourtCardNewProps) {
             <span className="text-sm text-gray-500">/hora</span>
           </div>
           
-          <div className="flex items-center gap-1">
+          {/* TODO: Implementar regra de avaliações */}
+          {/* <div className="flex items-center gap-1">
             <svg className="w-4 h-4 text-gray-900" fill="currentColor" viewBox="0 0 20 20">
               <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
             </svg>
             <span className="text-sm text-gray-900 font-medium">5.0</span>
-          </div>
+          </div> */}
         </div>
         
         <div className="flex gap-2">

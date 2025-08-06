@@ -20,7 +20,8 @@ const benefits = [
   {
     icon: FaVolleyballBall,
     title: "Alcance mais clientes",
-    description: "Exponha sua quadra para milhares de esportistas na sua região",
+    description:
+      "Exponha sua quadra para milhares de esportistas na sua região",
   },
   {
     icon: HiOutlineChartBar,
@@ -30,7 +31,8 @@ const benefits = [
   {
     icon: HiOutlineClock,
     title: "Economia de tempo",
-    description: "Automatize o processo de reservas e evite conflitos de horários",
+    description:
+      "Automatize o processo de reservas e evite conflitos de horários",
   },
   {
     icon: HiOutlineCash,
@@ -43,12 +45,14 @@ const processSteps = [
   {
     number: "01",
     title: "Cadastre sua quadra",
-    description: "Crie sua conta e adicione informações da sua quadra, fotos e horários disponíveis",
+    description:
+      "Crie sua conta e adicione informações da sua quadra, fotos e horários disponíveis",
   },
   {
     number: "02",
     title: "Personalize seu perfil",
-    description: "Configure preços, regras de reserva e políticas de cancelamento",
+    description:
+      "Configure preços, regras de reserva e políticas de cancelamento",
   },
   {
     number: "03",
@@ -95,7 +99,10 @@ export default function OwnerPlans() {
       setSelectedPlan(plan);
       setShowCheckout(true);
     } catch {
-      showToast.error("Erro", "Não foi possível selecionar o plano. Tente novamente.");
+      showToast.error(
+        "Erro",
+        "Não foi possível selecionar o plano. Tente novamente."
+      );
     }
   };
 
@@ -120,8 +127,8 @@ export default function OwnerPlans() {
       <div className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-blue-900/20 via-slate-50/50 to-white">
           <Image
-            src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-            alt="Background"
+            src="https://images.unsplash.com/photo-1553778263-73a83bab9b0c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
+            alt="Quadra de vôlei de praia"
             fill
             className="object-cover opacity-20"
           />
@@ -133,10 +140,15 @@ export default function OwnerPlans() {
             <span className="text-blue-600"> negócio lucrativo</span>
           </h1>
           <p className="text-xl md:text-2xl text-slate-600 mb-8 max-w-2xl mx-auto">
-            Junte-se a centenas de proprietários que já estão revolucionando a forma de gerenciar seus espaços esportivos
+            Junte-se a centenas de proprietários que já estão revolucionando a
+            forma de gerenciar seus espaços esportivos
           </p>
           <button
-            onClick={() => document.getElementById('plans')?.scrollIntoView({ behavior: 'smooth' })}
+            onClick={() =>
+              document
+                .getElementById("plans")
+                ?.scrollIntoView({ behavior: "smooth" })
+            }
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-300 transform hover:scale-105"
           >
             Começar agora
@@ -157,7 +169,8 @@ export default function OwnerPlans() {
               Por que escolher o SportMap?
             </h2>
             <p className="text-xl text-slate-600 max-w-3xl mx-auto">
-              A plataforma mais completa para proprietários de quadras esportivas
+              A plataforma mais completa para proprietários de quadras
+              esportivas
             </p>
           </div>
 
@@ -170,7 +183,9 @@ export default function OwnerPlans() {
                 <div className="w-16 h-16 bg-blue-600 rounded-xl flex items-center justify-center mb-6">
                   <benefit.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-900 mb-4">{benefit.title}</h3>
+                <h3 className="text-xl font-semibold text-slate-900 mb-4">
+                  {benefit.title}
+                </h3>
                 <p className="text-slate-600">{benefit.description}</p>
               </div>
             ))}
@@ -193,7 +208,7 @@ export default function OwnerPlans() {
             <div className="bg-white rounded-2xl shadow-2xl overflow-hidden transform hover:scale-105 transition-transform duration-300 border border-slate-200">
               <div className="relative h-80">
                 <Image
-                  src="https://www.topsporteng.com.br/imagens-y/informacoes/quadra-areia-01.jpg"
+                  src="https://images.unsplash.com/photo-1554068865-24cecd4e34b8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
                   alt="Exemplo de quadra"
                   fill
                   className="object-cover"
@@ -203,7 +218,9 @@ export default function OwnerPlans() {
                 </div>
               </div>
               <div className="p-8">
-                <h3 className="text-2xl font-bold text-slate-900 mb-3">Quadra Exemplo</h3>
+                <h3 className="text-2xl font-bold text-slate-900 mb-3">
+                  Quadra Exemplo
+                </h3>
                 <p className="text-slate-600 mb-6">São Paulo, SP</p>
                 <div className="flex items-center gap-6 mb-6">
                   <span className="flex items-center text-sm text-slate-500">
@@ -216,7 +233,9 @@ export default function OwnerPlans() {
                   </span>
                 </div>
                 <div className="flex justify-between items-center">
-                  <span className="text-blue-600 font-bold text-xl">R$ 80/hora</span>
+                  <span className="text-blue-600 font-bold text-xl">
+                    R$ 80/hora
+                  </span>
                   <button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                     Ver detalhes
                   </button>
@@ -227,8 +246,12 @@ export default function OwnerPlans() {
             <div className="space-y-8">
               <div className="bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200">
                 <div className="p-6 border-b border-slate-200">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-2">Suas Reservas</h3>
-                  <p className="text-slate-600">Gerencie todas as reservas em um só lugar</p>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                    Suas Reservas
+                  </h3>
+                  <p className="text-slate-600">
+                    Gerencie todas as reservas em um só lugar
+                  </p>
                 </div>
 
                 <div className="p-6">
@@ -240,7 +263,9 @@ export default function OwnerPlans() {
                             <FaVolleyballBall className="w-6 h-6 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-semibold text-slate-900">João Silva</h4>
+                            <h4 className="font-semibold text-slate-900">
+                              João Silva
+                            </h4>
                             <p className="text-slate-600">Vôlei - Quadra 01</p>
                           </div>
                         </div>
@@ -253,7 +278,9 @@ export default function OwnerPlans() {
                           <HiOutlineClock className="w-4 h-4" />
                           <span>Segunda, 15:00 - 16:00</span>
                         </div>
-                        <span className="font-semibold text-slate-900">R$ 80,00</span>
+                        <span className="font-semibold text-slate-900">
+                          R$ 80,00
+                        </span>
                       </div>
                     </div>
 
@@ -264,7 +291,9 @@ export default function OwnerPlans() {
                             <FaVolleyballBall className="w-6 h-6 text-white" />
                           </div>
                           <div>
-                            <h4 className="font-semibold text-slate-900">Maria Santos</h4>
+                            <h4 className="font-semibold text-slate-900">
+                              Maria Santos
+                            </h4>
                             <p className="text-slate-600">Vôlei - Quadra 01</p>
                           </div>
                         </div>
@@ -277,7 +306,9 @@ export default function OwnerPlans() {
                           <HiOutlineClock className="w-4 h-4" />
                           <span>Segunda, 16:00 - 17:00</span>
                         </div>
-                        <span className="font-semibold text-slate-900">R$ 80,00</span>
+                        <span className="font-semibold text-slate-900">
+                          R$ 80,00
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -285,14 +316,18 @@ export default function OwnerPlans() {
                   <div className="mt-6 p-4 border-t border-slate-200">
                     <div className="flex items-center justify-between text-sm text-slate-500">
                       <span>Total de reservas hoje</span>
-                      <span className="font-semibold text-slate-900">2 reservas</span>
+                      <span className="font-semibold text-slate-900">
+                        2 reservas
+                      </span>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6">
-                <h3 className="text-2xl font-bold text-slate-900 mb-6">Perfil otimizado para mais reservas</h3>
+                <h3 className="text-2xl font-bold text-slate-900 mb-6">
+                  Perfil otimizado para mais reservas
+                </h3>
                 <ul className="space-y-4">
                   {[
                     "Fotos em alta qualidade",
@@ -302,7 +337,10 @@ export default function OwnerPlans() {
                     "Gestão de reservas",
                     "Visibilidade na plataforma",
                   ].map((feature, index) => (
-                    <li key={index} className="flex items-center text-slate-700">
+                    <li
+                      key={index}
+                      className="flex items-center text-slate-700"
+                    >
                       <FaCheck className="w-5 h-5 text-blue-600 mr-4" />
                       {feature}
                     </li>
@@ -317,8 +355,12 @@ export default function OwnerPlans() {
       <div className="py-20 px-4 bg-white">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">Como funciona</h2>
-            <p className="text-xl text-slate-600">Comece a receber reservas em 4 passos simples</p>
+            <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+              Como funciona
+            </h2>
+            <p className="text-xl text-slate-600">
+              Comece a receber reservas em 4 passos simples
+            </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -331,7 +373,9 @@ export default function OwnerPlans() {
                   {step.number}
                 </div>
                 <div className="mt-6">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-4">{step.title}</h3>
+                  <h3 className="text-xl font-semibold text-slate-900 mb-4">
+                    {step.title}
+                  </h3>
                   <p className="text-slate-600">{step.description}</p>
                 </div>
               </div>
@@ -340,13 +384,18 @@ export default function OwnerPlans() {
         </div>
       </div>
 
-      <div id="plans" className="py-20 px-4 bg-gradient-to-b from-slate-50 to-white">
+      <div
+        id="plans"
+        className="py-20 px-4 bg-gradient-to-b from-slate-50 to-white"
+      >
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-slate-900 mb-4">
               Escolha o plano ideal para você
             </h2>
-            <p className="text-xl text-slate-600">Comece a receber reservas hoje mesmo</p>
+            <p className="text-xl text-slate-600">
+              Comece a receber reservas hoje mesmo
+            </p>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
@@ -356,9 +405,13 @@ export default function OwnerPlans() {
                 className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden hover:border-blue-300 transition-all duration-300 transform hover:scale-105"
               >
                 <div className="p-8 text-center border-b border-slate-200">
-                  <h2 className="text-2xl font-bold text-slate-900 mb-6">{plan.name}</h2>
+                  <h2 className="text-2xl font-bold text-slate-900 mb-6">
+                    {plan.name}
+                  </h2>
                   <div className="flex justify-center items-baseline mb-6">
-                    <span className="text-5xl font-extrabold text-slate-900">{formatPrice(plan.price)}</span>
+                    <span className="text-5xl font-extrabold text-slate-900">
+                      {formatPrice(plan.price)}
+                    </span>
                     <span className="text-slate-500 ml-2">/mês</span>
                   </div>
                   <p className="text-slate-600">{plan.description}</p>
@@ -368,11 +421,16 @@ export default function OwnerPlans() {
                   <ul className="space-y-4 mb-8">
                     <li className="flex items-center text-slate-700">
                       <FaCheck className="w-5 h-5 text-blue-600 mr-4" />
-                      {plan.courtLimit === 0 ? "Quadras ilimitadas" : `Até ${plan.courtLimit} quadras`}
+                      {plan.courtLimit === 0
+                        ? "Quadras ilimitadas"
+                        : `Até ${plan.courtLimit} quadras`}
                     </li>
 
                     {plan.features?.map((feature, index) => (
-                      <li key={index} className="flex items-center text-slate-700">
+                      <li
+                        key={index}
+                        className="flex items-center text-slate-700"
+                      >
                         <FaCheck className="w-5 h-5 text-blue-600 mr-4" />
                         {feature}
                       </li>

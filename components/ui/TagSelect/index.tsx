@@ -13,7 +13,7 @@ export function TagSelect({ value, label, isSelected, onChange, className }: Tag
     <button
       type="button"
       onClick={() => onChange(value)}
-      className={`px-4 py-2 rounded-full border text-sm font-medium transition ${isSelected ? 'bg-sky-500 text-white border-sky-500' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-sky-50'} ${className ?? ''}`}
+      className={`px-4 py-2 rounded-full border text-sm font-medium transition ${isSelected ? 'bg-primary-50 text-white border-primary-500' : 'bg-slate-100 text-slate-700 border-slate-200 hover:bg-sky-50'} ${className ?? ''}`}
     >
       {label}
     </button>

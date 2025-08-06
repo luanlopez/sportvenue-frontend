@@ -117,7 +117,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-slate-50 flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-sky-500" />
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
       </div>
     );
   }
@@ -140,7 +140,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                     <label className="block text-sm font-medium text-slate-700 mb-2">Nome da Quadra</label>
                     <input
                       {...register("name")}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
                       placeholder="Digite o nome da quadra"
                     />
                     {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
@@ -154,7 +154,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                         type="number"
                         step="0.01"
                         {...register("pricePerHour")}
-                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors"
+                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
                         placeholder="0,00"
                       />
                     </div>
@@ -168,7 +168,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                     <textarea
                       {...register("description")}
                       rows={4}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors resize-none"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors resize-none"
                       placeholder="Descreva sua quadra..."
                     />
                     {errors.description && (
@@ -185,7 +185,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                     <label className="block text-sm font-medium text-slate-700 mb-2">Endereço</label>
                     <input
                       {...register("address")}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
                       placeholder="Rua, Avenida, etc."
                     />
                     {errors.address && <p className="mt-2 text-sm text-red-600">{errors.address.message}</p>}
@@ -195,7 +195,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                     <label className="block text-sm font-medium text-slate-700 mb-2">Número</label>
                     <input
                       {...register("number")}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
                       placeholder="123"
                     />
                     {errors.number && <p className="mt-2 text-sm text-red-600">{errors.number.message}</p>}
@@ -205,7 +205,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                     <label className="block text-sm font-medium text-slate-700 mb-2">Bairro</label>
                     <input
                       {...register("neighborhood")}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
                       placeholder="Centro"
                     />
                     {errors.neighborhood && <p className="mt-2 text-sm text-red-600">{errors.neighborhood.message}</p>}
@@ -215,7 +215,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                     <label className="block text-sm font-medium text-slate-700 mb-2">Cidade</label>
                     <input
                       {...register("city")}
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 transition-colors"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
                       placeholder="São Paulo"
                     />
                     {errors.city && <p className="mt-2 text-sm text-red-600">{errors.city.message}</p>}
@@ -293,7 +293,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 text-white bg-sky-500 rounded-xl hover:bg-sky-600 transition-colors font-medium shadow-sm"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-sm"
                 >
                   <FiSave className="w-5 h-5" />
                   Salvar Alterações
@@ -384,7 +384,7 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                       <button
                         type="button"
                         onClick={handleUpload}
-                        className="px-4 py-2 text-white bg-sky-500 rounded-lg hover:bg-sky-600 transition-colors text-sm font-medium"
+                        className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                       >
                         Enviar
                       </button>
