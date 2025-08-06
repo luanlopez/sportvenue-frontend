@@ -59,7 +59,7 @@ export default function Checkout({ onClose, onSuccess, customer, plan }: Checkou
       onKeyDown={handleKeyDown}
       tabIndex={-1}
     >
-      <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-auto">
+      <div className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
         <div className="bg-white border-b border-slate-200 px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
@@ -79,7 +79,7 @@ export default function Checkout({ onClose, onSuccess, customer, plan }: Checkou
           </div>
         </div>
 
-        <div className="flex-1 overflow-hidden">
+        <div className="flex-1 overflow-auto">
           <div className="h-full p-6">
             <div className="h-full min-h-[500px] bg-slate-50 rounded-lg">
               <EmbeddedCheckoutProvider
@@ -96,7 +96,7 @@ export default function Checkout({ onClose, onSuccess, customer, plan }: Checkou
             </div>
           </div>
         </div>
-                  
+
         <div className="bg-slate-50 px-6 py-4 border-t border-slate-200">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4 text-xs text-slate-500">
