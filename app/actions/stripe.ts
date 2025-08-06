@@ -27,8 +27,9 @@ export async function fetchClientSecret({
   plan,
   customer,
 }: FetchClientSecretProps): Promise<string | null> {
+  console.log("fetchClientSecret", plan, customer);
   const origin = (await headers()).get("origin") ?? "";
-
+  console.log("origin", origin);
   const session = await stripe.checkout.sessions.create({
     ui_mode: "embedded",
     line_items: [
@@ -45,6 +46,6 @@ export async function fetchClientSecret({
     },
     return_url: `${origin}?session_id={CHECKOUT_SESSION_ID}&plan_id=${plan.id}`,
   });
-
+  console.log("session", session);
   return session.client_secret;
 }
