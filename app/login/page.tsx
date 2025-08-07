@@ -150,7 +150,6 @@ function LoginPage() {
     }
   };
 
-  // Esqueci minha senha - enviar e-mail
   const handleForgotPassword = async (
     values: { email: string },
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
@@ -168,13 +167,11 @@ function LoginPage() {
     }
   };
 
-  // Esqueci minha senha - validar código
   const handleValidateCode = async (
     values: { code: string },
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
-    try {
-      // Aqui você pode validar o código se quiser, ou apenas avançar
+    try {   
       setCode(values.code);
       setIsResetCode(false);
       setIsResetPassword(true);
@@ -185,7 +182,6 @@ function LoginPage() {
     }
   };
 
-  // Esqueci minha senha - redefinir senha
   const handleResetPassword = async (
     values: { newPassword: string; confirmPassword: string },
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
@@ -204,8 +200,8 @@ function LoginPage() {
   };
 
   return (
-    <main className="font-poppins min-h-screen w-full flex flex-col md:flex-row bg-[#1345BA] relative overflow-hidden">
-      <div className="hidden md:block absolute z-0 w-full h-full pointer-events-none">
+    <main className="font-poppins min-h-screen w-full flex flex-col lg:flex-row bg-[#1345BA] relative overflow-hidden">
+      <div className="hidden lg:block absolute z-0 w-full h-full pointer-events-none">
         <div className="absolute left-[-8vw] top-8 w-[70vw] h-10 bg-[#0A3B8A] opacity-30 rotate-12 rounded-full" />
         <div className="absolute right-[-12vw] top-1/3 w-[60vw] h-10 bg-[#0A3B8A] opacity-20 -rotate-18 rounded-full" />
         <div className="absolute left-[-10vw] bottom-12 w-[80vw] h-10 bg-[#0A3B8A] opacity-15 rotate-[-8deg] rounded-full" />
@@ -213,7 +209,19 @@ function LoginPage() {
         <div className="absolute left-[8vw] top-[38vh] w-[28vw] h-10 bg-[#0A3B8A] opacity-35 rotate-[60deg] rounded-full" />
         <div className="absolute left-[-12vw] bottom-[-4vw] w-[50vw] h-10 bg-[#0A3B8A] opacity-30 rotate-[70deg] rounded-full" />
       </div>
-      <div className="hidden md:flex flex-col justify-center items-center w-1/2 relative z-10">
+      
+        <div className="flex lg:hidden flex-col justify-center items-center w-full relative z-10 py-6">
+        <Image
+          src="/logo-white.svg"
+          alt="Sportmap Logo"
+          width={200}
+          height={80}
+          className="mb-4 max-w-[200px] w-full h-auto"
+          priority
+        />
+      </div>
+      
+      <div className="hidden lg:flex flex-col justify-center items-center w-1/2 relative z-10">
         <Image
           src="/logo-white.svg"
           alt="Sportmap Logo"
@@ -223,9 +231,10 @@ function LoginPage() {
           priority
         />
       </div>
-      <div className="flex flex-1 flex-col justify-center items-center w-full md:w-1/2 bg-transparent z-10 min-h-screen">
-        <div className="w-full max-w-[95vw] sm:max-w-sm md:max-w-md bg-white rounded-2xl shadow-xl px-4 sm:px-6 md:px-8 py-8 sm:py-10 md:py-10 flex flex-col items-center mx-auto my-8 md:my-0 overflow-hidden">
-          <div className="w-full relative min-h-[400px] sm:min-h-[600px] flex items-center justify-center">
+      
+      <div className="flex flex-1 flex-col justify-center items-center w-full lg:w-1/2 bg-transparent z-10 px-4 lg:px-8">
+        <div className="w-full max-w-sm lg:max-w-md bg-white rounded-2xl shadow-xl px-6 lg:px-8 py-8 lg:py-10 flex flex-col items-center mx-auto">
+          <div className="w-full relative">
             <AnimatePresence mode="wait">
               {isVerifying ? (
                 <motion.div
@@ -234,12 +243,12 @@ function LoginPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -40 }}
                   transition={{ duration: 0.35 }}
-                  className="flex flex-col justify-center items-center w-full h-full px-4 py-8 absolute top-0 left-0"
+                  className="flex flex-col justify-center items-center w-full"
                 >
-                  <h2 className="text-2xl font-bold text-slate-900 mb-2">Verificação de Email</h2>
-                  <p className="text-slate-500 text-base mb-2">Digite o código de 6 dígitos enviado para seu email</p>
-                  <p className="text-slate-400 text-sm mb-6">Verifique sua caixa de entrada e spam.</p>
-                  <form onSubmit={handleSubmitCode} className="flex flex-col items-center gap-8 w-full">
+                  <h2 className="text-2xl font-bold text-slate-900 mb-2 text-center">Verificação de Email</h2>
+                  <p className="text-slate-500 text-sm mb-2 text-center">Digite o código de 6 dígitos enviado para seu email</p>
+                  <p className="text-slate-400 text-xs mb-6 text-center">Verifique sua caixa de entrada e spam.</p>
+                  <form onSubmit={handleSubmitCode} className="flex flex-col items-center gap-6 w-full">
                     <input
                       type="text"
                       inputMode="numeric"
@@ -247,7 +256,7 @@ function LoginPage() {
                       maxLength={6}
                       value={code}
                       onChange={e => handleChangeCode(e.target.value)}
-                      className="w-full max-w-xs text-center text-4xl font-bold rounded-2xl border-2 border-slate-200 focus:border-[#1345BA] focus:ring-[#1345BA] text-slate-900 transition-all outline-none py-6 tracking-widest bg-slate-50"
+                      className="w-full max-w-xs text-center text-3xl font-bold rounded-2xl border-2 border-slate-200 focus:border-[#1345BA] focus:ring-[#1345BA] text-slate-900 transition-all outline-none py-4 tracking-widest bg-slate-50"
                       placeholder="______"
                       disabled={isSubmittingCode}
                       autoFocus
@@ -255,13 +264,13 @@ function LoginPage() {
                     <button
                       type="submit"
                       disabled={isSubmittingCode}
-                      className="w-full max-w-xs px-8 py-4 text-white rounded-2xl bg-[#1345BA] transition font-bold text-lg shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                      className="w-full max-w-xs px-6 py-3 text-white rounded-2xl bg-[#1345BA] transition font-bold text-base shadow-sm disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >
                       {isSubmittingCode ? "Verificando..." : "Verificar"}
                     </button>
                     <button
                       type="button"
-                      className="text-[#1345BA] hover:underline font-medium mt-2"
+                      className="text-[#1345BA] hover:underline font-medium mt-2 text-sm"
                       onClick={() => { setIsVerifying(false); setIsRegistering(true); }}
                     >
                       Voltar para cadastro
@@ -275,10 +284,10 @@ function LoginPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -40 }}
                   transition={{ duration: 0.35 }}
-                  className="w-full absolute top-0 left-0 flex flex-col justify-center h-full"
+                  className="w-full"
                 >
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1 w-full text-left">Crie sua conta</h2>
-                  <p className="text-slate-500 text-base mb-6 w-full text-left">Aproveite todos os recursos do SportMap</p>
+                  <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-1">Crie sua conta</h2>
+                  <p className="text-slate-500 text-sm mb-6">Aproveite todos os recursos do SportMap</p>
                   <Formik
                     initialValues={{
                       firstName: "",
@@ -292,21 +301,21 @@ function LoginPage() {
                     onSubmit={handleRegister}
                   >
                     {({ isSubmitting }) => (
-                      <Form className="space-y-5">
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <Form className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <Input
                             name="firstName"
                             label="Nome"
                             placeholder="Nome"
                             disabled={isSubmitting}
-                            className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                            className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                           />
                           <Input
                             name="lastName"
                             label="Sobrenome"
                             placeholder="Sobrenome"
                             disabled={isSubmitting}
-                            className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                            className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                           />
                         </div>
                         <Input
@@ -315,33 +324,33 @@ function LoginPage() {
                           label="Email"
                           placeholder="Email"
                           disabled={isSubmitting}
-                          className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                          className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                         />
                         <Password
                           name="password"
                           label="Senha"
                           placeholder="Senha"
                           disabled={isSubmitting}
-                          className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                          className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                         />
                         <Password
                           name="confirmPassword"
                           label="Confirmar Senha"
                           placeholder="Confirmar Senha"
                           disabled={isSubmitting}
-                          className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                          className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                         />
                         <Input
                           name="phone"
                           label="Telefone"
                           placeholder="Telefone"
                           disabled={isSubmitting}
-                          className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                          className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                         />
                         <button
                           type="submit"
                           disabled={isSubmitting}
-                          className="w-full px-8 py-3 text-white rounded-lg flex items-center justify-center gap-2"
+                          className="w-full px-6 py-3 text-white rounded-lg flex items-center justify-center gap-2 text-sm"
                           style={{ background: '#1345BA' }}
                         >
                           {isSubmitting ? (
@@ -353,7 +362,7 @@ function LoginPage() {
                             "Cadastrar"
                           )}
                         </button>
-                        <div className="w-full flex justify-center mt-6">
+                        <div className="w-full flex justify-center mt-4">
                           <span className="text-slate-500 text-sm">Já tem conta?{' '}
                             <button type="button" className="text-sky-600 hover:underline font-medium" onClick={() => setIsRegistering(false)}>Entrar</button>
                           </span>
@@ -369,34 +378,34 @@ function LoginPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -40 }}
                   transition={{ duration: 0.35 }}
-                  className="w-full absolute top-0 left-0 flex flex-col justify-center h-full"
+                  className="w-full"
                 >
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1 w-full text-left">Recuperar senha</h2>
-                  <p className="text-slate-500 text-base mb-6 w-full text-left">Digite seu e-mail para receber o código de recuperação</p>
+                  <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-1">Recuperar senha</h2>
+                  <p className="text-slate-500 text-sm mb-6">Digite seu e-mail para receber o código de recuperação</p>
                   <Formik
                     initialValues={{ email: "" }}
                     validationSchema={Yup.object({ email: Yup.string().required("Email é obrigatório").email("Email inválido") })}
                     onSubmit={handleForgotPassword}
                   >
                     {({ isSubmitting }) => (
-                      <Form className="space-y-5">
+                      <Form className="space-y-4">
                         <Input
                           name="email"
                           type="email"
                           label="Email"
                           placeholder="Email"
                           disabled={isSubmitting}
-                          className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                          className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                         />
                         <button
                           type="submit"
                           disabled={isSubmitting}
-                          className="w-full px-8 py-3 text-white rounded-lg flex items-center justify-center gap-2"
+                          className="w-full px-6 py-3 text-white rounded-lg flex items-center justify-center gap-2 text-sm"
                           style={{ background: '#1345BA' }}
                         >
                           {isSubmitting ? <><Spinner /><span>Enviando...</span></> : "Enviar código"}
                         </button>
-                        <div className="w-full flex justify-center mt-6">
+                        <div className="w-full flex justify-center mt-4">
                           <span className="text-slate-500 text-sm">
                             Lembrou a senha?{' '}
                             <button type="button" className="text-sky-600 hover:underline font-medium" onClick={() => setIsForgotPassword(false)}>Voltar para login</button>
@@ -413,35 +422,35 @@ function LoginPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -40 }}
                   transition={{ duration: 0.35 }}
-                  className="w-full absolute top-0 left-0 flex flex-col justify-center h-full"
+                  className="w-full"
                 >
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1 w-full text-left">Digite o código</h2>
-                  <p className="text-slate-500 text-base mb-6 w-full text-left">Enviamos um código para o e-mail <span className='font-bold'>{forgotEmail}</span></p>
+                  <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-1">Digite o código</h2>
+                  <p className="text-slate-500 text-sm mb-6">Enviamos um código para o e-mail <span className='font-bold'>{forgotEmail}</span></p>
                   <Formik
                     initialValues={{ code: "" }}
                     validationSchema={Yup.object({ code: Yup.string().required("Código é obrigatório").length(6, "Código deve ter 6 dígitos") })}
                     onSubmit={handleValidateCode}
                   >
                     {({ isSubmitting }) => (
-                      <Form className="space-y-5">
+                      <Form className="space-y-4">
                         <Input
                           name="code"
                           type="text"
                           label="Código"
                           placeholder="______"
                           disabled={isSubmitting}
-                          className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500 text-center tracking-widest text-2xl"
+                          className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500 text-center tracking-widest text-xl"
                           maxLength={6}
                         />
                         <button
                           type="submit"
                           disabled={isSubmitting}
-                          className="w-full px-8 py-3 text-white rounded-lg flex items-center justify-center gap-2"
+                          className="w-full px-6 py-3 text-white rounded-lg flex items-center justify-center gap-2 text-sm"
                           style={{ background: '#1345BA' }}
                         >
                           {isSubmitting ? <><Spinner /><span>Validando...</span></> : "Validar código"}
                         </button>
-                        <div className="w-full flex justify-center mt-6">
+                        <div className="w-full flex justify-center mt-4">
                           <span className="text-slate-500 text-sm">
                             Não recebeu?{' '}
                             <button type="button" className="text-sky-600 hover:underline font-medium" onClick={() => setIsForgotPassword(true)}>Reenviar código</button>
@@ -458,10 +467,10 @@ function LoginPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -40 }}
                   transition={{ duration: 0.35 }}
-                  className="w-full absolute top-0 left-0 flex flex-col justify-center h-full"
+                  className="w-full"
                 >
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1 w-full text-left">Nova senha</h2>
-                  <p className="text-slate-500 text-base mb-6 w-full text-left">Digite sua nova senha abaixo</p>
+                  <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-1">Nova senha</h2>
+                  <p className="text-slate-500 text-sm mb-6">Digite sua nova senha abaixo</p>
                   <Formik
                     initialValues={{ newPassword: "", confirmPassword: "" }}
                     validationSchema={Yup.object({
@@ -471,30 +480,30 @@ function LoginPage() {
                     onSubmit={handleResetPassword}
                   >
                     {({ isSubmitting }) => (
-                      <Form className="space-y-5">
+                      <Form className="space-y-4">
                         <Password
                           name="newPassword"
                           label="Nova senha"
                           placeholder="Nova senha"
                           disabled={isSubmitting}
-                          className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                          className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                         />
                         <Password
                           name="confirmPassword"
                           label="Confirmar nova senha"
                           placeholder="Confirmar nova senha"
                           disabled={isSubmitting}
-                          className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                          className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                         />
                         <button
                           type="submit"
                           disabled={isSubmitting}
-                          className="w-full px-8 py-3 text-white rounded-lg flex items-center justify-center gap-2"
+                          className="w-full px-6 py-3 text-white rounded-lg flex items-center justify-center gap-2 text-sm"
                           style={{ background: '#1345BA' }}
                         >
                           {isSubmitting ? <><Spinner /><span>Salvando...</span></> : "Salvar nova senha"}
                         </button>
-                        <div className="w-full flex justify-center mt-6">
+                        <div className="w-full flex justify-center mt-4">
                           <span className="text-slate-500 text-sm">
                             Lembrou a senha?{' '}
                             <button type="button" className="text-sky-600 hover:underline font-medium" onClick={() => { setIsResetPassword(false); setIsForgotPassword(false); }}>Voltar para login</button>
@@ -511,18 +520,18 @@ function LoginPage() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -40 }}
                   transition={{ duration: 0.35 }}
-                  className="w-full absolute top-0 left-0 flex flex-col justify-center h-full"
+                  className="w-full"
                 >
-                  <h2 className="text-xl sm:text-2xl font-bold text-slate-900 mb-1 w-full text-left">Bem vindo,</h2>
-                  <p className="text-slate-500 text-base mb-6 w-full text-left">faça o login para sua conta.</p>
+                  <h2 className="text-xl lg:text-2xl font-bold text-slate-900 mb-1">Bem vindo,</h2>
+                  <p className="text-slate-500 text-sm mb-6">faça o login para sua conta.</p>
                   <a
                     href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
-                    className="w-full px-4 py-3 mb-4 text-gray-700 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 transition font-medium text-base flex items-center justify-center gap-3 shadow-sm"
+                    className="w-full px-4 py-3 mb-4 text-gray-700 rounded-lg bg-white border border-slate-200 hover:bg-slate-50 transition font-medium text-sm flex items-center justify-center gap-3 shadow-sm"
                   >
                     <svg
                       viewBox="0 0 24 24"
-                      width="24"
-                      height="24"
+                      width="20"
+                      height="20"
                       xmlns="http://www.w3.org/2000/svg"
                     >
                       <g transform="matrix(1, 0, 0, 1, 27.009001, -39.238998)">
@@ -538,7 +547,7 @@ function LoginPage() {
                     <div className="absolute inset-0 flex items-center">
                       <div className="w-full border-t border-slate-200"></div>
                     </div>
-                    <div className="relative flex justify-center text-sm">
+                    <div className="relative flex justify-center text-xs">
                       <span className="px-2 bg-white text-slate-400">ou</span>
                     </div>
                   </div>
@@ -549,21 +558,21 @@ function LoginPage() {
                       onSubmit={handleSubmit}
                     >
                       {({ isSubmitting }) => (
-                        <Form className="space-y-5">
+                        <Form className="space-y-4">
                           <Input
                             name="email"
                             type="email"
                             label="Email"
                             placeholder="Email"
                             disabled={isSubmitting}
-                            className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                            className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                           />
                           <Password
                             name="password"
                             label="Senha"
                             placeholder="Senha"
                             disabled={isSubmitting}
-                            className="text-base px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
+                            className="text-sm px-4 py-3 rounded-lg border border-slate-200 focus:border-sky-500"
                           />
                           <div className="flex justify-end w-full mb-2">
                             <button
@@ -577,7 +586,7 @@ function LoginPage() {
                           <button
                             type="submit"
                             disabled={isSubmitting}
-                            className="w-full px-8 py-3 text-white rounded-lg flex items-center justify-center gap-2"
+                            className="w-full px-6 py-3 text-white rounded-lg flex items-center justify-center gap-2 text-sm"
                             style={{ background: '#1345BA' }}
                           >
                             {isSubmitting ? (
@@ -589,7 +598,7 @@ function LoginPage() {
                               "Login"
                             )}
                           </button>
-                          <div className="w-full flex justify-center mt-6">
+                          <div className="w-full flex justify-center mt-4">
                             <span className="text-slate-500 text-sm">
                               Ainda não possui uma conta?{' '}
                               <button

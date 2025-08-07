@@ -30,32 +30,32 @@ const sportOptions = [
   {
     value: "FOOTBALL",
     label: "Futebol",
-    icon: <MdSportsSoccer className="w-5 h-5 mr-2" />,
+    icon: <MdSportsSoccer className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />,
   },
   {
     value: "TENNIS",
     label: "Tênis",
-    icon: <MdSportsTennis className="w-5 h-5 mr-2" />,
+    icon: <MdSportsTennis className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />,
   },
   {
     value: "BASKETBALL",
     label: "Basquete",
-    icon: <MdSportsBasketball className="w-5 h-5 mr-2" />,
+    icon: <MdSportsBasketball className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />,
   },
   {
     value: "VOLLEYBALL",
     label: "Vôlei",
-    icon: <MdSportsVolleyball className="w-5 h-5 mr-2" />,
+    icon: <MdSportsVolleyball className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />,
   },
   {
     value: "PADEL",
     label: "Padel",
-    icon: <GiTennisRacket className="w-5 h-5 mr-2" />,
+    icon: <GiTennisRacket className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />,
   },
   {
     value: "FUTSAL",
     label: "Futsal",
-    icon: <MdSportsSoccer className="w-5 h-5 mr-2" />,
+    icon: <MdSportsSoccer className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />,
   },
 ];
 
@@ -148,7 +148,7 @@ export default function Home() {
 
       const formattedPlaces = places.slice(0, 5).map((place: PlaceSearchResult) => ({
         value: place.name,
-        icon: <MdSportsSoccer className="w-5 h-5 text-blue-600" />,
+        icon: <MdSportsSoccer className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />,
         subtitle: place.vicinity || place.formatted_address,
         location: place.geometry.location,
       }));
@@ -175,7 +175,7 @@ export default function Home() {
 
       const formattedPlaces = places.slice(0, 5).map((place: PlaceSearchResult) => ({
         value: place.name,
-        icon: <MdSportsSoccer className="w-5 h-5 text-blue-600" />,
+        icon: <MdSportsSoccer className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />,
         subtitle: place.formatted_address || place.vicinity || "Localização",
         location: place.geometry.location,
       }));
@@ -302,21 +302,21 @@ export default function Home() {
   const isOwner = user?.userType === "HOUSE_OWNER";
 
   return (
-    <div className="min-h-screen bg-secondary-50 overflow-x-hidden py-10 sm:py-16">
-      <div className="w-full max-w-3xl mx-auto mb-12">
+    <div className="min-h-screen bg-secondary-50 overflow-x-hidden py-6 sm:py-10 lg:py-16">
+      <div className="w-full max-w-3xl mx-auto mb-8 sm:mb-12 px-4 sm:px-6">
         <form
           onSubmit={handleSearch}
-          className="flex items-center bg-white rounded-full shadow-lg px-2 py-1 sm:py-0 sm:h-16 border border-slate-100 divide-x divide-slate-100"
+          className="flex flex-col sm:flex-row items-stretch sm:items-center bg-white rounded-2xl sm:rounded-full shadow-lg border border-slate-100 divide-y sm:divide-y-0 sm:divide-x divide-slate-100"
           autoComplete="off"
         >
-          <div className="flex flex-col flex-1 px-4 py-2 relative" ref={searchPanelRef}>
-            <span className="text-xs font-semibold text-slate-400 mb-0.5">
+          <div className="flex flex-col flex-1 px-4 sm:px-6 py-3 sm:py-2 relative" ref={searchPanelRef}>
+            <span className="text-xs font-semibold text-slate-400 mb-1 sm:mb-0.5">
               Onde
             </span>
             <input
               type="text"
               placeholder="Buscar destinos"
-              className="bg-transparent outline-none text-slate-700 placeholder:text-slate-400 text-base font-medium w-full"
+              className="bg-transparent outline-none text-slate-700 placeholder:text-slate-400 text-sm sm:text-base font-medium w-full"
               value={searchText}
               onChange={(e) => {
                 setSearchText(e.target.value);
@@ -327,14 +327,14 @@ export default function Home() {
               onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
             />
             {showSuggestions && (
-              <div className="absolute left-0 top-14 w-full bg-white rounded-2xl shadow-2xl border border-slate-100 z-30 py-2 px-0 max-h-80 overflow-y-auto animate-fadeIn">
+              <div className="absolute left-0 top-full w-full bg-white rounded-2xl shadow-2xl border border-slate-100 z-30 py-2 px-0 max-h-80 overflow-y-auto animate-fadeIn mt-1">
                 {searchText.trim() ? (
                   <>
-                    <div className="px-5 py-2 text-xs font-semibold text-slate-400">
+                    <div className="px-4 sm:px-5 py-2 text-xs font-semibold text-slate-400">
                       {isSearching ? "Buscando..." : "Resultados da busca"}
                     </div>
                     {isSearching ? (
-                      <div className="px-5 py-3 text-sm text-slate-500">
+                      <div className="px-4 sm:px-5 py-3 text-sm text-slate-500">
                         Buscando lugares...
                       </div>
                     ) : searchResults.length > 0 ? (
@@ -342,7 +342,7 @@ export default function Home() {
                         <button
                           key={place.value + idx}
                           type="button"
-                          className="flex items-start gap-3 w-full px-5 py-3 hover:bg-blue-50 transition rounded-xl text-left"
+                          className="flex items-start gap-3 w-full px-4 sm:px-5 py-3 hover:bg-blue-50 transition rounded-xl text-left"
                           onClick={() => {
                             setSearchText(place.value);
                             setActiveSearchText(place.value);
@@ -350,31 +350,31 @@ export default function Home() {
                           }}
                         >
                           <span className="mt-1">{place.icon}</span>
-                          <span>
-                            <div className="font-semibold text-slate-900 text-sm">
+                          <span className="min-w-0 flex-1">
+                            <div className="font-semibold text-slate-900 text-sm truncate">
                               {place.value}
                             </div>
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-slate-500 truncate">
                               {place.subtitle}
                             </div>
                           </span>
                         </button>
                       ))
                     ) : (
-                      <div className="px-5 py-3 text-sm text-slate-500">
+                      <div className="px-4 sm:px-5 py-3 text-sm text-slate-500">
                             Nenhum lugar encontrado para &quot;{searchText}&quot;
                       </div>
                     )}
                   </>
                 ) : (
                   <>
-                    <div className="px-5 py-2 text-xs font-semibold text-slate-400">
+                    <div className="px-4 sm:px-5 py-2 text-xs font-semibold text-slate-400">
                       {isLoadingLocation
                         ? "Carregando lugares próximos..."
                         : "Lugares próximos"}
                     </div>
                     {isLoadingLocation ? (
-                      <div className="px-5 py-3 text-sm text-slate-500">
+                      <div className="px-4 sm:px-5 py-3 text-sm text-slate-500">
                         Buscando sua localização...
                       </div>
                     ) : nearbyPlaces.length > 0 ? (
@@ -382,7 +382,7 @@ export default function Home() {
                         <button
                           key={place.value + idx}
                           type="button"
-                          className="flex items-start gap-3 w-full px-5 py-3 hover:bg-blue-50 transition rounded-xl text-left"
+                          className="flex items-start gap-3 w-full px-4 sm:px-5 py-3 hover:bg-blue-50 transition rounded-xl text-left"
                           onClick={() => {
                             setSearchText(place.value);
                             setActiveSearchText(place.value);
@@ -390,18 +390,18 @@ export default function Home() {
                           }}
                         >
                           <span className="mt-1">{place.icon}</span>
-                          <span>
-                            <div className="font-semibold text-slate-900 text-sm">
+                          <span className="min-w-0 flex-1">
+                            <div className="font-semibold text-slate-900 text-sm truncate">
                               {place.value}
                             </div>
-                            <div className="text-xs text-slate-500">
+                            <div className="text-xs text-slate-500 truncate">
                               {place.subtitle}
                             </div>
                           </span>
                         </button>
                       ))
                     ) : (
-                      <div className="px-5 py-3 text-sm text-slate-500">
+                      <div className="px-4 sm:px-5 py-3 text-sm text-slate-500">
                         Nenhum lugar próximo encontrado
                       </div>
                     )}
@@ -411,38 +411,40 @@ export default function Home() {
             )}
           </div>
 
-          <div className="flex flex-col flex-1 px-4 py-2 relative">
-            <span className="text-xs font-semibold text-slate-400 mb-0.5">
+          <div className="flex flex-col flex-1 px-4 py-3 sm:py-2 relative">
+            <span className="text-xs font-semibold text-slate-400 mb-1 sm:mb-0.5">
               Esporte
             </span>
             <button
               type="button"
-              className="flex items-center justify-between w-full bg-transparent rounded-xl px-0 py-0 text-base font-medium text-slate-700 focus:ring-2 focus:ring-blue-200 transition"
+              className="flex items-center justify-between w-full bg-transparent rounded-xl px-0 py-0 text-sm sm:text-base font-medium text-slate-700 focus:ring-2 focus:ring-blue-200 transition"
               onClick={() => setShowSportPanel(true)}
               aria-haspopup="dialog"
               aria-expanded={showSportPanel}
             >
               <span className="flex items-center">
                 {sportOptions.find((opt) => opt.value === selectedSport)?.icon}
-                {sportOptions.find((opt) => opt.value === selectedSport)?.label}
+                <span className="truncate">
+                  {sportOptions.find((opt) => opt.value === selectedSport)?.label}
+                </span>
               </span>
             </button>
             {showSportPanel && (
               <div
                 ref={sportPanelRef}
-                className="absolute left-0 top-14 w-full bg-white rounded-2xl shadow-2xl border border-slate-100 z-30 py-4 px-0 max-h-80 overflow-y-auto animate-fadeIn"
+                className="absolute left-0 top-full w-full bg-white rounded-2xl shadow-2xl border border-slate-100 z-30 py-4 px-0 max-h-80 overflow-y-auto animate-fadeIn mt-1"
               >
-                <div className="px-5 py-2 text-xs font-semibold text-slate-400">
+                <div className="px-4 sm:px-5 py-2 text-xs font-semibold text-slate-400">
                   Selecione o esporte
                 </div>
-                <div className="grid grid-cols-2 gap-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                   {sportOptions
                     .filter((opt) => opt.value !== "")
                     .map((opt) => (
                       <button
                         key={opt.value}
                         type="button"
-                        className={`flex items-center gap-3 w-full px-5 py-3 hover:bg-blue-50 transition rounded-xl text-base ${
+                        className={`flex items-center gap-3 w-full px-4 sm:px-5 py-3 hover:bg-blue-50 transition rounded-xl text-sm sm:text-base ${
                           selectedSport === opt.value
                             ? "bg-blue-100 font-semibold text-blue-700"
                             : "text-slate-700"
@@ -453,7 +455,7 @@ export default function Home() {
                         }}
                       >
                         {opt.icon}
-                        {opt.label}
+                        <span className="truncate">{opt.label}</span>
                       </button>
                     ))}
                 </div>
@@ -463,15 +465,16 @@ export default function Home() {
 
           <button
             type="submit"
-            className="ml-2 flex items-center justify-center w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 transition-colors shadow text-white"
+            className="flex items-center justify-center w-full sm:w-12 h-12 sm:h-12 mr-2 rounded-b-2xl sm:rounded-full bg-blue-600 hover:bg-blue-700 transition-colors shadow text-white text-sm sm:text-base font-medium sm:font-normal"
             aria-label="Buscar"
           >
-            <FaSearch className="w-5 h-5" />
+            <FaSearch className="w-4 h-4 sm:w-5 sm:h-5 mr-2 sm:mr-0" />
+            <span className="sm:hidden">Buscar</span>
           </button>
         </form>
       </div>
 
-      <div className="w-full max-w-8xl mx-auto px-2 sm:px-4 lg:px-20 py-20 sm:py-6">
+      <div className="w-full max-w-8xl mx-auto px-4 sm:px-6 lg:px-20 py-6 sm:py-8 lg:py-20">
         {isLoading ? (
           <div className="grid grid-cols-1 xs:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
             {[...Array(8)].map((_, index) => (
@@ -486,11 +489,11 @@ export default function Home() {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center min-h-[300px] py-10">
-            <HiOutlineExclamationCircle className="w-14 h-14 text-blue-200 mb-4" />
-            <h3 className="text-lg font-semibold text-slate-500 mb-1">
+            <HiOutlineExclamationCircle className="w-12 h-12 sm:w-14 sm:h-14 text-blue-200 mb-4" />
+            <h3 className="text-base sm:text-lg font-semibold text-slate-500 mb-1 text-center">
               Nenhuma quadra encontrada
             </h3>
-            <p className="text-slate-400 text-sm text-center max-w-xs">
+            <p className="text-slate-400 text-sm text-center max-w-xs px-4">
               Não encontramos quadras para os filtros selecionados. Tente
               alterar os filtros ou buscar por outro local ou esporte.
             </p>
@@ -512,11 +515,11 @@ export default function Home() {
         <Link
           href="/courts/new"
           className="
-            fixed bottom-6 right-6 z-50
-            flex items-center gap-3
-            px-6 py-3
+            fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50
+            flex items-center gap-2 sm:gap-3
+            px-4 sm:px-6 py-3
             rounded-full
-            bg-blue-600 text-white font-bold
+            bg-blue-600 text-white font-bold text-sm sm:text-base
             shadow-xl
             hover:bg-blue-700 hover:scale-105 hover:shadow-2xl
             active:scale-95
@@ -531,7 +534,7 @@ export default function Home() {
             viewBox="0 0 24 24"
             strokeWidth={2}
             stroke="currentColor"
-            className="w-6 h-6"
+            className="w-5 h-5 sm:w-6 sm:h-6"
           >
             <path
               strokeLinecap="round"
@@ -539,7 +542,8 @@ export default function Home() {
               d="M12 4.5v15m7.5-7.5h-15"
             />
           </svg>
-          <span>Criar Quadra</span>
+          <span className="hidden sm:inline">Criar Quadra</span>
+          <span className="sm:hidden">Criar</span>
         </Link>
       )}
     </div>

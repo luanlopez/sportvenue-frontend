@@ -11,7 +11,7 @@ import {
 } from "@/services/courts";
 import { ReservationModal } from "@/components/ui/ReservationModal";
 import { ContactModal } from "@/components/ui/ContactModal";
-import { FaMapMarkerAlt, FaRegImage } from "react-icons/fa";
+import { FaMapMarkerAlt, FaRegImage, FaImages } from "react-icons/fa";
 import {
   MdSportsSoccer,
   MdSportsBasketball,
@@ -88,117 +88,132 @@ export default function CourtDetails() {
       <div className="max-w-7xl mx-auto px-4 py-10">
         <div className="mb-8">
           {court.images && court.images.length > 0 ? (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-2 rounded-3xl overflow-hidden">
-              <div className="md:col-span-2 row-span-2 relative h-64 md:h-[420px]">
-                <Image
-                  src={court.images[0]}
-                  alt={court.name}
-                  fill
-                  className="object-cover w-full h-full"
-                  priority
-                />
+            <div className="space-y-4">
+              {/* Main Photo Gallery */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 h-[400px] sm:h-[500px] lg:h-[600px]">
+                {/* Large Photo - Left */}
+                <div className="lg:col-span-2 relative rounded-2xl overflow-hidden cursor-pointer group transition-transform hover:scale-[1.02]">
+                  <Image
+                    src={court.images[0]}
+                    alt={`${court.name} - Foto principal`}
+                    fill
+                    className="object-cover w-full h-full"
+                    priority
+                  />
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                </div>
+                
+                {/* Two Smaller Photos - Right */}
+                <div className="lg:col-span-1 flex flex-col gap-4">
+                  {court.images.slice(1, 3).map((img, idx) => (
+                    <div
+                      key={idx}
+                      className="relative flex-1 rounded-2xl overflow-hidden cursor-pointer group transition-transform hover:scale-[1.02]"
+                    >
+                      <Image
+                        src={img}
+                        alt={`${court.name} - Foto ${idx + 2}`}
+                        fill
+                        className="object-cover w-full h-full"
+                      />
+                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                    </div>
+                  ))}
+                  
+                  {/* Fill empty space if less than 3 photos */}
+                  {court.images.length < 3 && (
+                    <div className="flex-1 bg-slate-100 rounded-2xl" />
+                  )}
+                </div>
               </div>
-              <div className="flex flex-col gap-2 h-64 md:h-[420px]">
-                {court.images.slice(1, 5).map((img, idx) => (
-                  <div
-                    key={idx}
-                    className="relative flex-1 rounded-xl overflow-hidden"
+
+              {/* Show All Photos Button */}
+              {court.images.length > 3 && (
+                <div className="flex justify-center">
+                  <button
+                    onClick={() => setShowAllPhotos(true)}
+                    className="flex items-center gap-3 px-6 py-3 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-all duration-200 text-slate-700 font-semibold hover:bg-slate-50"
+                    type="button"
                   >
-                    <Image
-                      src={img}
-                      alt={court.name + " thumb"}
-                      fill
-                      className="object-cover w-full h-full"
-                    />
-                    {idx === 3 && (
-                      <button
-                        className="absolute inset-0 bg-black/40 flex items-center justify-center text-white font-bold text-base transition hover:bg-black/60"
-                        onClick={() => setShowAllPhotos(true)}
-                        type="button"
-                      >
-                        Mostrar todas as fotos
-                      </button>
-                    )}
-                  </div>
-                ))}
-                {Array.from({
-                  length: 4 - court.images.slice(1, 5).length,
-                }).map((_, idx) => (
-                  <div key={idx} className="flex-1 bg-slate-100 rounded-xl" />
-                ))}
-              </div>
+                    <FaImages className="w-5 h-5 text-[#1345BA]" />
+                    <span>Mostrar todas as fotos ({court.images.length})</span>
+                  </button>
+                </div>
+              )}
             </div>
           ) : (
-            <div className="flex items-center justify-center h-64 md:h-[420px] bg-slate-100 rounded-3xl flex-col gap-2">
+            <div className="flex items-center justify-center h-64 md:h-[420px] bg-slate-100 rounded-2xl flex-col gap-2">
               <FaRegImage className="text-6xl text-slate-300" />
               <span className="text-slate-400 font-semibold">
                 Sem fotos disponíveis
               </span>
             </div>
           )}
-          {court.images && court.images.length > 0 && (
-            <div className="md:hidden mt-2 flex justify-end">
-              <button
-                className="px-4 py-2 bg-white border border-slate-300 rounded-full shadow text-slate-700 font-semibold hover:bg-slate-100"
-                onClick={() => setShowAllPhotos(true)}
-                type="button"
-              >
-                Mostrar todas as fotos
-              </button>
-            </div>
-          )}
         </div>
 
+        {/* Full Photo Gallery Modal */}
         {showAllPhotos && (
           <div
-            className="fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4 overflow-auto"
+            className="fixed inset-0 z-50 bg-black/95 flex flex-col items-center justify-center p-4 overflow-auto"
             onClick={() => setShowAllPhotos(false)}
           >
             <button
-              className="absolute top-6 right-8 text-white text-3xl font-bold bg-black/40 rounded-full p-2 hover:bg-black/60"
+              className="absolute top-4 right-4 sm:top-6 sm:right-8 text-white text-2xl sm:text-3xl font-bold bg-black/40 rounded-full p-2 hover:bg-black/60 transition-colors"
               onClick={e => { e.stopPropagation(); setShowAllPhotos(false); }}
               aria-label="Fechar"
             >
               &times;
             </button>
-            <div
-              className="max-w-5xl w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mt-10"
-              onClick={e => e.stopPropagation()}
-            >
-              {court.images?.map((img, idx) => (
-                <div
-                  key={idx}
-                  className="relative aspect-video rounded-2xl overflow-hidden cursor-pointer group"
-                  onClick={() => setSelectedImage(img)}
-                >
-                  <Image
-                    src={img}
-                    alt={`Foto ${idx + 1}`}
-                    fill
-                    className="object-cover w-full h-full group-hover:scale-105 transition-transform"
-                  />
-                </div>
-              ))}
+            
+            <div className="w-full max-w-6xl">
+              <h3 className="text-white text-xl sm:text-2xl font-bold mb-6 text-center">
+                Galeria de Fotos - {court.name}
+              </h3>
+              
+              <div
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                onClick={e => e.stopPropagation()}
+              >
+                {court.images?.map((img, idx) => (
+                  <div
+                    key={idx}
+                    className="relative aspect-[4/3] rounded-xl overflow-hidden cursor-pointer group"
+                    onClick={() => setSelectedImage(img)}
+                  >
+                    <Image
+                      src={img}
+                      alt={`${court.name} - Foto ${idx + 1}`}
+                      fill
+                      className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                    <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-1 rounded">
+                      {idx + 1}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         )}
 
-            {selectedImage && (
+        {/* Single Image Modal */}
+        {selectedImage && (
           <div
-            className="fixed inset-0 bg-black bg-opacity-90 flex items-center justify-center z-[300] p-4"
+            className="fixed inset-0 bg-black bg-opacity-95 flex items-center justify-center z-[300] p-4"
             onClick={() => setSelectedImage(null)}
           >
-            <div className="relative max-w-4xl w-full max-h-[90vh] flex items-center justify-center">
+            <div className="relative max-w-5xl w-full max-h-[90vh] flex items-center justify-center">
               <Image
                 src={selectedImage}
                 alt="Foto da quadra"
-                className="w-auto h-auto max-h-[80vh] max-w-full object-contain rounded-2xl shadow-lg"
+                className="w-auto h-auto max-h-[80vh] max-w-full object-contain rounded-2xl shadow-2xl"
                 width={1200}
                 height={800}
               />
               <button
                 onClick={e => { e.stopPropagation(); setSelectedImage(null); }}
-                className="absolute top-4 right-4 text-white text-3xl font-bold bg-black/40 rounded-full p-2 hover:bg-black/60"
+                className="absolute top-4 right-4 text-white text-2xl sm:text-3xl font-bold bg-black/40 rounded-full p-2 hover:bg-black/60 transition-colors"
                 aria-label="Fechar"
               >
                 &times;

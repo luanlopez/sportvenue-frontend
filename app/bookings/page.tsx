@@ -17,23 +17,23 @@ const ITEMS_PER_PAGE = 6;
 
 const statusStyles = {
   requested: {
-    bg: "bg-yellow-100",
-    text: "text-yellow-800",
+    bg: "bg-warning-50",
+    text: "text-secondary-50",
     label: "Pendente",
   },
   approved: {
-    bg: "bg-green-100",
-    text: "text-green-800",
+    bg: "bg-success-50",
+    text: "text-secondary-50",
     label: "Aprovado",
   },
   rejected: {
-    bg: "bg-red-100",
-    text: "text-red-800",
+    bg: "bg-error-50",
+    text: "text-secondary-50",
     label: "Reprovado",
   },
   cancelled: {
-    bg: "bg-gray-100",
-    text: "text-gray-800",
+    bg: "bg-error-50",
+    text: "text-secondary-50",
     label: "Cancelado",
   },
 };
