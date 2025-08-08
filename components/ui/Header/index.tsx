@@ -27,12 +27,10 @@ function getInitials(name: string) {
 }
 
 export function Header() {
-  const { user, signOut, ownerPendingInvoices } = useAuth();
+  const { user, signOut } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const router = useRouter();
-
-  const hasPending = user?.userType === "HOUSE_OWNER" && ownerPendingInvoices;
 
   const { data: unreadCountData } = useQuery({
     queryKey: ["notifications", "unread-count"],
@@ -41,7 +39,7 @@ export function Header() {
   });
 
   const unreadCount = unreadCountData?.count || 0;
-  const totalUnreadCount = unreadCount + (hasPending ? 1 : 0);
+  const totalUnreadCount = unreadCount; 
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -90,7 +88,7 @@ export function Header() {
                   <NotificationsDropdown
                     isOpen={showNotifications}
                     onClose={() => setShowNotifications(false)}
-                    hasPendingInvoices={!!hasPending}
+                    hasPendingInvoices={false}
                   />
                 </div>
               )}
@@ -283,7 +281,7 @@ export function Header() {
                 <NotificationsDropdown
                   isOpen={showNotifications}
                   onClose={() => setShowNotifications(false)}
-                  hasPendingInvoices={!!hasPending}
+                    hasPendingInvoices={false}
                 />
               </div>
             )}
