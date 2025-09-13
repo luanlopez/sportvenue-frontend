@@ -7,7 +7,7 @@ import * as yup from "yup";
 import { useRouter } from "next/navigation";
 import { Amenity, AMENITY_LABELS, Category, CATEGORY_LABELS, courtService, UpdateCourtDTO } from "@/services/courts";
 import { showToast } from "@/components/ui/Toast";
-import { FiUpload } from 'react-icons/fi';
+import { FiUpload, FiSave, FiX, FiTrash2 } from 'react-icons/fi';
 import { ImageWithSkeleton } from "@/components/ui/ImageWithSkeleton";
 import { TagSelect } from "@/components/ui/TagSelect";
 import { decryptId } from "@/lib/utils";
@@ -116,80 +116,119 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex justify-center items-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-500" />
+      <div className="min-h-screen bg-slate-50 flex justify-center items-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-tertiary-500 py-20 sm:py-20 mt-28 sm:mt-0">
-      <div className="container mx-auto px-2 sm:px-4 lg:px-8">
-        <h1 className="text-xl sm:text-2xl font-bold text-primary-500 mb-6 sm:mb-8">Editar Quadra</h1>
+    <div className="min-h-screen bg-slate-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-slate-900 mb-2">Editar Quadra</h1>
+          <p className="text-slate-600">Atualize as informações da sua quadra</p>
+        </div>
         
-        <div className="flex flex-col lg:flex-row gap-4 sm:gap-8">
-          <div className="flex-1">
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
-              <div className="bg-tertiary-500 p-4 sm:p-8 rounded-2xl shadow-md border border-primary-500">
-                <h2 className="text-lg sm:text-xl font-bold text-primary-500 mb-4 sm:mb-6">Informações Básicas</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-6">
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 className="text-xl font-semibold text-slate-900 mb-6">Informações Básicas</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-bold text-primary-500 mb-2">Nome da Quadra</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Nome da Quadra</label>
                     <input
                       {...register("name")}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl
-                        border border-primary-500/20
-                        bg-tertiary-500 text-primary-500 placeholder-primary-500/50
-                        focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
-                        transition-colors duration-200
-                        text-sm sm:text-base"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
+                      placeholder="Digite o nome da quadra"
                     />
-                    {errors.name && <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.name.message}</p>}
+                    {errors.name && <p className="mt-2 text-sm text-red-600">{errors.name.message}</p>}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-primary-500 mb-2">Valor por Hora</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      {...register("pricePerHour")}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl
-                        border border-primary-500/20
-                        bg-tertiary-500 text-primary-500 placeholder-primary-500/50
-                        focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
-                        transition-colors duration-200
-                        text-sm sm:text-base"
-                    />
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Valor por Hora</label>
+                    <div className="relative">
+                      <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400">R$</span>
+                      <input
+                        type="number"
+                        step="0.01"
+                        {...register("pricePerHour")}
+                        className="w-full pl-12 pr-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
+                        placeholder="0,00"
+                      />
+                    </div>
                     {errors.pricePerHour && (
-                      <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.pricePerHour.message}</p>
+                      <p className="mt-2 text-sm text-red-600">{errors.pricePerHour.message}</p>
                     )}
                   </div>
 
                   <div className="col-span-2">
-                    <label className="block text-sm font-bold text-primary-500 mb-2">Descrição</label>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Descrição</label>
                     <textarea
                       {...register("description")}
                       rows={4}
-                      className="w-full px-3 sm:px-4 py-2 sm:py-3 rounded-xl
-                        border border-primary-500/20
-                        bg-tertiary-500 text-primary-500 placeholder-primary-500/50
-                        focus:border-secondary-500 focus:ring-2 focus:ring-secondary-500 focus:ring-opacity-20
-                        transition-colors duration-200
-                        text-sm sm:text-base resize-none"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors resize-none"
+                      placeholder="Descreva sua quadra..."
                     />
                     {errors.description && (
-                      <p className="mt-1 text-xs sm:text-sm text-red-600">{errors.description.message}</p>
+                      <p className="mt-2 text-sm text-red-600">{errors.description.message}</p>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="bg-tertiary-500 p-4 sm:p-8 rounded-2xl shadow-md border border-primary-500">
-                <h2 className="text-lg sm:text-xl font-bold text-primary-500 mb-4 sm:mb-6">Horários e Categorias</h2>
-                <div className="space-y-6 sm:space-y-8">
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 className="text-xl font-semibold text-slate-900 mb-6">Endereço</h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-bold text-primary-500 mb-4">Categorias</label>
-                    <div className="flex flex-wrap gap-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Endereço</label>
+                    <input
+                      {...register("address")}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
+                      placeholder="Rua, Avenida, etc."
+                    />
+                    {errors.address && <p className="mt-2 text-sm text-red-600">{errors.address.message}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Número</label>
+                    <input
+                      {...register("number")}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
+                      placeholder="123"
+                    />
+                    {errors.number && <p className="mt-2 text-sm text-red-600">{errors.number.message}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Bairro</label>
+                    <input
+                      {...register("neighborhood")}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
+                      placeholder="Centro"
+                    />
+                    {errors.neighborhood && <p className="mt-2 text-sm text-red-600">{errors.neighborhood.message}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">Cidade</label>
+                    <input
+                      {...register("city")}
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-colors"
+                      placeholder="São Paulo"
+                    />
+                    {errors.city && <p className="mt-2 text-sm text-red-600">{errors.city.message}</p>}
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+                <h2 className="text-xl font-semibold text-slate-900 mb-6">Esportes e Comodidades</h2>
+                <div className="space-y-8">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-4">Esportes Disponíveis</label>
+                    <div className="flex flex-wrap gap-3">
                       {Object.entries(CATEGORY_LABELS).map(([value, label]) => {
                         const categories = watch("categories") || [];
                         return (
@@ -210,13 +249,13 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                       })}
                     </div>
                     {errors.categories && (
-                      <p className="mt-2 text-xs sm:text-sm text-red-600">{errors.categories.message}</p>
+                      <p className="mt-3 text-sm text-red-600">{errors.categories.message}</p>
                     )}
                   </div>
 
                   <div>
-                    <label className="block text-sm font-bold text-primary-500 mb-4">Comodidades</label>
-                    <div className="flex flex-wrap gap-2">
+                    <label className="block text-sm font-medium text-slate-700 mb-4">Comodidades</label>
+                    <div className="flex flex-wrap gap-3">
                       {Object.entries(AMENITY_LABELS).map(([value, label]) => {
                         const amenities = watch("amenities") || [];
                         return (
@@ -237,76 +276,78 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                       })}
                     </div>
                     {errors.amenities && (
-                      <p className="mt-2 text-xs sm:text-sm text-red-600">{errors.amenities.message}</p>
+                      <p className="mt-3 text-sm text-red-600">{errors.amenities.message}</p>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex flex-col sm:flex-row justify-end gap-3 sm:gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 pt-6">
                 <button
                   type="button"
                   onClick={() => router.back()}
-                  className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 text-primary-500 bg-tertiary-500 
-                    border-2 border-primary-500 rounded-full
-                    hover:bg-primary-500 hover:text-tertiary-500
-                    transition-colors duration-200 font-bold
-                    text-sm sm:text-base"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 text-slate-700 bg-white border border-slate-300 rounded-xl hover:bg-slate-50 transition-colors font-medium"
                 >
+                  <FiX className="w-5 h-5" />
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="w-full sm:w-auto px-4 sm:px-6 py-2.5 sm:py-3 text-primary-500 bg-secondary-500 rounded-full
-                    hover:bg-secondary-600 transition-colors duration-200
-                    shadow-md hover:shadow-lg font-bold
-                    text-sm sm:text-base"
+                  className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-6 py-3 text-white bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors font-medium shadow-sm"
                 >
+                  <FiSave className="w-5 h-5" />
                   Salvar Alterações
                 </button>
               </div>
             </form>
           </div>
 
-          <div className="lg:w-96">
-            <div className="bg-tertiary-500 p-4 sm:p-8 rounded-2xl shadow-md border border-primary-500 space-y-4 sm:space-y-6 sticky top-24">
-              <h2 className="text-lg sm:text-xl font-bold text-primary-500">Imagens da Quadra</h2>
+          <div className="lg:col-span-1">
+            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6 sticky top-8 space-y-6">
+              <h2 className="text-xl font-semibold text-slate-900">Gerenciar Imagens</h2>
               
               {currentImages.length > 0 && (
                 <div>
-                  <h3 className="text-sm font-bold text-primary-500 mb-4">Imagens Atuais</h3>
-                  <div className="grid grid-cols-2 gap-4">
+                  <h3 className="text-sm font-medium text-slate-700 mb-4">Imagens Atuais</h3>
+                  <div className="grid grid-cols-2 gap-3">
                     {currentImages.map((imageUrl, index) => (
                       <div key={index} className="relative group">
                         <ImageWithSkeleton
                           src={imageUrl}
                           alt={`Court ${index + 1}`}
-                          className={`w-full h-24 object-cover rounded-lg ${
+                          className={`w-full h-20 object-cover rounded-lg transition-opacity ${
                             selectedImagesToRemove.includes(imageUrl) ? 'opacity-50' : ''
                           }`}
                         />
                         <button
                           type="button"
                           onClick={() => toggleImageSelection(imageUrl)}
-                          className={`absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all rounded-lg
-                            ${selectedImagesToRemove.includes(imageUrl) ? 'bg-opacity-30' : ''}`}
+                          className={`absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/30 transition-all rounded-lg ${
+                            selectedImagesToRemove.includes(imageUrl) ? 'bg-black/30' : ''
+                          }`}
                         >
-                          <span className={`text-white transform scale-0 group-hover:scale-100 transition-transform
-                            ${selectedImagesToRemove.includes(imageUrl) ? 'scale-100' : ''}`}>
-                            {selectedImagesToRemove.includes(imageUrl) ? 'Selecionada' : 'Selecionar'}
-                          </span>
+                          <div className={`text-white transform scale-0 group-hover:scale-100 transition-transform ${
+                            selectedImagesToRemove.includes(imageUrl) ? 'scale-100' : ''
+                          }`}>
+                            {selectedImagesToRemove.includes(imageUrl) ? (
+                              <FiTrash2 className="w-5 h-5" />
+                            ) : (
+                              <span className="text-xs font-medium">Selecionar</span>
+                            )}
+                          </div>
                         </button>
                       </div>
                     ))}
                   </div>
                   {selectedImagesToRemove.length > 0 && (
-                    <div className="mt-4 flex justify-end">
+                    <div className="mt-4">
                       <button
                         type="button"
                         onClick={handleRemoveImages}
-                        className="px-4 py-2 text-sm text-red-600 border border-red-600 rounded-md hover:bg-red-50 transition-colors"
+                        className="w-full flex items-center justify-center gap-2 px-4 py-2 text-red-600 border border-red-300 rounded-lg hover:bg-red-50 transition-colors text-sm font-medium"
                       >
-                        Remover Selecionadas ({selectedImagesToRemove.length})
+                        <FiTrash2 className="w-4 h-4" />
+                        Remover ({selectedImagesToRemove.length})
                       </button>
                     </div>
                   )}
@@ -314,17 +355,15 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
               )}
 
               <div className="space-y-4">
-                <h3 className="text-sm font-bold text-primary-500">Adicionar Novas Imagens</h3>
+                <h3 className="text-sm font-medium text-slate-700">Adicionar Novas Imagens</h3>
                 <div className="flex items-center justify-center w-full">
-                  <label className="flex flex-col items-center justify-center w-full h-32 
-                    border-2 border-primary-500/20 border-dashed rounded-xl cursor-pointer 
-                    bg-tertiary-500/50 hover:bg-primary-500/5 transition-colors">
+                  <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-300 border-dashed rounded-xl cursor-pointer hover:bg-slate-50 transition-colors">
                     <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                      <FiUpload className="w-8 h-8 mb-3 text-primary-500" />
-                      <p className="mb-2 text-sm text-primary-500">
-                        <span className="font-bold">Clique para fazer upload</span> ou arraste e solte
+                      <FiUpload className="w-8 h-8 mb-3 text-slate-400" />
+                      <p className="mb-2 text-sm text-slate-600">
+                        <span className="font-medium">Clique para fazer upload</span>
                       </p>
-                      <p className="text-xs text-primary-500/70">PNG, JPG ou JPEG (MAX. 800x400px)</p>
+                      <p className="text-xs text-slate-500">PNG, JPG ou JPEG</p>
                     </div>
                     <input
                       type="file"
@@ -339,26 +378,24 @@ export default function EditCourt({ params }: { params: Promise<{ id: string }> 
                 {selectedFiles.length > 0 && (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm text-primary-500">
+                      <p className="text-sm text-slate-600">
                         {selectedFiles.length} arquivo(s) selecionado(s)
                       </p>
                       <button
                         type="button"
                         onClick={handleUpload}
-                        className="px-4 py-2 text-primary-500 bg-secondary-500 rounded-full
-                          hover:bg-secondary-600 transition-colors duration-200
-                          text-sm font-bold shadow-md hover:shadow-lg"
+                        className="px-4 py-2 text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
                       >
-                        Enviar Imagens
+                        Enviar
                       </button>
                     </div>
-                    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div className="grid grid-cols-2 gap-3">
                       {selectedFiles.map((file, index) => (
                         <div key={index} className="relative">
                           <ImageWithSkeleton
                             src={URL.createObjectURL(file)}
                             alt={`Preview ${index + 1}`}
-                            className="w-full h-24 object-cover rounded-lg"
+                            className="w-full h-20 object-cover rounded-lg"
                           />
                         </div>
                       ))}

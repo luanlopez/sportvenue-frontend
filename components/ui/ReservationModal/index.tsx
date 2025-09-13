@@ -6,7 +6,7 @@ import { reservationService } from "@/services/reservations";
 import { CreateReservationDTO } from "@/dtos/CreateReservationDTO";
 import { Court } from "@/services/courts";
 import { WeeklySchedule } from "@/types/courts";
-import { FaClock, FaMoneyBillWave, FaCalendarAlt } from "react-icons/fa";
+import { FaMoneyBillWave, FaCalendarAlt } from "react-icons/fa";
 
 enum ReservationType {
   SINGLE = 'SINGLE',
@@ -40,7 +40,7 @@ export function ReservationModal({
     null
   );
   const [selectedHour, setSelectedHour] = useState<string>("");
-  const [reservationType, setReservationType] = useState<ReservationType>(ReservationType.SINGLE);
+  const [reservationType, setReservationType] = useState<ReservationType>(ReservationType.MONTHLY);
 
   useEffect(() => {
     if (!isOpen) {
@@ -91,7 +91,7 @@ export function ReservationModal({
               <p className="text-sm text-gray-500">
                 {`${court?.address}, ${court?.number} - ${court?.neighborhood}, ${court?.city}`}
               </p>
-              <p className="text-sm font-semibold text-primary-600 mt-1">
+              <p className="text-sm font-semibold text-[#1345BA] mt-1">
                 R$ {court?.pricePerHour?.toFixed(2) || 0} por hora
               </p>
             </div>
@@ -106,7 +106,7 @@ export function ReservationModal({
                   setSelectedDay(e.target.value as keyof WeeklySchedule);
                   setSelectedHour("");
                 }}
-                className="w-full px-4 py-2 rounded-lg border text-gray-500 border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                className="w-full px-4 py-2 rounded-lg border text-gray-500 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1345BA] focus:border-[#1345BA]"
               >
                 <option value="">Selecione um dia</option>
                 {Object.entries(DAYS).map(([day, label]) => (
@@ -125,7 +125,7 @@ export function ReservationModal({
                 <select
                   value={selectedHour}
                   onChange={(e) => setSelectedHour(e.target.value)}
-                  className="w-full px-4 py-2 rounded-lg border text-gray-500 border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+                  className="w-full px-4 py-2 rounded-lg border text-gray-500 border-gray-200 focus:outline-none focus:ring-2 focus:ring-[#1345BA] focus:border-[#1345BA]"
                 >
                   <option value="">Selecione um horário</option>
                   {weeklySchedule[selectedDay].map((hour) => (
@@ -142,7 +142,8 @@ export function ReservationModal({
                 <FaCalendarAlt className="w-4 h-4 mr-2" />
                 Tipo de Reserva
               </label>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 gap-2">
+                {/* Temporarily commented out - Avulso option
                 <button
                   type="button"
                   onClick={() => setReservationType(ReservationType.SINGLE)}
@@ -151,7 +152,7 @@ export function ReservationModal({
                     transition-all duration-200
                     flex items-center justify-center gap-2
                     ${reservationType === ReservationType.SINGLE
-                      ? "bg-primary-500 text-white shadow-sm"
+                      ? "bg-[#1345BA] text-white shadow-sm"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }
                   `}
@@ -159,6 +160,7 @@ export function ReservationModal({
                   <FaClock className="w-4 h-4" />
                   Avulso
                 </button>
+                */}
                 <button
                   type="button"
                   onClick={() => setReservationType(ReservationType.MONTHLY)}
@@ -167,7 +169,7 @@ export function ReservationModal({
                     transition-all duration-200
                     flex items-center justify-center gap-2
                     ${reservationType === ReservationType.MONTHLY
-                      ? "bg-primary-500 text-white shadow-sm"
+                      ? "bg-[#1345BA] text-white shadow-sm"
                       : "bg-gray-100 text-gray-700 hover:bg-gray-200"
                     }
                   `}
@@ -202,7 +204,7 @@ export function ReservationModal({
           <button
             onClick={handleSubmit}
             disabled={!selectedDay || !selectedHour}
-            className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex-1 px-4 py-2 bg-[#1345BA] text-white rounded-lg hover:bg-[#0A3B8A] transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-[#1345BA] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Confirmar Reserva
           </button>

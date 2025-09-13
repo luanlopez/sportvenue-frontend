@@ -84,13 +84,13 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[200] p-4">
-      <div className="bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden animate-enter">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
+      <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full overflow-hidden animate-enter">
         <div className="p-6">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center">
+          <h2 className="text-2xl font-bold text-slate-900 mb-4 text-center">
             Bem-vindo ao SportMap!
           </h2>
-          <p className="text-gray-600 text-center mb-8">
+          <p className="text-slate-600 text-center mb-8">
             Como você deseja usar nossa plataforma?
           </p>
 
@@ -102,21 +102,24 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
               }}
               className={`w-full p-4 border-2 rounded-xl transition-all duration-300 group
                 ${selectedType === 'USER' 
-                  ? 'border-primary-500 bg-primary-50' 
-                  : 'border-gray-200 hover:border-primary-500 hover:bg-primary-50'
+                  ? 'border-blue-600 bg-blue-50' 
+                  : 'border-slate-200 hover:border-blue-600 hover:bg-blue-50'
                 }`}
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary-100 
-                  flex items-center justify-center
-                  group-hover:bg-primary-200 transition-colors">
-                  <FaUser className="w-6 h-6 text-primary-500" />
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center
+                  transition-colors
+                  ${selectedType === 'USER'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-blue-100 text-blue-600 group-hover:bg-blue-200'
+                  }`}>
+                  <FaUser className="w-6 h-6" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                  <h3 className="font-semibold text-slate-900 mb-1">
                     Usuário
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Quero encontrar e reservar quadras
                   </p>
                 </div>
@@ -127,21 +130,24 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
               onClick={() => setSelectedType('HOUSE_OWNER')}
               className={`w-full p-4 border-2 rounded-xl transition-all duration-300 group
                 ${selectedType === 'HOUSE_OWNER' 
-                  ? 'border-primary-500 bg-primary-50' 
-                  : 'border-gray-200 hover:border-primary-500 hover:bg-primary-50'
+                  ? 'border-blue-600 bg-blue-50' 
+                  : 'border-slate-200 hover:border-blue-600 hover:bg-blue-50'
                 }`}
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full bg-primary-100 
-                  flex items-center justify-center
-                  group-hover:bg-primary-200 transition-colors">
-                  <FaVolleyballBall className="w-6 h-6 text-primary-500" />
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center
+                  transition-colors
+                  ${selectedType === 'HOUSE_OWNER'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-blue-100 text-blue-600 group-hover:bg-blue-200'
+                  }`}>
+                  <FaVolleyballBall className="w-6 h-6" />
                 </div>
                 <div className="text-left">
-                  <h3 className="font-semibold text-gray-900 mb-1">
+                  <h3 className="font-semibold text-slate-900 mb-1">
                     Proprietário
                   </h3>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-slate-600">
                     Quero anunciar minhas quadras
                   </p>
                 </div>
@@ -150,44 +156,42 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
 
             {selectedType && (
               <div className="mt-6 space-y-4">
-                {selectedType === 'HOUSE_OWNER' && (
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => {
-                        setDocumentType('CPF');
-                        setDocument('');
-                      }}
-                      className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium
-                        transition-all duration-200
-                        ${documentType === 'CPF'
-                          ? 'bg-primary-500 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                    >
-                      CPF
-                    </button>
-                    <button
-                      onClick={() => {
-                        setDocumentType('CNPJ');
-                        setDocument('');
-                      }}
-                      className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium
-                        transition-all duration-200
-                        ${documentType === 'CNPJ'
-                          ? 'bg-primary-500 text-white'
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                        }`}
-                    >
-                      CNPJ
-                    </button>
-                  </div>
-                )}
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => {
+                      setDocumentType('CPF');
+                      setDocument('');
+                    }}
+                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium
+                      transition-all duration-200
+                      ${documentType === 'CPF'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                  >
+                    CPF
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDocumentType('CNPJ');
+                      setDocument('');
+                    }}
+                    className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium
+                      transition-all duration-200
+                      ${documentType === 'CNPJ'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                  >
+                    CNPJ
+                  </button>
+                </div>
 
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-slate-600">
                   {selectedType === 'HOUSE_OWNER' ? (
                     <p>Informe seu {documentType} para geração das cobranças mensais da plataforma</p>
                   ) : (
-                    <p>Informe seu CPF para identificação na plataforma</p>
+                    <p>Informe seu {documentType} para identificação na plataforma</p>
                   )}
                 </div>
                 
@@ -205,7 +209,7 @@ export function UserTypeModal({ isOpen, onSelect }: UserTypeModalProps) {
                   onClick={handleSubmit}
                   disabled={isSubmitting || !selectedType || !document}
                   className="w-full px-4 py-3 text-white rounded-lg
-                    bg-primary-500 hover:bg-primary-600
+                    bg-blue-600 hover:bg-blue-700
                     transition-colors duration-200
                     disabled:opacity-50 disabled:cursor-not-allowed
                     font-medium"

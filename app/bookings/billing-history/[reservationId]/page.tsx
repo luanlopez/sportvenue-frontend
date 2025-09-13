@@ -9,13 +9,13 @@ import {
   BillingType,
 } from "@/services/reservations";
 import { LoadingSpinner } from "@/components/ui/LoadingSpinner";
+import { GoogleMap } from "@/components/ui/GoogleMap";
 import {
   FaArrowLeft,
   FaMapMarkerAlt,
   FaMoneyBillWave,
   FaClock,
   FaCheck,
-  FaMapMarkedAlt,
   FaCreditCard,
   FaMoneyBill,
   FaCalendarAlt,
@@ -28,8 +28,9 @@ import { ptBR } from "date-fns/locale";
 import { showToast } from "@/components/ui/Toast";
 import { api } from "@/lib/axios";
 import { ReactNode } from "react";
-import jsPDF from 'jspdf';
+import jsPDF from "jspdf";
 import { decryptId } from "@/lib/utils";
+import { Button } from "@/components/ui/Button";
 
 interface Invoice {
   _id: string;
@@ -88,30 +89,30 @@ interface Invoice {
 
 const statusStyles = {
   [BillingStatus.PENDING]: {
-    bg: "bg-amber-50",
-    border: "border-amber-200",
-    text: "text-amber-700",
+    bg: "bg-warning-50",
+    border: "border-warning-50",
+    text: "text-white",
     label: "Pendente",
     icon: <FaClock className="w-4 h-4" />,
   },
   [BillingStatus.PAGO_PRESENCIALMENTE]: {
-    bg: "bg-emerald-50",
-    border: "border-emerald-200",
-    text: "text-emerald-700",
+    bg: "bg-success-50",
+    border: "border-success-50",
+    text: "text-white",
     label: "Pago Presencialmente",
     icon: <FaCheck className="w-4 h-4" />,
   },
   [BillingStatus.PAGO_SPORTMAP]: {
-    bg: "bg-emerald-50",
-    border: "border-emerald-200",
-    text: "text-emerald-700",
+    bg: "bg-success-50",
+    border: "border-success-50",
+    text: "text-white",
     label: "Pago via SportMap",
     icon: <FaCheck className="w-4 h-4" />,
   },
   default: {
-    bg: "bg-gray-50",
-    border: "border-gray-200",
-    text: "text-gray-700",
+    bg: "bg-secondary-200",
+    border: "border-secondary-200",
+    text: "text-secondary-400",
     label: "Status Desconhecido",
     icon: <FaClock className="w-4 h-4" />,
   },
@@ -138,20 +139,21 @@ export default function BillingHistoryPage() {
   const params = useParams();
   const router = useRouter();
   const reservationId = decryptId(params.reservationId as string);
-  const [showPaymentOptions, setShowPaymentOptions] = useState(false);
   const [isConfirmDialogOpen, setIsConfirmDialogOpen] = useState(false);
   const [selectedPaymentType, setSelectedPaymentType] = useState<
     "ONLINE" | "PAGO_PRESENCIALMENTE" | null
   >(null);
-  const [activeInvoiceMenu, setActiveInvoiceMenu] = useState<string | null>(null);
+  const [activeInvoiceMenu, setActiveInvoiceMenu] = useState<string | null>(
+    null
+  );
   const [downloadingPdf, setDownloadingPdf] = useState<string | null>(null);
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [filters, setFilters] = useState({
-    status: '',
-    paymentMethod: '',
-    startDate: '',
-    endDate: '',
-    search: ''
+    status: "",
+    paymentMethod: "",
+    startDate: "",
+    endDate: "",
+    search: "",
   });
   const menuRef = useRef<HTMLDivElement>(null);
 
@@ -178,12 +180,17 @@ export default function BillingHistoryPage() {
       if (!billingHistory?._id) {
         return { data: [] };
       }
-      return reservationService.getInvoicesByBillingId(billingHistory._id, 1, 10, {
-        status: filters.status as BillingStatus,
-        paymentMethod: filters.paymentMethod as BillingType,
-        startDate: filters.startDate,
-        endDate: filters.endDate
-      });
+      return reservationService.getInvoicesByBillingId(
+        billingHistory._id,
+        1,
+        10,
+        {
+          status: filters.status as BillingStatus,
+          paymentMethod: filters.paymentMethod as BillingType,
+          startDate: filters.startDate,
+          endDate: filters.endDate,
+        }
+      );
     },
     enabled: !!billingHistory?._id,
     staleTime: 1000 * 60 * 5,
@@ -204,7 +211,6 @@ export default function BillingHistoryPage() {
             : "online"
         } registrado com sucesso!`
       );
-      setShowPaymentOptions(false);
       setIsConfirmDialogOpen(false);
       setSelectedPaymentType(null);
       refetch();
@@ -227,7 +233,6 @@ export default function BillingHistoryPage() {
 
   const handlePaymentTypeSelect = (type: "ONLINE" | "PAGO_PRESENCIALMENTE") => {
     setSelectedPaymentType(type);
-    setShowPaymentOptions(false);
 
     if (type === "PAGO_PRESENCIALMENTE") {
       setIsConfirmDialogOpen(true);
@@ -246,92 +251,122 @@ export default function BillingHistoryPage() {
     try {
       setActiveInvoiceMenu(null);
       setDownloadingPdf(invoiceId);
-      
+
       showToast.info("Gerando PDF", "Preparando o documento...");
-      
-      const invoice = invoices.data.find((inv: Invoice) => inv._id === invoiceId);
+
+      const invoice = invoices.data.find(
+        (inv: Invoice) => inv._id === invoiceId
+      );
       if (!invoice) {
         throw new Error("Fatura não encontrada");
       }
-      
+
       const doc = new jsPDF();
-      
+
       doc.setFontSize(18);
-      doc.setTextColor(24, 40, 130); 
+      doc.setTextColor(24, 40, 130);
       doc.text("SportMap", 105, 20, { align: "center" });
-      
+
       doc.setFontSize(14);
       doc.setTextColor(0, 0, 0);
-      doc.text(`FATURA #${invoice.invoiceNumber}`, 105, 30, { align: "center" });
-      
+      doc.text(`FATURA #${invoice.invoiceNumber}`, 105, 30, {
+        align: "center",
+      });
+
       doc.setDrawColor(200, 200, 200);
       doc.line(20, 35, 190, 35);
-      
+
       doc.setFontSize(10);
-      
+
       doc.setTextColor(100, 100, 100);
       doc.text("INFORMAÇÕES DA FATURA", 20, 45);
       doc.setTextColor(0, 0, 0);
-      
+
       doc.text(`Número da Fatura: ${invoice.invoiceNumber}`, 20, 55);
       doc.text(`Data de Emissão: ${formatDate(invoice.createdAt)}`, 20, 60);
       doc.text(`Valor: ${formatCurrency(invoice.amount)}`, 20, 65);
-      
+
       const statusText = getStatusStyle(invoice.status).label;
       doc.text(`Status: ${statusText}`, 20, 70);
-      
+
       doc.setTextColor(100, 100, 100);
       doc.text("INFORMAÇÕES DE PAGAMENTO", 120, 45);
       doc.setTextColor(0, 0, 0);
-      
+
       const paymentMethodLabels: Record<string, string> = {
-        'IN_PERSON': 'Presencial',
-        'CREDIT_CARD': 'Cartão de Crédito',
-        'PIX': 'PIX', 
-        'BANK_TRANSFER': 'Transferência',
-        'OTHER': 'Outro'
+        IN_PERSON: "Presencial",
+        CREDIT_CARD: "Cartão de Crédito",
+        PIX: "PIX",
+        BANK_TRANSFER: "Transferência",
+        OTHER: "Outro",
       };
-      
-      doc.text(`Método: ${paymentMethodLabels[invoice.paymentMethod] || invoice.paymentMethod}`, 120, 55);
-      doc.text(`Data de Pagamento: ${invoice.paidAt ? formatDate(invoice.paidAt) : "Pendente"}`, 120, 60);
-      
+
+      doc.text(
+        `Método: ${
+          paymentMethodLabels[invoice.paymentMethod] || invoice.paymentMethod
+        }`,
+        120,
+        55
+      );
+      doc.text(
+        `Data de Pagamento: ${
+          invoice.paidAt ? formatDate(invoice.paidAt) : "Pendente"
+        }`,
+        120,
+        60
+      );
+
       if (invoice.notes) {
         doc.text(`Observações: ${invoice.notes}`, 120, 65);
       }
-      
+
       doc.setTextColor(100, 100, 100);
       doc.text("INFORMAÇÕES DA QUADRA", 20, 85);
       doc.setTextColor(0, 0, 0);
-      
+
       doc.text(`Nome da Quadra: ${invoice.courtId.name}`, 20, 95);
-      
+
       if (invoice.courtId.address) {
         const address = `${invoice.courtId.address}, ${invoice.courtId.number} - ${invoice.courtId.neighborhood}, ${invoice.courtId.city}`;
-        
+
         if (address.length > 70) {
           const part1 = address.substring(0, 70);
           const part2 = address.substring(70);
           doc.text(`Endereço: ${part1}`, 20, 100);
-          doc.text(part2, 33, 105); 
+          doc.text(part2, 33, 105);
         } else {
           doc.text(`Endereço: ${address}`, 20, 100);
         }
       }
-      
+
       doc.setTextColor(100, 100, 100);
       doc.text("CLIENTE", 20, 120);
       doc.setTextColor(0, 0, 0);
-      
-      doc.text(`Nome: ${invoice.userId.firstName} ${invoice.userId.lastName}`, 20, 130);
+
+      doc.text(
+        `Nome: ${invoice.userId.firstName} ${invoice.userId.lastName}`,
+        20,
+        130
+      );
       doc.text(`Email: ${invoice.userId.email}`, 20, 135);
-      
+
       doc.setFontSize(8);
       doc.setTextColor(100, 100, 100);
-      doc.text("Esta fatura foi gerada automaticamente pelo sistema SportMap.", 105, 270, { align: "center" });
-      doc.text("Em caso de dúvidas, entre em contato com o suporte.", 105, 275, { align: "center" });
-      
+      doc.text(
+        "Esta fatura foi gerada automaticamente pelo sistema SportMap.",
+        105,
+        270,
+        { align: "center" }
+      );
+      doc.text(
+        "Em caso de dúvidas, entre em contato com o suporte.",
+        105,
+        275,
+        { align: "center" }
+      );
+
       doc.save(`fatura-${invoice.invoiceNumber}.pdf`);
-      
+
       showToast.success("PDF Gerado", "Documento gerado com sucesso!");
     } catch (error) {
       console.error("Erro ao gerar PDF:", error);
@@ -348,20 +383,20 @@ export default function BillingHistoryPage() {
       setActiveInvoiceMenu(invoiceId);
     }
   };
-  
+
   const openInvoiceDetails = (invoice: Invoice) => {
     setSelectedInvoice(invoice);
     setActiveInvoiceMenu(null);
   };
-  
+
   const closeInvoiceDetails = () => {
     setSelectedInvoice(null);
   };
 
   const handleFilterChange = (key: string, value: string) => {
-    setFilters(prev => ({
+    setFilters((prev) => ({
       ...prev,
-      [key]: value
+      [key]: value,
     }));
   };
 
@@ -372,15 +407,15 @@ export default function BillingHistoryPage() {
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
   if (isLoadingBilling) {
     return (
-      <div className="min-h-screen bg-tertiary-500 py-20 flex justify-center items-center">
+      <div className="min-h-screen bg-white py-20 flex justify-center items-center">
         <LoadingSpinner />
       </div>
     );
@@ -388,16 +423,16 @@ export default function BillingHistoryPage() {
 
   if (billingError || !billingHistory) {
     return (
-      <div className="min-h-screen bg-tertiary-500 py-8">
+      <div className="min-h-screen bg-white py-8">
         <div className="container mx-auto px-4">
-          <button
+          <Button
             onClick={handleGoBack}
-            className="flex items-center text-primary-500 hover:text-primary-600 transition-colors"
+            className="flex items-center text-primary-50 hover:text-primary-100 transition-colors"
           >
             <FaArrowLeft className="mr-2" />
             Voltar
-          </button>
-          
+          </Button>
+
           <div className="mt-6 bg-red-50 p-4 rounded-lg text-red-600 text-center">
             {billingError
               ? "Ocorreu um erro ao carregar o histórico de cobrança."
@@ -412,84 +447,98 @@ export default function BillingHistoryPage() {
   const isPending = billingHistory.status === BillingStatus.PENDING;
 
   return (
-    <div className="min-h-screen bg-tertiary-500 py-6">
+    <div className="min-h-screen bg-white py-10">
       <div className="container mx-auto px-4">
-        <div className="mb-5">
+        <div className="mb-8">
           <button
             onClick={handleGoBack}
-            className="flex items-center text-primary-500 hover:text-primary-600 transition-colors"
+            className="flex items-center text-primary-50 hover:text-primary-100 transition-colors"
           >
             <FaArrowLeft className="mr-2" />
             Voltar para reservas
           </button>
         </div>
 
-        <h1 className="text-2xl font-bold text-primary-700 mb-6">
+        <h1 className="text-2xl font-bold text-slate-900 mb-2">
           Histórico de Cobrança
         </h1>
+        <p className="text-base text-slate-500 mb-8">
+          Acompanhe o status e os detalhes dos pagamentos desta reserva.
+        </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-8 space-y-6">
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <div className="lg:col-span-8 space-y-8">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow overflow-hidden">
               <div className="border-b border-gray-100">
-                <h2 className="text-base font-bold text-primary-700 px-5 py-3 flex items-center">
-                  <MdLocationOn className="mr-2 text-lg text-primary-500" />
+                <h2 className="text-base font-bold text-primary-50 px-5 py-3 flex items-center">
+                  <MdLocationOn className="mr-2 text-lg text-primary-50" />
                   Localização da Quadra
                 </h2>
               </div>
 
-              <div className="p-5 flex flex-col items-center justify-center min-h-[350px] bg-gray-50">
-                <FaMapMarkedAlt className="text-6xl text-gray-300 mb-3" />
-                <p className="text-sm text-gray-500 text-center">
-                  Mapa com localização da quadra
-                  <br />
-                  <span className="text-xs text-gray-400">
-                    Feature nova em breve
-                  </span>
-                </p>
+              <div className="p-5 min-h-[350px]">
+                <GoogleMap
+                  address={`${billingHistory.courtId.address}, ${billingHistory.courtId.number} - ${billingHistory.courtId.neighborhood}, ${billingHistory.courtId.city}`}
+                  className="w-full h-full"
+                />
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow overflow-hidden">
               <div className="border-b border-gray-100">
-                <h2 className="text-base font-bold text-primary-700 px-5 py-3 flex items-center">
-                  <MdHistory className="mr-2 text-lg text-primary-500" /> 
+                <h2 className="text-base font-bold text-primary-50 px-5 py-3 flex items-center">
+                  <MdHistory className="mr-2 text-lg text-primary-50" />
                   Histórico de Cobranças
                 </h2>
               </div>
-              
+
               <div className="p-0">
-                <div className="p-4 border-b border-gray-100 bg-gray-50 flex flex-wrap gap-3 items-center justify-between">
+                <div className="p-4 border-b border-slate-100 bg-slate-50 flex flex-wrap gap-3 items-center justify-between">
                   <div className="flex flex-col w-full gap-2 sm:flex-row sm:space-x-2">
                     <div className="relative w-full sm:w-auto">
                       <select
                         className="
-                          border border-gray-200
-                          text-sm
-                          rounded-xl
-                          px-4 py-2
-                          bg-gray-50
-                          focus:outline-none
-                          focus:ring-2 focus:ring-primary-500
-                          text-primary-900
-                          shadow-sm
-                          transition
-                          appearance-none
-                          font-medium
-                          w-full
-                          pr-10
-                        "
+                            border border-slate-200
+                            text-sm
+                            rounded-xl
+                            px-4 py-2
+                            bg-white
+                            focus:outline-none
+                                                      focus:ring-2 focus:ring-primary-50
+                          text-primary-50
+                            shadow-sm
+                            transition
+                            appearance-none
+                            font-medium
+                            w-full
+                            pr-10
+                          "
                         value={filters.status}
-                        onChange={e => handleFilterChange('status', e.target.value)}
+                        onChange={(e) =>
+                          handleFilterChange("status", e.target.value)
+                        }
                       >
                         <option value="">Todos os status</option>
                         <option value="PENDING">Pendente</option>
-                        <option value="PAGO_PRESENCIALMENTE">Pago Presencialmente</option>
+                        <option value="PAGO_PRESENCIALMENTE">
+                          Pago Presencialmente
+                        </option>
                         <option value="PAGO_SPORTMAP">Pago via SportMap</option>
                       </select>
                       <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-gray-400">
-                        <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
-                          <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                        <svg
+                          width="18"
+                          height="18"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            d="M6 9l6 6 6-6"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                          />
                         </svg>
                       </span>
                     </div>
@@ -499,7 +548,9 @@ export default function BillingHistoryPage() {
                   <div className="py-10 flex justify-center">
                     <LoadingSpinner />
                   </div>
-                ) : invoicesError || !invoices || invoices.data?.length === 0 ? (
+                ) : invoicesError ||
+                  !invoices ||
+                  invoices.data?.length === 0 ? (
                   <div className="p-5 text-center text-gray-500 text-sm">
                     Não há histórico de cobranças disponível
                   </div>
@@ -508,139 +559,226 @@ export default function BillingHistoryPage() {
                     <div className="max-h-[500px] overflow-y-auto w-full">
                       <div className="overflow-x-auto">
                         <table className="min-w-[700px] w-full text-sm border-collapse">
-                          <thead className="bg-primary-50 text-primary-800 border-b border-primary-100 sticky top-0 z-10">
+                          <thead className="bg-slate-50 text-slate-700 border-b border-slate-100 sticky top-0 z-10">
                             <tr>
-                              <th className="px-5 py-3 text-left font-medium">Nº FATURA</th>
-                              <th className="px-5 py-3 text-left font-medium">DATA</th>
-                              <th className="px-5 py-3 text-left font-medium">VALOR</th>
-                              <th className="px-5 py-3 text-left font-medium">MÉTODO</th>
-                              <th className="px-5 py-3 text-left font-medium">STATUS</th>
-                              <th className="px-5 py-3 text-left font-medium hidden md:table-cell">PAGO EM</th>
-                              <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">USUÁRIO</th>
-                              <th className="px-5 py-3 text-center font-medium hidden xl:table-cell">AÇÕES</th>
+                              <th className="px-5 py-3 text-left font-medium">
+                                Nº FATURA
+                              </th>
+                              <th className="px-5 py-3 text-left font-medium">
+                                DATA
+                              </th>
+                              <th className="px-5 py-3 text-left font-medium">
+                                VALOR
+                              </th>
+                              <th className="px-5 py-3 text-left font-medium">
+                                MÉTODO
+                              </th>
+                              <th className="px-5 py-3 text-left font-medium">
+                                STATUS
+                              </th>
+                              <th className="px-5 py-3 text-left font-medium hidden md:table-cell">
+                                PAGO EM
+                              </th>
+                              <th className="px-5 py-3 text-left font-medium hidden lg:table-cell">
+                                USUÁRIO
+                              </th>
+                              <th className="px-5 py-3 text-center font-medium hidden xl:table-cell">
+                                AÇÕES
+                              </th>
                             </tr>
                           </thead>
                           <tbody>
-                            {invoices.data.map((invoice: Invoice, index: number) => {
-                              const invoiceStatusStyle = getStatusStyle(invoice.status);
-                              
-                              const paymentMethodLabels: Record<string, string> = {
-                                'IN_PERSON': 'Presencial',
-                                'CREDIT_CARD': 'Cartão de Crédito',
-                                'PIX': 'PIX',
-                                'BANK_TRANSFER': 'Transferência',
-                                'OTHER': 'Outro'
-                              };
+                            {invoices.data.map(
+                              (invoice: Invoice, index: number) => {
+                                const invoiceStatusStyle = getStatusStyle(
+                                  invoice.status
+                                );
 
-                              const paymentMethodIcons: Record<string, ReactNode> = {
-                                'IN_PERSON': <FaMoneyBill className="mr-1 text-blue-500" />,
-                                'CREDIT_CARD': <FaCreditCard className="mr-1 text-purple-500" />,
-                                'PIX': <span className="mr-1 font-bold text-green-500">PIX</span>,
-                                'BANK_TRANSFER': <FaMoneyBillWave className="mr-1 text-teal-500" />,
-                                'OTHER': <FaMoneyBillWave className="mr-1 text-gray-500" />
-                              };
-                              
-                              return (
-                                <tr key={invoice._id || index} className="hover:bg-gray-50 transition-colors">
-                                  <td className="px-5 py-4 border-b border-gray-100 font-medium">
-                                    <span className="bg-primary-50 text-primary-700 py-1 px-2 rounded-md">
-                                      {invoice.invoiceNumber}
+                                const paymentMethodLabels: Record<
+                                  string,
+                                  string
+                                > = {
+                                  IN_PERSON: "Presencial",
+                                  CREDIT_CARD: "Cartão de Crédito",
+                                  PIX: "PIX",
+                                  BANK_TRANSFER: "Transferência",
+                                  OTHER: "Outro",
+                                };
+
+                                const paymentMethodIcons: Record<
+                                  string,
+                                  ReactNode
+                                > = {
+                                  IN_PERSON: (
+                                    <FaMoneyBill className="mr-1 text-blue-500" />
+                                  ),
+                                  CREDIT_CARD: (
+                                    <FaCreditCard className="mr-1 text-purple-500" />
+                                  ),
+                                  PIX: (
+                                    <span className="mr-1 font-bold text-green-500">
+                                      PIX
                                     </span>
-                                  </td>
-                                  <td className="px-5 py-4 border-b border-gray-100 text-gray-800">
-                                    {formatDate(invoice.createdAt)}
-                                  </td>
-                                  <td className="px-5 py-4 border-b border-gray-100 font-medium text-gray-900">
-                                    {formatCurrency(invoice.amount)}
-                                  </td>
-                                  <td className="px-5 py-4 border-b border-gray-100 text-gray-800">
-                                    <div className="flex items-center">
-                                      {paymentMethodIcons[invoice.paymentMethod] || <FaMoneyBillWave className="mr-1" />}
-                                      <span>{paymentMethodLabels[invoice.paymentMethod] || invoice.paymentMethod}</span>
-                                    </div>
-                                  </td>
-                                  <td className="px-5 py-4 border-b border-gray-100">
-                                    <span
-                                      className={`inline-flex items-center gap-1 px-2.5 py-1.5 rounded-full text-xs font-medium
-                                      ${invoiceStatusStyle.bg} ${invoiceStatusStyle.text} border ${invoiceStatusStyle.border}`}
-                                    >
-                                      {invoiceStatusStyle.icon}
-                                      {invoiceStatusStyle.label}
-                                    </span>
-                                  </td>
-                                  <td className="px-5 py-4 border-b border-gray-100 hidden md:table-cell text-gray-800">
-                                    {invoice.paidAt ? formatDate(invoice.paidAt) : "-"}
-                                  </td>
-                                  <td className="px-5 py-4 border-b border-gray-100 hidden lg:table-cell">
-                                    <div className="flex flex-col">
-                                      <span className="font-medium text-gray-900">{invoice.userId.firstName} {invoice.userId.lastName}</span>
-                                      <span className="text-xs text-gray-600">{invoice.userId.email}</span>
-                                    </div>
-                                  </td>
-                                  <td className="px-5 py-4 border-b border-gray-100 text-center hidden xl:table-cell">
-                                    <div className="relative" ref={menuRef}>
-                                      <button 
-                                        onClick={() => toggleInvoiceMenu(invoice._id)}
-                                        className="inline-flex items-center justify-center p-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 transition-colors"
-                                        title="Opções"
+                                  ),
+                                  BANK_TRANSFER: (
+                                    <FaMoneyBillWave className="mr-1 text-teal-500" />
+                                  ),
+                                  OTHER: (
+                                    <FaMoneyBillWave className="mr-1 text-gray-500" />
+                                  ),
+                                };
+
+                                return (
+                                  <tr
+                                    key={invoice._id || index}
+                                    className="hover:bg-slate-50 transition-colors"
+                                  >
+                                    <td className="px-5 py-4 border-b border-gray-100 font-medium">
+                                      <span className="bg-primary-50 text-white py-1 px-2 rounded-md">
+                                        {invoice.invoiceNumber}
+                                      </span>
+                                    </td>
+                                    <td className="px-5 py-4 border-b border-gray-100 text-gray-800">
+                                      {formatDate(invoice.createdAt)}
+                                    </td>
+                                    <td className="px-5 py-4 border-b border-gray-100 font-medium text-gray-900">
+                                      {formatCurrency(invoice.amount)}
+                                    </td>
+                                    <td className="px-5 py-4 border-b border-gray-100 text-gray-800">
+                                      <div className="flex items-center">
+                                        {paymentMethodIcons[
+                                          invoice.paymentMethod
+                                        ] || (
+                                          <FaMoneyBillWave className="mr-1" />
+                                        )}
+                                        <span>
+                                          {paymentMethodLabels[
+                                            invoice.paymentMethod
+                                          ] || invoice.paymentMethod}
+                                        </span>
+                                      </div>
+                                    </td>
+                                    <td className="px-5 py-4 border-b border-gray-100">
+                                      <span
+                                        className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium
+                                        ${invoiceStatusStyle.bg} ${invoiceStatusStyle.text} border ${invoiceStatusStyle.border}`}
                                       >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-4 h-4">
-                                          <path strokeLinecap="round" strokeLinejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                                          <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                                        </svg>
-                                      </button>
-                                      
-                                      {activeInvoiceMenu === invoice._id && (
-                                        <div className="absolute right-0 top-full mt-1 z-20 bg-white rounded-lg shadow-lg border border-gray-200 w-44 overflow-hidden">
-                                          <button
-                                            onClick={() => downloadInvoicePDF(invoice._id)}
-                                            className="w-full text-left py-2 px-3 hover:bg-gray-50 flex items-center text-gray-700 text-sm"
-                                            disabled={downloadingPdf === invoice._id}
+                                        {invoiceStatusStyle.icon}
+                                        {invoiceStatusStyle.label}
+                                      </span>
+                                    </td>
+                                    <td className="px-5 py-4 border-b border-gray-100 hidden md:table-cell text-gray-800">
+                                      {invoice.paidAt
+                                        ? formatDate(invoice.paidAt)
+                                        : "-"}
+                                    </td>
+                                    <td className="px-5 py-4 border-b border-gray-100 hidden lg:table-cell">
+                                      <div className="flex flex-col">
+                                        <span className="font-medium text-gray-900">
+                                          {invoice.userId.firstName}{" "}
+                                          {invoice.userId.lastName}
+                                        </span>
+                                        <span className="text-xs text-gray-600">
+                                          {invoice.userId.email}
+                                        </span>
+                                      </div>
+                                    </td>
+                                    <td className="px-5 py-4 border-b border-gray-100 text-center hidden xl:table-cell">
+                                      <div className="relative" ref={menuRef}>
+                                        <Button
+                                          onClick={() =>
+                                            toggleInvoiceMenu(invoice._id)
+                                          }
+                                          className="inline-flex items-center justify-center p-1.5 bg-gray-100 hover:bg-gray-200 rounded-full text-gray-700 transition-colors"
+                                          title="Opções"
+                                        >
+                                          <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            fill="none"
+                                            viewBox="0 0 24 24"
+                                            strokeWidth={1.5}
+                                            stroke="currentColor"
+                                            className="w-4 h-4"
                                           >
-                                            {downloadingPdf === invoice._id ? (
-                                              <>
-                                                <div className="h-4 w-4 mr-2 rounded-full border-2 border-red-500 border-t-transparent animate-spin"></div>
-                                                Gerando PDF...
-                                              </>
-                                            ) : (
-                                              <>
-                                                <FaFilePdf className="text-red-500 mr-2" /> 
-                                                Baixar PDF
-                                              </>
-                                            )}
-                                          </button>
-                                          <button 
-                                            onClick={() => openInvoiceDetails(invoice)} 
-                                            className="w-full text-left py-2 px-3 hover:bg-gray-50 flex items-center text-gray-700 text-sm"
-                                          >
-                                            <FaDownload className="text-primary-500 mr-2" /> 
-                                            Visualizar Detalhes
-                                          </button>
-                                        </div>
-                                      )}
-                                    </div>
-                                  </td>
-                                </tr>
-                              );
-                            })}
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                                            />
+                                            <path
+                                              strokeLinecap="round"
+                                              strokeLinejoin="round"
+                                              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                                            />
+                                          </svg>
+                                        </Button>
+
+                                        {activeInvoiceMenu === invoice._id && (
+                                          <div className="absolute right-0 top-full mt-1 z-20 bg-white rounded-lg shadow-lg border border-gray-200 w-44 overflow-hidden">
+                                            <button
+                                              onClick={() =>
+                                                downloadInvoicePDF(invoice._id)
+                                              }
+                                              className="w-full text-left py-2 px-3 hover:bg-gray-50 flex items-center text-gray-700 text-sm"
+                                              disabled={
+                                                downloadingPdf === invoice._id
+                                              }
+                                            >
+                                              {downloadingPdf ===
+                                              invoice._id ? (
+                                                <>
+                                                  <div className="h-4 w-4 mr-2 rounded-full border-2 border-red-500 border-t-transparent animate-spin"></div>
+                                                  Gerando PDF...
+                                                </>
+                                              ) : (
+                                                <>
+                                                  <FaFilePdf className="text-red-500 mr-2" />
+                                                  Baixar PDF
+                                                </>
+                                              )}
+                                            </button>
+                                            <button
+                                              onClick={() =>
+                                                openInvoiceDetails(invoice)
+                                              }
+                                              className="w-full text-left py-2 px-3 hover:bg-gray-50 flex items-center text-gray-700 text-sm"
+                                            >
+                                              <FaDownload className="text-primary-500 mr-2" />
+                                              Visualizar Detalhes
+                                            </button>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </td>
+                                  </tr>
+                                );
+                              }
+                            )}
                           </tbody>
                         </table>
                       </div>
                     </div>
-                    
-                    <div className="p-4 border-t border-gray-100 bg-gray-50 flex flex-wrap items-center justify-between">
+
+                    <div className="p-4 border-t border-slate-100 bg-slate-50 flex flex-wrap items-center justify-between">
                       <div className="text-sm text-gray-700 font-medium">
-                        Exibindo 1-{invoices.data.length} de {invoices.data.length} registros
+                        Exibindo 1-{invoices.data.length} de{" "}
+                        {invoices.data.length} registros
                       </div>
-                      
+
                       <div className="flex space-x-1">
-                        <button className="px-3 py-1.5 border border-gray-200 rounded-md bg-white text-gray-700 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <button
+                          className="px-3 py-1.5 border border-gray-200 rounded-md bg-white text-gray-700 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          disabled
+                        >
                           Anterior
                         </button>
-                        <button className="px-3 py-1.5 border border-primary-200 rounded-md bg-primary-50 text-primary-700 font-medium text-sm">
+                        <button className="px-3 py-1.5 border border-primary-50 rounded-md bg-primary-50 text-white font-medium text-sm">
                           1
                         </button>
-                        <button className="px-3 py-1.5 border border-gray-200 rounded-md bg-white text-gray-700 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
+                        <button
+                          className="px-3 py-1.5 border border-gray-200 rounded-md bg-white text-gray-700 text-sm hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                          disabled
+                        >
                           Próxima
                         </button>
                       </div>
@@ -651,11 +789,11 @@ export default function BillingHistoryPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-4 space-y-6">
-            <div className="bg-white rounded-lg shadow-sm">
+          <div className="lg:col-span-4 space-y-8">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow">
               <div className="border-b border-gray-100">
-                <h2 className="text-base font-bold text-primary-700 px-5 py-3 flex items-center">
-                  <MdOutlinePayments className="mr-2 text-lg text-primary-500" />
+                <h2 className="text-base font-bold text-primary-50 px-5 py-3 flex items-center">
+                  <MdOutlinePayments className="mr-2 text-lg text-primary-50" />
                   Informações da Cobrança
                 </h2>
               </div>
@@ -676,8 +814,8 @@ export default function BillingHistoryPage() {
                 <div className="px-5 py-3 flex justify-between items-center">
                   <span className="text-gray-700">Status:</span>
                   <span
-                    className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs
-                    ${statusStyle.bg} ${statusStyle.text} border ${statusStyle.border}`}
+                    className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs
+                      ${statusStyle.bg} ${statusStyle.text} border ${statusStyle.border}`}
                   >
                     {statusStyle.icon}
                     {statusStyle.label}
@@ -686,52 +824,24 @@ export default function BillingHistoryPage() {
 
                 {isPending && (
                   <div className="px-5 py-4">
-                    <div className="relative">
-                      <button
-                        onClick={() =>
-                          setShowPaymentOptions(!showPaymentOptions)
-                        }
-                        className="w-full py-3 bg-primary-500 hover:bg-primary-600 text-white rounded-md font-medium flex items-center justify-center gap-2 transition-colors"
-                      >
-                        <FaCheck className="w-4 h-4" />
-                        Aprovar Pagamento
-                      </button>
-
-                      {showPaymentOptions && (
-                        <div className="absolute top-full left-0 right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 z-[1000] overflow-hidden animate-fade-in">
-                          <div className="py-3 px-4 bg-primary-500 text-white text-sm font-medium">
-                            Como o pagamento foi realizado?
-                          </div>
-
-                          <button
-                            onClick={() => handlePaymentTypeSelect("ONLINE")}
-                            className="w-full py-4 px-4 hover:bg-emerald-50 text-gray-700 font-medium flex items-center text-left transition-colors border-b border-gray-100"
-                          >
-                            <FaCreditCard className="w-4 h-4 mr-3 text-emerald-600 flex-shrink-0" />
-                            <span>Pagou Online (SportMap)</span>
-                          </button>
-
-                          <button
-                            onClick={() =>
-                              handlePaymentTypeSelect("PAGO_PRESENCIALMENTE")
-                            }
-                            className="w-full py-4 px-4 hover:bg-blue-50 text-gray-700 font-medium flex items-center text-left transition-colors"
-                          >
-                            <FaMoneyBill className="w-4 h-4 mr-3 text-blue-600 flex-shrink-0" />
-                            <span>Pagou Presencialmente</span>
-                          </button>
-                        </div>
-                      )}
-                    </div>
+                    <Button
+                      onClick={() =>
+                        handlePaymentTypeSelect("PAGO_PRESENCIALMENTE")
+                      }
+                      className="w-full py-3 bg-primary-50 hover:bg-primary-100 text-white rounded-lg font-medium flex items-center justify-center gap-2 transition-colors"
+                    >
+                      <FaCheck className="w-4 h-4" />
+                      Confirmar Pagamento Presencial
+                    </Button>
                   </div>
                 )}
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow overflow-hidden">
               <div className="border-b border-gray-100">
-                <h2 className="text-base font-bold text-primary-700 px-5 py-3 flex items-center">
-                  <FaCalendarAlt className="mr-2 text-lg text-primary-500" />
+                <h2 className="text-base font-bold text-primary-50 px-5 py-3 flex items-center">
+                  <FaCalendarAlt className="mr-2 text-lg text-primary-50" />
                   Datas
                 </h2>
               </div>
@@ -739,7 +849,9 @@ export default function BillingHistoryPage() {
               <div className="divide-y divide-gray-100">
                 <div className="px-5 py-3 flex justify-between items-center">
                   <span className="text-gray-700">Criado em:</span>
-                  <span className="text-gray-900">{formatDate(billingHistory.createdAt)}</span>
+                  <span className="text-gray-900">
+                    {formatDate(billingHistory.createdAt)}
+                  </span>
                 </div>
                 <div className="px-5 py-3 flex justify-between items-center">
                   <span className="text-gray-700">Último pagamento:</span>
@@ -768,10 +880,10 @@ export default function BillingHistoryPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+            <div className="bg-white border border-slate-200 rounded-2xl shadow overflow-hidden">
               <div className="border-b border-gray-100">
-                <h2 className="text-base font-bold text-primary-700 px-5 py-3 flex items-center">
-                  <FaMoneyBillWave className="mr-2 text-lg text-primary-500" />
+                <h2 className="text-base font-bold text-primary-50 px-5 py-3 flex items-center">
+                  <FaMoneyBillWave className="mr-2 text-lg text-primary-50" />
                   Detalhes da Quadra
                 </h2>
               </div>
@@ -802,34 +914,54 @@ export default function BillingHistoryPage() {
       </div>
 
       <div className="container mx-auto px-4 mt-8 mb-10">
-        <div className="bg-blue-50 border border-blue-100 rounded-lg p-5">
-          <h3 className="text-blue-800 font-semibold text-base mb-2 flex items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2 text-blue-600">
-              <path strokeLinecap="round" strokeLinejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
+        <div className="bg-primary-50/10 border border-primary-50/20 rounded-lg p-5">
+          <h3 className="text-primary-50 font-semibold text-base mb-2 flex items-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5 mr-2 text-primary-50"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z"
+              />
             </svg>
             Informações sobre pagamentos
           </h3>
-          <p className="text-sm text-blue-700 mb-2">
+          <p className="text-sm text-primary-50/80 mb-2">
             O pagamento pode ser realizado de duas formas:
           </p>
-          <ul className="list-disc list-inside text-sm text-blue-700 space-y-1 ml-2">
+          <ul className="list-disc list-inside text-sm text-primary-50/80 space-y-1 ml-2">
             <li>
-              <span className="font-medium">Presencial</span>: O pagamento é feito diretamente para o proprietário da quadra, sem envolvimento do SportMap.
+              <span className="font-medium">Presencial</span>: O pagamento é
+              feito diretamente para o proprietário da quadra, sem envolvimento
+              do SportMap.
             </li>
             <li>
-              <span className="font-medium">Online via SportMap</span>: O pagamento é processado através da nossa plataforma, garantindo segurança e facilidade.
+              <span className="font-medium">Online via SportMap</span>: O
+              pagamento é processado através da nossa plataforma, garantindo
+              segurança e facilidade.
             </li>
           </ul>
-          <p className="text-sm text-blue-700 mt-2">
-            Para mais informações sobre pagamentos e políticas de cancelamento, consulte nossos <a href="#" className="text-blue-600 underline font-medium">Termos e Condições</a>.
+          <p className="text-sm text-primary-50/80 mt-2">
+            Para mais informações sobre pagamentos e políticas de cancelamento,
+            consulte nossos{" "}
+            <a href="#" className="text-primary-50 underline font-medium">
+              Termos e Condições
+            </a>
+            .
           </p>
         </div>
       </div>
 
       {isConfirmDialogOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1001] p-4">
-          <div className="bg-white rounded-lg shadow-lg max-w-md w-full overflow-hidden animate-fade-in">
-            <div className="bg-blue-500 px-5 py-4">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-lg max-w-md w-full overflow-hidden animate-fade-in">
+            <div className="bg-primary-50 px-5 py-4">
               <h3 className="text-lg font-bold text-white">
                 Confirmar Pagamento Presencial
               </h3>
@@ -843,14 +975,14 @@ export default function BillingHistoryPage() {
               </p>
 
               <div className="flex gap-3">
-                <button
+                <Button
                   onClick={handleConfirmPayment}
-                  className="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                  className="flex-1 py-3 bg-primary-50 hover:bg-primary-100 text-white rounded-lg font-medium transition-colors"
                 >
                   Confirmar
-                </button>
+                </Button>
 
-                <button
+                <Button
                   onClick={() => {
                     setIsConfirmDialogOpen(false);
                     setSelectedPaymentType(null);
@@ -858,7 +990,7 @@ export default function BillingHistoryPage() {
                   className="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-medium transition-colors"
                 >
                   Cancelar
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -867,17 +999,29 @@ export default function BillingHistoryPage() {
 
       {selectedInvoice && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1001] p-4">
-          <div className="bg-white rounded-lg shadow-lg max-w-2xl w-full overflow-hidden animate-fade-in">
-            <div className="bg-gradient-to-r from-primary-500 to-primary-600 px-5 py-4 flex justify-between items-center">
+          <div className="bg-white border border-slate-200 rounded-2xl shadow-lg max-w-2xl w-full overflow-hidden animate-fade-in">
+            <div className="bg-gradient-to-r from-primary-50 to-primary-100 px-5 py-4 flex justify-between items-center">
               <h3 className="text-lg font-bold text-white flex items-center">
-                <FaFilePdf className="mr-2" /> Detalhes da Fatura #{selectedInvoice.invoiceNumber}
+                <FaFilePdf className="mr-2" /> Detalhes da Fatura #
+                {selectedInvoice.invoiceNumber}
               </h3>
-              <button 
+              <button
                 onClick={closeInvoiceDetails}
                 className="text-white hover:text-gray-200 transition-colors"
               >
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-5 h-5">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={2}
+                  stroke="currentColor"
+                  className="w-5 h-5"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18 18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
@@ -885,27 +1029,43 @@ export default function BillingHistoryPage() {
             <div className="p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-500 mb-3">INFORMAÇÕES DA FATURA</h4>
+                  <h4 className="text-sm font-semibold text-gray-500 mb-3">
+                    INFORMAÇÕES DA FATURA
+                  </h4>
                   <div className="space-y-3">
                     <div>
-                      <div className="text-sm text-gray-600">Número da Fatura</div>
-                      <div className="font-medium text-gray-900">{selectedInvoice.invoiceNumber}</div>
+                      <div className="text-sm text-gray-600">
+                        Número da Fatura
+                      </div>
+                      <div className="font-medium text-gray-900">
+                        {selectedInvoice.invoiceNumber}
+                      </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600">Data de Emissão</div>
-                      <div className="font-medium text-gray-900">{formatDate(selectedInvoice.createdAt)}</div>
+                      <div className="text-sm text-gray-600">
+                        Data de Emissão
+                      </div>
+                      <div className="font-medium text-gray-900">
+                        {formatDate(selectedInvoice.createdAt)}
+                      </div>
                     </div>
                     <div>
                       <div className="text-sm text-gray-600">Valor</div>
-                      <div className="font-semibold text-gray-900">{formatCurrency(selectedInvoice.amount)}</div>
+                      <div className="font-semibold text-gray-900">
+                        {formatCurrency(selectedInvoice.amount)}
+                      </div>
                     </div>
                     <div>
                       <div className="text-sm text-gray-600">Status</div>
                       <div>
                         <span
-                          className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs
-                          ${getStatusStyle(selectedInvoice.status).bg} ${getStatusStyle(selectedInvoice.status).text} 
-                          border ${getStatusStyle(selectedInvoice.status).border}`}
+                          className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs
+                            ${getStatusStyle(selectedInvoice.status).bg} ${
+                            getStatusStyle(selectedInvoice.status).text
+                          } 
+                            border ${
+                              getStatusStyle(selectedInvoice.status).border
+                            }`}
                         >
                           {getStatusStyle(selectedInvoice.status).icon}
                           {getStatusStyle(selectedInvoice.status).label}
@@ -914,58 +1074,74 @@ export default function BillingHistoryPage() {
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
-                  <h4 className="text-sm font-semibold text-gray-500 mb-3">INFORMAÇÕES DE PAGAMENTO</h4>
+                  <h4 className="text-sm font-semibold text-gray-500 mb-3">
+                    INFORMAÇÕES DE PAGAMENTO
+                  </h4>
                   <div className="space-y-3">
                     <div>
-                      <div className="text-sm text-gray-600">Método de Pagamento</div>
+                      <div className="text-sm text-gray-600">
+                        Método de Pagamento
+                      </div>
                       <div className="font-medium text-gray-900">
-                        {
-                          {
-                            'IN_PERSON': 'Presencial',
-                            'CREDIT_CARD': 'Cartão de Crédito',
-                            'PIX': 'PIX',
-                            'BANK_TRANSFER': 'Transferência',
-                            'OTHER': 'Outro'
-                          }[selectedInvoice.paymentMethod] || selectedInvoice.paymentMethod
-                        }
+                        {{
+                          IN_PERSON: "Presencial",
+                          CREDIT_CARD: "Cartão de Crédito",
+                          PIX: "PIX",
+                          BANK_TRANSFER: "Transferência",
+                          OTHER: "Outro",
+                        }[selectedInvoice.paymentMethod] ||
+                          selectedInvoice.paymentMethod}
                       </div>
                     </div>
                     <div>
-                      <div className="text-sm text-gray-600">Data de Pagamento</div>
+                      <div className="text-sm text-gray-600">
+                        Data de Pagamento
+                      </div>
                       <div className="font-medium text-gray-900">
-                        {selectedInvoice.paidAt ? formatDate(selectedInvoice.paidAt) : "Pendente"}
+                        {selectedInvoice.paidAt
+                          ? formatDate(selectedInvoice.paidAt)
+                          : "Pendente"}
                       </div>
                     </div>
                     {selectedInvoice.notes && (
                       <div>
                         <div className="text-sm text-gray-600">Observações</div>
-                        <div className="font-medium text-gray-900">{selectedInvoice.notes}</div>
+                        <div className="font-medium text-gray-900">
+                          {selectedInvoice.notes}
+                        </div>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 border-t border-gray-100 pt-6">
-                <h4 className="text-sm font-semibold text-gray-500 mb-3">INFORMAÇÕES DA QUADRA</h4>
+                <h4 className="text-sm font-semibold text-gray-500 mb-3">
+                  INFORMAÇÕES DA QUADRA
+                </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <div className="text-sm text-gray-600">Nome da Quadra</div>
-                    <div className="font-medium text-gray-900">{selectedInvoice.courtId.name}</div>
+                    <div className="font-medium text-gray-900">
+                      {selectedInvoice.courtId.name}
+                    </div>
                     {selectedInvoice.courtId.address && (
                       <div className="text-sm text-gray-600 mt-2 flex items-start">
                         <FaMapMarkerAlt className="text-gray-400 mt-1 mr-1 flex-shrink-0" />
                         <span>
-                          {selectedInvoice.courtId.address}, {selectedInvoice.courtId.number} - {selectedInvoice.courtId.neighborhood}, {selectedInvoice.courtId.city}
+                          {selectedInvoice.courtId.address},{" "}
+                          {selectedInvoice.courtId.number} -{" "}
+                          {selectedInvoice.courtId.neighborhood},{" "}
+                          {selectedInvoice.courtId.city}
                         </span>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-6 pt-2 flex justify-between">
                 <button
                   onClick={closeInvoiceDetails}
@@ -973,15 +1149,15 @@ export default function BillingHistoryPage() {
                 >
                   Fechar
                 </button>
-                
+
                 <button
                   onClick={() => downloadInvoicePDF(selectedInvoice._id)}
-                  className="px-5 py-2.5 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg font-medium transition-colors flex items-center"
+                  className="px-5 py-2.5 bg-error-50 hover:bg-error-50/80 text-white rounded-lg font-medium transition-colors flex items-center"
                   disabled={downloadingPdf === selectedInvoice._id}
                 >
                   {downloadingPdf === selectedInvoice._id ? (
                     <>
-                      <div className="h-4 w-4 mr-2 rounded-full border-2 border-red-500 border-t-transparent animate-spin"></div>
+                      <div className="h-4 w-4 mr-2 rounded-full border-2 border-white border-t-transparent animate-spin"></div>
                       Gerando PDF...
                     </>
                   ) : (

@@ -5,6 +5,7 @@ interface PaginationProps {
 }
 
 export function Pagination({ currentPage, totalPages, onPageChange }: PaginationProps) {
+  if (!totalPages || totalPages < 2) return null;
   const pages = Array.from({ length: totalPages }, (_, i) => i + 1);
   const showEllipsis = totalPages > 7;
 
@@ -44,7 +45,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
 
       {getVisiblePages().map((page, index) => (
         <button
-          key={index}
+          key={typeof page === 'number' ? `page-${page}` : `ellipsis-${index}`}
           onClick={() => typeof page === 'number' && onPageChange(page)}
           disabled={page === '...'}
           className={`

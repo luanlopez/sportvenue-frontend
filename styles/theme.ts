@@ -1,51 +1,27 @@
 export const colors = {
   primary: {
-    50: '#F4F0F7',
-    100: '#E9E0F0',
-    200: '#D3C1E1',
-    300: '#BDA2D2',
-    400: '#8B5BAB',
-    500: '#562981',
-    600: '#4D2574',
-    700: '#442067',
-    800: '#3B1C5A',
-    900: '#32174D',
+    50:  '#1345BA',
+    100: '#0C2B70',
+    200: '#03103E',
   },
   secondary: {
-    50: '#FFFCF5',
-    100: '#FFF9EB',
-    200: '#FEF3D7',
-    300: '#FEECC3',
-    400: '#FED782',
-    500: '#FEC341',
-    600: '#E5B03B',
-    700: '#CC9C34',
-    800: '#B2882E',
-    900: '#997427',
-  },
-  tertiary: {
-    50: '#FFFEFB',
-    100: '#FFFDF7',
-    200: '#FFFBEF',
-    300: '#FEF9E7',
-    400: '#FEF8E3',
-    500: '#FEF7DF',
-    600: '#E5DEC9',
-    700: '#CCC6B3',
-    800: '#B2AD9C',
-    900: '#999485',
+    50:  '#F9F9F9',
+    100: '#D9D9D9',
+    200: '#8F8E8E',
+    300: '#5C5C5C',
+    400: '#0D0D0D',
   },
   success: {
-    50: '#f0fdf4',
-    500: '#22c55e',
-    700: '#15803d',
+    50: '#07B13D',
   },
   error: {
-    50: '#FEF2F2',
-    100: '#FEE2E2',
-    500: '#EF4444',
-    600: '#DC2626',
-    700: '#B91C1C',
+    50: '#E94438',
+  },
+  warning: {
+    50: '#F9CE31',
+  },
+  info: {
+    50: '#2F94F1',
   },
   background: {
     primary: '#ffffff',
@@ -58,6 +34,6 @@ export const colors = {
 } as const;
 
 export const fontFamily = {
-  sans: 'var(--font-montserrat)',
-  mono: 'var(--font-roboto-mono)',
+  sans: 'Roboto, ui-sans-serif, system-ui',
+  poppins: 'Poppins, ui-sans-serif, system-ui',
 } as const;

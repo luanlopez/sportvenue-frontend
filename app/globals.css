@@ -5,7 +5,7 @@
 @import './styles/animations.css';
 
 body {
-  background-color: #fdf6e3;
+  background-color: #fff;
 }
 
 @layer utilities {
@@ -18,17 +18,14 @@ body {
   }
 }
 
-/* Esconde a scrollbar mas mantém a funcionalidade */
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;     /* Firefox */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
-  display: none;             /* Chrome, Safari and Opera */
+    display: none;
 }
-
-
 
 @layer base {
   :root {
@@ -93,6 +90,6 @@ body {
     @apply border-gray-200;
   }
   body {
-    background: #fdf6e3
+    background: #fff;
   }
 }

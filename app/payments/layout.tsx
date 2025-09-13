@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Pagamentos'
+  title: 'Detalhes de Assinatura'
 }
 
 export default function PaymentsLayout({
