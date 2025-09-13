@@ -189,8 +189,20 @@ export default function CreateCourt() {
       await courtService.createCourt(data);
       showToast.success("Sucesso", "Quadra criada com sucesso");
       router.push("/");
-    } catch {
-      showToast.error("Erro", "Não foi possível criar a quadra");
+    } catch (error: unknown) {
+      if (error && typeof error === 'object' && 'response' in error) {
+        const axiosError = error as { response: { data: { code?: string; title?: string; message?: string } } };
+        if (axiosError.response?.data?.code === "SUB003") {
+          showToast.error(
+            axiosError.response.data.title || "Limite de Quadras Atingido",
+            axiosError.response.data.message || "Você atingiu o limite de quadras do seu plano atual. Faça um upgrade para adicionar mais quadras."
+          );
+        } else {
+          showToast.error("Erro", "Não foi possível criar a quadra");
+        }
+      } else {
+        showToast.error("Erro", "Não foi possível criar a quadra");
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -575,7 +587,7 @@ export default function CreateCourt() {
                         key={cat}
                         className="px-3 py-1 rounded-full bg-primary-50 text-white text-sm font-medium"
                       >
-                        {cat}
+                        {CATEGORY_LABELS[cat as Category]}
                       </span>
                     ))}
                   </div>
@@ -590,7 +602,7 @@ export default function CreateCourt() {
                         key={a}
                         className="px-3 py-1 rounded-full bg-slate-100 text-slate-700 text-sm font-medium"
                       >
-                        {a}
+                        {AMENITY_LABELS[a as Amenity]}
                       </span>
                     ))}
                   </div>

@@ -92,7 +92,7 @@ export default function OwnerPlans() {
   const handleSelectPlan = async (plan: Plan) => {
     try {
       if (!user) {
-        router.push(`/register?type=HOUSE_OWNER`);
+        router.push(`/login`);
         return;
       }
 

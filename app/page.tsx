@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
@@ -86,55 +85,47 @@ export default function Home() {
   const [activeSearchText, setActiveSearchText] = useState("");
 
   useEffect(() => {
-    if (!sessionId || !planId || !user) return;
+    if (sessionId && planId && user) {
+      subscriptionService
+        .createSubscription({
+          userId: user.id,
+          planId: planId,
+          sessionId: sessionId,
+        })
+        .then(() => {
+          showToast.success("Sucesso", "Assinatura realizada com sucesso!");
+          router.replace("/");
+        })
+        .catch(() => {
+          showToast.error("Erro", "Erro ao finalizar assinatura. Tente novamente.");
+          router.replace("/");
+        });
+    }
 
-    subscriptionService
-      .createSubscription({
-        userId: user.id,
-        planId: planId,
-        sessionId: sessionId,
-      })
-      .then(() => {
-        showToast.success("Sucesso", "Assinatura realizada com sucesso!");
-        router.replace("/");
-      })
-      .catch(() => {
-        showToast.error(
-          "Erro",
-          "Erro ao finalizar assinatura. Tente novamente."
-        );
-        router.replace("/");
-      });
-  }, [sessionId, planId, user, router]);
-
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (
-        sportPanelRef.current &&
-        !sportPanelRef.current.contains(event.target as Node)
-      ) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (sportPanelRef.current && !sportPanelRef.current.contains(event.target as Node)) {
         setShowSportPanel(false);
       }
-      if (
-        searchPanelRef.current &&
-        !searchPanelRef.current.contains(event.target as Node)
-      ) {
+      if (searchPanelRef.current && !searchPanelRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
       }
-    }
-    function handleEsc(event: KeyboardEvent) {
+    };
+    
+    const handleEsc = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         setShowSportPanel(false);
         setShowSuggestions(false);
       }
-    }
+    };
+    
     document.addEventListener("mousedown", handleClickOutside);
     document.addEventListener("keydown", handleEsc);
+    
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
       document.removeEventListener("keydown", handleEsc);
     };
-  }, []);
+  }, [sessionId, planId, user, router]);
 
   const searchNearbyPlaces = useCallback(async (lat: number, lng: number) => {
     try {
@@ -189,10 +180,8 @@ export default function Home() {
     }
   }, []);
 
-  // Obtém localização do usuário
   const getUserLocation = useCallback(() => {
     if (!navigator.geolocation) {
-      showToast.error("Erro", "Geolocalização não suportada pelo navegador");
       setNearbyPlaces([]);
       return;
     }
@@ -206,49 +195,29 @@ export default function Home() {
       },
       (error) => {
         console.error("Erro ao obter localização:", error);
-        let errorMessage = "Não foi possível obter sua localização";
-        
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            errorMessage = "Permissão de localização negada";
-            break;
-          case error.POSITION_UNAVAILABLE:
-            errorMessage = "Informação de localização indisponível";
-            break;
-          case error.TIMEOUT:
-            errorMessage = "Tempo limite para obter localização";
-            break;
-        }
-        
-        showToast.error("Erro", errorMessage);
         setIsLoadingLocation(false);
         setNearbyPlaces([]);
       },
       {
         enableHighAccuracy: true,
         timeout: 10000,
-        maximumAge: 300000 // 5 minutos
+        maximumAge: 300000
       }
     );
   }, [searchNearbyPlaces]);
 
-  // Busca lugares quando o texto muda
+  useEffect(() => {
+    getUserLocation();
+  }, [getUserLocation]);
+
   useEffect(() => {
     if (searchText.trim()) {
-      const timeoutId = setTimeout(() => {
-        searchPlaces(searchText);
-      }, 500);
-
+      const timeoutId = setTimeout(() => searchPlaces(searchText), 500);
       return () => clearTimeout(timeoutId);
     } else {
       setSearchResults([]);
     }
   }, [searchText, searchPlaces]);
-
-  // Carrega lugares próximos na inicialização
-  useEffect(() => {
-    getUserLocation();
-  }, [getUserLocation]);
 
   const { data, isLoading } = useQuery({
     queryKey: [
@@ -362,8 +331,8 @@ export default function Home() {
                       ))
                     ) : (
                       <div className="px-4 sm:px-5 py-3 text-sm text-slate-500">
-                            Nenhum lugar encontrado para &quot;{searchText}&quot;
-                      </div>
+                Nenhum lugar encontrado para &quot;{searchText}&quot;
+              </div>
                     )}
                   </>
                 ) : (
